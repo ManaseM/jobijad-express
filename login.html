@@ -1,0 +1,337 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login — Jobijad Express</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Roboto',sans-serif;
+  min-height:100vh;
+  background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
+}
+
+/* Decorative circles matching homepage hero */
+body::before{
+  content:'';position:absolute;
+  width:480px;height:480px;
+  background:rgba(249,115,22,.08);
+  border-radius:50%;
+  bottom:-140px;left:-120px;
+  pointer-events:none;
+}
+body::after{
+  content:'';position:absolute;
+  width:340px;height:340px;
+  background:rgba(249,115,22,.06);
+  border-radius:50%;
+  top:-80px;right:60px;
+  pointer-events:none;
+}
+
+/* Floating dots */
+.dot{
+  position:absolute;border-radius:50%;
+  background:rgba(249,115,22,.15);
+  pointer-events:none;
+}
+.dot1{width:12px;height:12px;top:18%;left:12%;}
+.dot2{width:8px;height:8px;top:60%;left:6%;}
+.dot3{width:16px;height:16px;top:30%;right:10%;}
+.dot4{width:10px;height:10px;bottom:20%;right:18%;}
+
+.card{
+  background:rgba(255,255,255,.04);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:20px;
+  padding:44px 40px 38px;
+  width:100%;max-width:460px;
+  position:relative;z-index:1;
+  box-shadow:0 32px 80px rgba(0,0,0,.45);
+}
+
+/* Logo */
+.brand{text-align:center;margin-bottom:28px;}
+.brand-name{font-size:26px;font-weight:700;color:#fff;letter-spacing:.5px;}
+.brand-name span{color:#f97316;}
+.brand-sub{font-size:12px;color:rgba(255,255,255,.45);margin-top:3px;letter-spacing:1px;text-transform:uppercase;}
+
+/* Icon */
+.brand-icon{
+  width:64px;height:64px;
+  background:linear-gradient(135deg,#f97316,#ea6c0a);
+  border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 14px;
+  box-shadow:0 8px 24px rgba(249,115,22,.4);
+  font-size:26px;color:#fff;
+}
+
+/* Tabs */
+.tabs{
+  display:flex;
+  background:rgba(255,255,255,.08);
+  border-radius:10px;
+  padding:4px;
+  margin-bottom:22px;
+  border:1px solid rgba(255,255,255,.1);
+}
+.tab{
+  flex:1;padding:9px;border:none;background:none;
+  color:rgba(255,255,255,.55);
+  font-size:13px;font-weight:600;
+  border-radius:7px;transition:all .2s;cursor:pointer;
+  font-family:inherit;letter-spacing:.5px;
+}
+.tab.active{
+  background:linear-gradient(135deg,#f97316,#ea6c0a);
+  color:#fff;
+  box-shadow:0 4px 12px rgba(249,115,22,.35);
+}
+.tab:hover:not(.active){color:rgba(255,255,255,.8);}
+
+/* Error */
+.error-msg{
+  background:rgba(239,68,68,.18);
+  border:1px solid rgba(239,68,68,.4);
+  color:#fca5a5;
+  border-radius:8px;padding:10px 14px;
+  font-size:13px;margin-bottom:14px;display:none;
+}
+
+/* Input groups */
+.input-group{position:relative;margin-bottom:14px;}
+.input-group .ico{
+  position:absolute;left:14px;top:50%;
+  transform:translateY(-50%);
+  pointer-events:none;
+  color:rgba(255,255,255,.4);
+  font-size:14px;
+}
+.input-group input{
+  width:100%;
+  background:rgba(255,255,255,.08);
+  border:1.5px solid rgba(255,255,255,.15);
+  border-radius:9px;
+  padding:13px 14px 13px 42px;
+  color:#fff;font-size:13px;
+  outline:none;transition:all .2s;
+  font-family:inherit;
+}
+.input-group input::placeholder{color:rgba(255,255,255,.35);font-size:12px;letter-spacing:.5px;}
+.input-group input:focus{
+  border-color:#f97316;
+  background:rgba(249,115,22,.08);
+  box-shadow:0 0 0 3px rgba(249,115,22,.15);
+}
+
+/* Main button */
+.main-btn{
+  width:100%;
+  background:linear-gradient(135deg,#f97316,#ea6c0a);
+  color:#fff;border:none;
+  border-radius:9px;padding:14px;
+  font-size:14px;font-weight:700;
+  letter-spacing:1.5px;cursor:pointer;
+  margin-top:6px;
+  transition:all .2s;
+  font-family:inherit;
+  box-shadow:0 6px 20px rgba(249,115,22,.35);
+  position:relative;overflow:hidden;
+}
+.main-btn::after{
+  content:'';position:absolute;
+  inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);
+  transform:translateX(-100%);transition:transform .5s;
+}
+.main-btn:hover::after{transform:translateX(100%);}
+.main-btn:hover{box-shadow:0 8px 28px rgba(249,115,22,.5);transform:translateY(-1px);}
+.main-btn:disabled{background:#555;box-shadow:none;cursor:not-allowed;transform:none;}
+
+/* Forgot */
+.forgot{text-align:right;margin-top:10px;}
+.forgot a{color:rgba(255,255,255,.45);font-size:12px;cursor:pointer;transition:color .2s;}
+.forgot a:hover{color:#f97316;}
+
+/* Bottom link */
+.bottom-link{text-align:center;margin-top:20px;font-size:13px;color:rgba(255,255,255,.45);}
+.bottom-link a{color:#f97316;font-weight:600;cursor:pointer;transition:color .2s;}
+.bottom-link a:hover{color:#fb923c;}
+
+/* Divider */
+.divider{display:flex;align-items:center;gap:10px;margin:18px 0 14px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.1);}
+.divider span{font-size:11px;color:rgba(255,255,255,.3);letter-spacing:1px;}
+
+/* Back to store */
+.back-store{
+  text-align:center;margin-top:18px;
+  font-size:12px;color:rgba(255,255,255,.3);
+}
+.back-store a{
+  color:rgba(255,255,255,.45);
+  display:inline-flex;align-items:center;gap:5px;
+  transition:color .2s;
+}
+.back-store a:hover{color:#f97316;}
+
+@media(max-width:500px){
+  .card{padding:32px 22px 28px;margin:16px;}
+}
+</style>
+</head>
+<body>
+
+<span class="dot dot1"></span>
+<span class="dot dot2"></span>
+<span class="dot dot3"></span>
+<span class="dot dot4"></span>
+
+<div class="card">
+  <div class="brand">
+    <div class="brand-icon"><i class="fas fa-shopping-bag"></i></div>
+    <div class="brand-name">Jobijad <span>Express</span></div>
+    <div class="brand-sub">Premium African Fashion</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" id="tab-login" onclick="switchTab('login')">Login</button>
+    <button class="tab" id="tab-register" onclick="switchTab('register')">Register</button>
+  </div>
+
+  <div class="error-msg" id="error-msg"></div>
+
+  <!-- Login form -->
+  <div id="form-login">
+    <div class="input-group">
+      <span class="ico"><i class="fas fa-envelope"></i></span>
+      <input type="email" id="l-email" placeholder="EMAIL ADDRESS" autocomplete="email">
+    </div>
+    <div class="input-group">
+      <span class="ico"><i class="fas fa-lock"></i></span>
+      <input type="password" id="l-pass" placeholder="PASSWORD">
+    </div>
+    <button class="main-btn" id="login-btn" onclick="doLogin()">LOGIN</button>
+    <div class="forgot"><a>Forgot password?</a></div>
+  </div>
+
+  <!-- Register form -->
+  <div id="form-register" style="display:none">
+    <div class="input-group">
+      <span class="ico"><i class="fas fa-user"></i></span>
+      <input type="text" id="r-name" placeholder="FULL NAME">
+    </div>
+    <div class="input-group">
+      <span class="ico"><i class="fas fa-envelope"></i></span>
+      <input type="email" id="r-email" placeholder="EMAIL ADDRESS">
+    </div>
+    <div class="input-group">
+      <span class="ico"><i class="fas fa-lock"></i></span>
+      <input type="password" id="r-pass" placeholder="PASSWORD (min 6 chars)">
+    </div>
+    <button class="main-btn" id="register-btn" onclick="doRegister()">CREATE ACCOUNT</button>
+  </div>
+
+  <div class="divider"><span>OR</span></div>
+
+  <div class="bottom-link" id="bottom-link">
+    Don't have an account? <a onclick="switchTab('register')">Sign up free</a>
+  </div>
+
+  <div class="back-store">
+    <a href="alibaba-style.html"><i class="fas fa-arrow-left"></i> Back to Store</a>
+  </div>
+</div>
+
+<script>
+function switchTab(t) {
+  document.getElementById('form-login').style.display = t==='login' ? '' : 'none';
+  document.getElementById('form-register').style.display = t==='register' ? '' : 'none';
+  document.getElementById('tab-login').classList.toggle('active', t==='login');
+  document.getElementById('tab-register').classList.toggle('active', t==='register');
+  document.getElementById('bottom-link').innerHTML = t==='login'
+    ? "Don't have an account? <a onclick=\"switchTab('register')\">Sign up free</a>"
+    : "Already have an account? <a onclick=\"switchTab('login')\">Login</a>";
+  hideError();
+}
+
+function showError(msg) {
+  var el = document.getElementById('error-msg');
+  el.textContent = msg; el.style.display = 'block';
+}
+function hideError() { document.getElementById('error-msg').style.display = 'none'; }
+
+async function doLogin() {
+  var email = document.getElementById('l-email').value.trim();
+  var pass = document.getElementById('l-pass').value;
+  hideError();
+  if (!email || !pass) { showError('Please enter your email and password.'); return; }
+  var btn = document.getElementById('login-btn');
+  btn.textContent = 'LOGGING IN...'; btn.disabled = true;
+  try {
+    var res = await fetch('' + (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?'http://localhost:3000/api':window.location.origin+'/api').Replace('(','').Replace(')','') + '/auth/login', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email, password: pass })
+    });
+    var data = await res.json();
+    if (res.ok) {
+      localStorage.setItem('jobiToken', data.token);
+      localStorage.setItem('currentUser', JSON.stringify(data.user));
+      window.location.href = data.user && data.user.role === 'admin' ? 'admin.html' : 'alibaba-style.html';
+    } else {
+      showError(data.message || 'Invalid email or password.');
+      btn.textContent = 'LOGIN'; btn.disabled = false;
+    }
+  } catch(e) {
+    showError('Cannot connect to server. Make sure npm start is running.');
+    btn.textContent = 'LOGIN'; btn.disabled = false;
+  }
+}
+
+async function doRegister() {
+  var name = document.getElementById('r-name').value.trim();
+  var email = document.getElementById('r-email').value.trim();
+  var pass = document.getElementById('r-pass').value;
+  hideError();
+  if (!name || !email || !pass) { showError('Please fill in all fields.'); return; }
+  if (pass.length < 6) { showError('Password must be at least 6 characters.'); return; }
+  var btn = document.getElementById('register-btn');
+  btn.textContent = 'CREATING...'; btn.disabled = true;
+  try {
+    var res = await fetch('' + (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?'http://localhost:3000/api':window.location.origin+'/api').Replace('(','').Replace(')','') + '/auth/register', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ name, email, password: pass })
+    });
+    var data = await res.json();
+    if (res.ok) {
+      localStorage.setItem('jobiToken', data.token);
+      localStorage.setItem('currentUser', JSON.stringify(data.user));
+      window.location.href = data.user && data.user.role === 'admin' ? 'admin.html' : 'alibaba-style.html';
+    } else {
+      showError(data.message || 'Registration failed.');
+      btn.textContent = 'CREATE ACCOUNT'; btn.disabled = false;
+    }
+  } catch(e) {
+    showError('Cannot connect to server. Make sure npm start is running.');
+    btn.textContent = 'CREATE ACCOUNT'; btn.disabled = false;
+  }
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Enter') return;
+  var loginVisible = document.getElementById('form-login').style.display !== 'none';
+  if (loginVisible) doLogin(); else doRegister();
+});
+</script>
+</body>
+</html>

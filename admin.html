@@ -1,0 +1,1112 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — Jobijad Express</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;}
+.header{background:#1a1a2e;padding:0 20px;height:60px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.3);position:sticky;top:0;z-index:200;}
+.logo{font-size:18px;font-weight:700;color:#fff;display:flex;align-items:center;gap:10px;}
+.logo span{color:#f97316;}
+.header-right{display:flex;align-items:center;gap:10px;}
+.admin-badge{background:#f97316;color:#fff;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.logout-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;}
+.logout-btn:hover{background:rgba(255,255,255,.22);}
+.hamburger{display:none;background:none;border:none;color:#fff;font-size:20px;cursor:pointer;padding:4px 8px;}
+.layout{display:flex;min-height:calc(100vh - 60px);}
+.sidebar{width:210px;background:#1a1a2e;padding:16px 0;flex-shrink:0;transition:transform .3s;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:11px 18px;color:rgba(255,255,255,.7);font-size:13px;cursor:pointer;border-left:3px solid transparent;transition:all .2s;user-select:none;}
+.nav-item:hover,.nav-item.active{background:rgba(255,255,255,.08);color:#fff;border-left-color:#f97316;}
+.nav-item i{width:16px;text-align:center;}
+.nav-divider{border-top:1px solid rgba(255,255,255,.08);margin:8px 0;}
+.main{flex:1;padding:20px;min-width:0;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.stat-card{background:#fff;border-radius:10px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.07);display:flex;align-items:center;gap:14px;}
+.stat-icon{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.stat-icon.orange{background:#fff7ed;color:#f97316;}
+.stat-icon.blue{background:#eff6ff;color:#3b82f6;}
+.stat-icon.green{background:#f0fdf4;color:#22c55e;}
+.stat-icon.purple{background:#faf5ff;color:#a855f7;}
+.stat-value{font-size:26px;font-weight:700;color:#1a1a2e;line-height:1;}
+.stat-label{font-size:12px;color:#888;margin-top:3px;}
+.section{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:18px;}
+.section-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid #f0f0f0;flex-wrap:wrap;gap:8px;}
+.section-head h2{font-size:15px;font-weight:600;color:#1a1a2e;display:flex;align-items:center;gap:8px;}
+.section-head h2::before{content:'';width:3px;height:16px;background:#f97316;border-radius:2px;display:inline-block;}
+.head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.btn{padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;border:none;font-family:inherit;font-weight:500;display:inline-flex;align-items:center;gap:5px;transition:all .2s;}
+.btn-primary{background:#f97316;color:#fff;}.btn-primary:hover{background:#ea6c0a;}
+.btn-secondary{background:#f4f6f8;color:#555;border:1px solid #e0e0e0;}.btn-secondary:hover{background:#e8eaed;}
+.btn-danger{background:#fee2e2;color:#991b1b;}.btn-danger:hover{background:#fecaca;}
+.btn-success{background:#dcfce7;color:#15803d;}.btn-success:hover{background:#bbf7d0;}
+.search-filter{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.search-input{padding:6px 12px;border:1.5px solid #e0e0e0;border-radius:6px;font-size:13px;outline:none;width:200px;}
+.search-input:focus{border-color:#f97316;}
+.filter-select{padding:6px 10px;border:1.5px solid #e0e0e0;border-radius:6px;font-size:13px;outline:none;cursor:pointer;}
+.filter-select:focus{border-color:#f97316;}
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;min-width:500px;}
+th{background:#f8f9fa;padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+td{padding:11px 14px;font-size:13px;border-bottom:1px solid #f5f5f5;color:#333;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#fafafa;}
+.badge{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;text-transform:uppercase;}
+.badge-pending{background:#fef9c3;color:#854d0e;}
+.badge-confirmed{background:#dbeafe;color:#1e40af;}
+.badge-processing{background:#ede9fe;color:#5b21b6;}
+.badge-shipped{background:#dcfce7;color:#15803d;}
+.badge-delivered{background:#dcfce7;color:#15803d;}
+.badge-cancelled{background:#fee2e2;color:#991b1b;}
+.badge-admin{background:#fff7ed;color:#f97316;}
+.badge-customer{background:#f0fdf4;color:#15803d;}
+.status-select{border:1px solid #e0e0e0;border-radius:5px;padding:4px 8px;font-size:12px;cursor:pointer;background:#fff;}
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-top:1px solid #f0f0f0;font-size:13px;color:#888;flex-wrap:wrap;gap:8px;}
+.page-btns{display:flex;gap:4px;}
+.page-btn{padding:4px 10px;border:1px solid #e0e0e0;border-radius:5px;background:#fff;cursor:pointer;font-size:12px;}
+.page-btn.active{background:#f97316;color:#fff;border-color:#f97316;}
+.page-btn:hover:not(.active){background:#f4f6f8;}
+.empty-row td{text-align:center;color:#aaa;padding:40px;}
+.notif-dot{width:7px;height:7px;background:#f97316;border-radius:50%;display:inline-block;margin-left:5px;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.access-denied{display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;color:#aaa;gap:12px;}
+.access-denied i{font-size:60px;color:#f97316;}
+.access-denied h2{color:#1a1a2e;font-size:20px;}
+.access-denied a{color:#f97316;}
+.chart-wrap{padding:18px;height:260px;position:relative;}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;}
+.modal-bg.open{display:flex;}
+.modal{background:#fff;border-radius:12px;padding:24px;width:90%;max-width:480px;max-height:90vh;overflow-y:auto;}
+.modal h3{font-size:16px;font-weight:600;margin-bottom:18px;color:#1a1a2e;}
+.form-group{margin-bottom:13px;}
+.form-group label{display:block;font-size:11px;font-weight:600;color:#666;margin-bottom:4px;text-transform:uppercase;}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 11px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:13px;outline:none;font-family:inherit;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#f97316;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;}
+@media(max-width:900px){
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .hamburger{display:block;}
+  .sidebar{position:fixed;top:60px;left:0;bottom:0;z-index:300;transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:299;}
+  .sidebar-overlay.open{display:block;}
+}
+@media(max-width:600px){
+  .stats{grid-template-columns:1fr 1fr;}
+  .stat-value{font-size:20px;}
+  .search-input{width:140px;}
+  .main{padding:12px;}
+}
+@media(max-width:400px){
+  .stats{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <button class="hamburger" id="hamburger-btn"><i class="fas fa-bars"></i></button>
+    Jobijad <span>Express</span>&nbsp;— Admin
+  </div>
+  <div class="header-right">
+    <span class="admin-badge"><i class="fas fa-shield-alt"></i> Admin</span>
+    <span id="admin-name" style="color:#fff;font-size:12px;"></span>
+    <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+  </div>
+</header>
+
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+<div class="layout">
+  <div class="sidebar" id="sidebar">
+    <div class="nav-item active" data-tab="overview"><i class="fas fa-chart-pie"></i> Overview</div>
+    <div class="nav-item" data-tab="users"><i class="fas fa-users"></i> Users <span class="notif-dot" id="users-dot" style="display:none"></span></div>
+    <div class="nav-item" data-tab="orders"><i class="fas fa-box"></i> Orders</div>
+    <div class="nav-item" data-tab="products"><i class="fas fa-tshirt"></i> Products</div>
+    <div class="nav-item" data-tab="inquiries"><i class="fas fa-envelope"></i> Inquiries</div>
+    <div class="nav-item" data-tab="feedback"><i class="fas fa-star"></i> Feedback</div>
+    <div class="nav-divider"></div>
+    <div class="nav-item" onclick="window.open('alibaba-style.html?preview=1','_blank')"><i class="fas fa-store"></i> View Store</div>
+  </div>
+
+  <div class="main" id="main-content"></div>
+</div>
+
+<!-- Receipt Modal -->
+<div class="modal-bg" id="receipt-modal">
+  <div class="modal" style="max-width:560px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h3 style="margin:0">Order Receipt</h3>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-primary" onclick="printReceipt()"><i class="fas fa-print"></i> Print</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('receipt-modal').classList.remove('open')"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+    <div id="receipt-body"></div>
+  </div>
+</div>
+
+<!-- Reply Modal (Inquiries & Feedback) -->
+<div class="modal-bg" id="reply-modal">
+  <div class="modal">
+    <h3 id="reply-modal-title">Reply</h3>
+    <input type="hidden" id="reply-item-id">
+    <input type="hidden" id="reply-item-type">
+    <div class="form-group"><label>Your Reply *</label><textarea id="reply-text" rows="4" placeholder="Type your reply..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeReplyModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="sendReply()"><i class="fas fa-paper-plane"></i> Send Reply</button>
+    </div>
+  </div>
+</div>
+
+<!-- Product Modal -->
+<div class="modal-bg" id="product-modal">
+  <div class="modal">
+    <h3 id="modal-title">Add Product</h3>
+    <input type="hidden" id="edit-product-id">
+    <div class="form-group"><label>Product Name *</label><input id="p-name" placeholder="e.g. Kitenge Dress"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Price *</label><input id="p-price" type="number" step="0.01" placeholder="0.00"></div>
+      <div class="form-group"><label>Category *</label>
+        <select id="p-category">
+          <option value="women">Women</option>
+          <option value="men">Men</option>
+          <option value="children">Children</option>
+          <option value="accessories">Accessories</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group"><label>Description</label><textarea id="p-desc" rows="2" placeholder="Short description..."></textarea></div>
+    <div class="form-group"><label>Image URL</label><input id="p-image" placeholder="https://..."></div>
+    <div class="form-row">
+      <div class="form-group"><label>Stock</label><input id="p-stock" type="number" placeholder="0"></div>
+      <div class="form-group"><label>Featured</label>
+        <select id="p-featured"><option value="false">No</option><option value="true">Yes</option></select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeProductModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveProduct()"><i class="fas fa-save"></i> Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?(window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?'http://localhost:3000/api':window.location.origin+'/api'):window.location.origin+'/api');
+let token = localStorage.getItem('jobiToken');
+let allUsers = [], allOrders = [], allProducts = [];
+let currentTab = 'overview';
+const PAGE_SIZE = 10;
+let userPage = 1, orderPage = 1, productPage = 1;
+let userSearch = '', orderSearch = '', orderFilter = '', productSearch = '';
+
+async function checkAccess() {
+  if (!token) { showAccessDenied('You are not logged in.'); return false; }
+  try {
+    const res = await fetch(`${API}/auth/me`, { headers: { Authorization: `Bearer ${token}` } });
+    const data = await res.json();
+    if (!res.ok || data.user?.role !== 'admin') { showAccessDenied('Admin access required.'); return false; }
+    document.getElementById('admin-name').textContent = data.user.name;
+    return true;
+  } catch(e) { showAccessDenied('Cannot connect to server. Run: npm start'); return false; }
+}
+
+function showAccessDenied(msg) {
+  document.getElementById('main-content').innerHTML = `
+    <div class="access-denied">
+      <i class="fas fa-lock"></i><h2>Access Denied</h2>
+      <p>${msg}</p><a href="login.html">Go to Login</a>
+    </div>`;
+}
+
+function logout() {
+  localStorage.removeItem('jobiToken'); localStorage.removeItem('currentUser');
+  window.location.href = 'login.html';
+}
+
+let allInquiries = [], allFeedbacks = [];
+
+async function fetchAll() {
+  const h = { Authorization: `Bearer ${token}` };
+  try {
+    const [uR, oR, pR] = await Promise.all([
+      fetch(`${API}/users`, { headers: h }),
+      fetch(`${API}/orders`, { headers: h }),
+      fetch(`${API}/products?limit=200`, { headers: h })
+    ]);
+    allUsers = (await uR.json()).users || [];
+    allOrders = (await oR.json()).orders || [];
+    allProducts = (await pR.json()).products || [];
+  } catch(e) { console.error(e); }
+}
+
+// ===== SIDEBAR NAV =====
+document.querySelectorAll('.nav-item[data-tab]').forEach(n => {
+  n.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+    n.classList.add('active');
+    currentTab = n.dataset.tab;
+    if (currentTab === 'overview') renderOverview();
+    else if (currentTab === 'users') { userPage=1; renderUsers(); }
+    else if (currentTab === 'orders') { orderPage=1; renderOrders(); }
+    else if (currentTab === 'products') { productPage=1; renderProducts(); }
+    else if (currentTab === 'inquiries') renderInquiries();
+    else if (currentTab === 'feedback') renderFeedback();
+    closeSidebar();
+  });
+});
+
+document.getElementById('hamburger-btn').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebar-overlay').classList.add('open');
+});
+document.getElementById('sidebar-overlay').addEventListener('click', closeSidebar);
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+}
+
+// ===== OVERVIEW =====
+function renderOverview() {
+  const revenue = allOrders.reduce((s,o) => s + (parseFloat(o.total)||0), 0);
+  const pending = allOrders.filter(o => o.orderStatus === 'pending').length;
+  document.getElementById('main-content').innerHTML = `
+    <div class="stats">
+      <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-users"></i></div><div><div class="stat-value">${allUsers.length}</div><div class="stat-label">Total Users</div></div></div>
+      <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-box"></i></div><div><div class="stat-value">${allOrders.length}</div><div class="stat-label">Total Orders</div></div></div>
+      <div class="stat-card"><div class="stat-icon green"><i class="fas fa-dollar-sign"></i></div><div><div class="stat-value">$${revenue.toFixed(0)}</div><div class="stat-label">Total Revenue</div></div></div>
+      <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-clock"></i></div><div><div class="stat-value">${pending}</div><div class="stat-label">Pending Orders</div></div></div>
+    </div>
+    <div class="section">
+      <div class="section-head"><h2>Revenue (Last 7 Days)</h2></div>
+      <div class="chart-wrap"><canvas id="revenue-chart"></canvas></div>
+    </div>
+    <div class="section">
+      <div class="section-head"><h2>Recent Signups</h2><button class="btn btn-secondary" onclick="init()"><i class="fas fa-sync"></i> Refresh</button></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr></thead>
+        <tbody>${allUsers.slice(0,5).map(u=>`
+          <tr><td><i class="fas fa-user-circle" style="color:#f97316;margin-right:6px"></i>${u.name}</td>
+          <td>${u.email}</td><td><span class="badge badge-${u.role}">${u.role}</span></td>
+          <td>${fmtDate(u.createdAt)}</td></tr>`).join('') || '<tr class="empty-row"><td colspan="4">No users yet</td></tr>'}
+        </tbody>
+      </table></div>
+    </div>
+    <div class="section">
+      <div class="section-head"><h2>Recent Orders</h2></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Order #</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
+        <tbody>${allOrders.slice(0,5).map(o=>`
+          <tr><td style="font-family:monospace;font-size:11px">${o.orderNumber||String(o.id).substring(0,8)}</td>
+          <td>${o.shippingAddress?.name||'—'}</td>
+          <td style="font-weight:600;color:#f97316">$${(parseFloat(o.total)||0).toFixed(2)}</td>
+          <td><span class="badge badge-${o.orderStatus}">${o.orderStatus}</span></td>
+          <td>${fmtDate(o.createdAt)}</td></tr>`).join('') || '<tr class="empty-row"><td colspan="5">No orders yet</td></tr>'}
+        </tbody>
+      </table></div>
+    </div>`;
+  buildRevenueChart();
+}
+
+function buildRevenueChart() {
+  const ctx = document.getElementById('revenue-chart');
+  if (!ctx) return;
+  const days = [], revenues = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const label = d.toLocaleDateString('en-US',{weekday:'short'});
+    const dayStr = d.toISOString().split('T')[0];
+    const rev = allOrders.filter(o => o.createdAt?.startsWith(dayStr)).reduce((s,o)=>s+(parseFloat(o.total)||0),0);
+    days.push(label); revenues.push(rev);
+  }
+  new Chart(ctx, {
+    type: 'bar',
+    data: { labels: days, datasets: [{ label: 'Revenue ($)', data: revenues, backgroundColor: '#f97316', borderRadius: 6 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+  });
+}
+
+// ===== USERS =====
+function renderUsers() {
+  const filtered = allUsers.filter(u =>
+    !userSearch || u.name.toLowerCase().includes(userSearch) || u.email.toLowerCase().includes(userSearch));
+  const total = filtered.length;
+  const pages = Math.ceil(total / PAGE_SIZE) || 1;
+  userPage = Math.min(userPage, pages);
+  const slice = filtered.slice((userPage-1)*PAGE_SIZE, userPage*PAGE_SIZE);
+
+  let rows = '';
+  for (let i = 0; i < slice.length; i++) {
+    const u = slice[i];
+    const num = (userPage-1)*PAGE_SIZE + i + 1;
+    const actionCell = u.role !== 'admin'
+      ? '<button class="btn btn-danger" style="font-size:11px;padding:5px 10px" onclick="deleteUser(\'' + u.id + '\',\'' + u.name.replace(/'/g, '&#39;') + '\')"><i class="fas fa-user-times"></i> Remove</button>'
+      : '<span style="color:#aaa;font-size:11px;font-style:italic">Protected</span>';
+    rows += '<tr>' +
+      '<td style="color:#aaa">' + num + '</td>' +
+      '<td><i class="fas fa-user-circle" style="color:#f97316;margin-right:6px"></i><strong>' + u.name + '</strong></td>' +
+      '<td>' + u.email + '</td>' +
+      '<td><span class="badge badge-' + u.role + '">' + u.role + '</span></td>' +
+      '<td>' + fmtDate(u.createdAt) + '</td>' +
+      '<td>' + actionCell + '</td>' +
+      '</tr>';
+  }
+  if (!rows) rows = '<tr class="empty-row"><td colspan="6">No users found</td></tr>';
+
+  document.getElementById('main-content').innerHTML =
+    '<div class="section">' +
+    '<div class="section-head">' +
+    '<h2>Users (' + total + ')</h2>' +
+    '<div class="head-actions">' +
+    '<div class="search-filter">' +
+    '<input class="search-input" placeholder="Search name or email..." value="' + userSearch + '" oninput="userSearch=this.value.toLowerCase();userPage=1;renderUsers()">' +
+    '</div>' +
+    '<button class="btn btn-secondary" onclick="exportCSV(\'users\')"><i class="fas fa-download"></i> CSV</button>' +
+    '<button class="btn btn-secondary" onclick="init()"><i class="fas fa-sync"></i></button>' +
+    '</div></div>' +
+    '<div class="table-wrap"><table>' +
+    '<thead><tr><th>#</th><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Action</th></tr></thead>' +
+    '<tbody>' + rows + '</tbody>' +
+    '</table></div>' +
+    paginator(userPage, pages, 'userPage', 'renderUsers') +
+    '</div>';
+}
+
+async function deleteUser(id, name) {
+  if (!confirm('Remove user "' + name + '" from the platform? They will no longer be able to log in.')) return;
+  try {
+    const res = await fetch(API + '/users/' + id, {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    if (!res.ok) throw new Error();
+    showToast('User "' + name + '" has been removed.');
+    allUsers = allUsers.filter(u => u.id !== id);
+    renderUsers();
+  } catch(e) { showToast('Failed to remove user.', true); }
+}
+
+// ===== ORDERS =====
+function renderOrders() {
+  let filtered = allOrders.filter(o => {
+    const q = orderSearch;
+    const matchQ = !q || (o.shippingAddress?.name||'').toLowerCase().includes(q) || String(o.orderNumber||o.id).toLowerCase().includes(q);
+    const matchF = !orderFilter || o.orderStatus === orderFilter;
+    return matchQ && matchF;
+  });
+  const total = filtered.length;
+  const pages = Math.ceil(total / PAGE_SIZE) || 1;
+  orderPage = Math.min(orderPage, pages);
+  const slice = filtered.slice((orderPage-1)*PAGE_SIZE, orderPage*PAGE_SIZE);
+  document.getElementById('main-content').innerHTML = `
+    <div class="section">
+      <div class="section-head">
+        <h2>Orders (${total})</h2>
+        <div class="head-actions">
+          <div class="search-filter">
+            <input class="search-input" placeholder="Search customer/order..." value="${orderSearch}" oninput="orderSearch=this.value.toLowerCase();orderPage=1;renderOrders()">
+            <select class="filter-select" onchange="orderFilter=this.value;orderPage=1;renderOrders()">
+              <option value="">All Status</option>
+              ${['pending','confirmed','processing','shipped','delivered','cancelled'].map(s=>`<option value="${s}" ${orderFilter===s?'selected':''}>${s}</option>`).join('')}
+            </select>
+          </div>
+          <button class="btn btn-secondary" onclick="exportCSV('orders')"><i class="fas fa-download"></i> CSV</button>
+          <button class="btn btn-secondary" onclick="init()"><i class="fas fa-sync"></i></button>
+        </div>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Order #</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody>${slice.map(o=>`
+          <tr>
+            <td style="font-family:monospace;font-size:11px;color:#888">${o.orderNumber||String(o.id).substring(0,8)}</td>
+            <td><strong>${o.shippingAddress?.name||'—'}</strong><br><span style="font-size:11px;color:#aaa">${o.shippingAddress?.city||''}</span></td>
+            <td>${(o.items||[]).length}</td>
+            <td style="font-weight:700;color:#f97316">$${(parseFloat(o.total)||0).toFixed(2)}</td>
+            <td style="font-size:11px">${(o.paymentMethod||'—').replace('_',' ')}</td>
+            <td><select class="status-select" onchange="updateStatus('${o.id}',this.value)">
+              ${['pending','confirmed','processing','shipped','delivered','cancelled'].map(s=>`<option value="${s}" ${o.orderStatus===s?'selected':''}>${s}</option>`).join('')}
+            </select></td>
+            <td style="font-size:11px">${fmtDate(o.createdAt)}</td>
+            <td style="white-space:nowrap">
+              <button class="btn btn-secondary" style="margin-bottom:3px;display:block;width:100%" onclick="showReceipt('${o.id}')"><i class="fas fa-receipt"></i> View Receipt</button>
+              ${o.paymentMethod==='mobile_money' && o.paymentStatus!=='paid' ? `<button class="btn btn-success" style="margin-bottom:3px;display:block;width:100%" onclick="approvePayment('${o.id}')"><i class="fas fa-check-circle"></i> Approve Payment</button>` : ''}
+              ${o.orderStatus==='pending' && o.paymentStatus==='paid' ? `<button class="btn btn-success" style="margin-bottom:3px;display:block;width:100%" onclick="approveOrder('${o.id}')"><i class="fas fa-check"></i> Confirm Order</button>` : ''}
+            </td>
+          </tr>`).join('') || '<tr class="empty-row"><td colspan="8">No orders found</td></tr>'}
+        </tbody>
+      </table></div>
+      ${paginator(orderPage, pages, 'orderPage', 'renderOrders')}
+    </div>`;
+}
+
+async function updateStatus(id, status) {
+  try {
+    await fetch(`${API}/orders/${id}/status`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ orderStatus: status })
+    });
+    showToast(`Status updated to "${status}"`);
+    const o = allOrders.find(x => x.id === id);
+    if (o) o.orderStatus = status;
+  } catch(e) { showToast('Failed to update', true); }
+}
+
+async function approveOrder(id) {
+  await updateStatus(id, 'confirmed');
+  const o = allOrders.find(x => x.id === id);
+  if (o) o.orderStatus = 'confirmed';
+  renderOrders();
+}
+
+async function approvePayment(id) {
+  openDeliveryModal(id);
+}
+
+function showReceipt(id) {
+  const o = allOrders.find(x => x.id === id);
+  if (!o) return;
+  const receiptNum = o.orderNumber || String(o.id).substring(0,8).toUpperCase();
+  const itemRows = (o.items||[]).map(function(i) {
+    return '<tr style="border-bottom:1px solid #f0f0f0">' +
+      '<td style="padding:8px 10px">' + (i.name||'Item') + '</td>' +
+      '<td style="padding:8px 10px;text-align:center">' + (i.quantity||1) + '</td>' +
+      '<td style="padding:8px 10px;text-align:right">$' + (parseFloat(i.price)||0).toFixed(2) + '</td>' +
+      '<td style="padding:8px 10px;text-align:right;font-weight:600">$' + ((parseFloat(i.price)||0)*(i.quantity||1)).toFixed(2) + '</td>' +
+      '</tr>';
+  }).join('');
+
+  // FRAUD DETECTION
+  const fraudFlags = [];
+  const tot = parseFloat(o.total) || 0;
+  if (tot > 500) fraudFlags.push('High order value ($' + tot.toFixed(2) + ') — verify customer identity');
+  if (o.paymentMethod === 'mobile_money' && !o.momoNumber) fraudFlags.push('Mobile money order but no phone number recorded');
+  if (o.paymentMethod === 'credit_card' && !o.cardLast4) fraudFlags.push('Card payment but no card details recorded');
+  if (o.paymentMethod === 'paypal' && !o.paypalCardLast4) fraudFlags.push('PayPal payment but no card details recorded');
+  if ((o.items||[]).length > 10) fraudFlags.push('Unusually large number of items (' + (o.items||[]).length + ')');
+  if (o.paymentStatus === 'paid' && o.orderStatus === 'pending') fraudFlags.push('Payment marked paid but order still pending — review carefully');
+
+  let fraudHtml = '';
+  if (fraudFlags.length) {
+    fraudHtml = '<div style="background:#fef2f2;border:2px solid #ef4444;border-radius:8px;padding:12px 14px;margin-bottom:16px">' +
+      '<div style="font-weight:700;color:#dc2626;font-size:13px;margin-bottom:6px"><i class="fas fa-exclamation-triangle"></i> Fraud Risk Flags (' + fraudFlags.length + ')</div>' +
+      fraudFlags.map(function(f){ return '<div style="font-size:12px;color:#7f1d1d;padding:3px 0;border-bottom:1px solid #fecaca"><i class="fas fa-flag" style="color:#ef4444;margin-right:5px"></i>' + f + '</div>'; }).join('') +
+      '<div style="font-size:11px;color:#aaa;margin-top:6px">Review these flags carefully before approving payment.</div></div>';
+  } else {
+    fraudHtml = '<div style="background:#f0fdf4;border:1.5px solid #22c55e;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:#15803d">' +
+      '<i class="fas fa-shield-alt"></i> No fraud flags detected — order appears genuine.</div>';
+  }
+
+  // PAYMENT DETAILS
+  let paymentDetails = '';
+  if (o.paymentMethod === 'mobile_money') {
+    paymentDetails = '<div style="background:#fff7ed;border:1.5px solid #f97316;border-radius:7px;padding:10px 14px;font-size:12px;margin-top:10px">' +
+      '<div style="font-weight:700;color:#f97316;margin-bottom:5px"><i class="fas fa-mobile-alt"></i> Mobile Money Details</div>' +
+      '<div><strong>Network:</strong> ' + (o.momoNetwork||'—').toUpperCase() + '</div>' +
+      '<div><strong>Number:</strong> ' + (o.momoNumber||'—') + '</div>' +
+      '<div style="margin-top:6px;color:#888;font-size:11px">Contact customer on this number to verify payment before approving.</div></div>';
+  } else if (o.paymentMethod === 'credit_card') {
+    paymentDetails = '<div style="background:#f8f9fa;border:1.5px solid #1a1a2e;border-radius:7px;padding:10px 14px;font-size:12px;margin-top:10px">' +
+      '<div style="font-weight:700;color:#1a1a2e;margin-bottom:5px"><i class="fas fa-credit-card"></i> Card Payment Details</div>' +
+      '<div><strong>Cardholder:</strong> ' + (o.cardName||'—') + '</div>' +
+      '<div><strong>Card Number:</strong> &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; ' + (o.cardLast4||'????') + '</div>' +
+      '<div><strong>Expiry:</strong> ' + (o.cardExpiry||'—') + '</div></div>';
+  } else if (o.paymentMethod === 'paypal') {
+    paymentDetails = '<div style="background:#e8f0fe;border:1.5px solid #003087;border-radius:7px;padding:10px 14px;font-size:12px;margin-top:10px">' +
+      '<div style="font-weight:700;color:#003087;margin-bottom:5px"><i class="fab fa-paypal"></i> PayPal Card Details</div>' +
+      '<div><strong>Cardholder:</strong> ' + (o.paypalCardName||'—') + '</div>' +
+      '<div><strong>Card Number:</strong> &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; ' + (o.paypalCardLast4||'????') + '</div>' +
+      '<div><strong>Expiry:</strong> ' + (o.paypalCardExpiry||'—') + '</div></div>';
+  } else {
+    paymentDetails = '<div style="background:#f8f9fa;border:1.5px solid #e0e0e0;border-radius:7px;padding:10px 14px;font-size:12px;margin-top:10px">' +
+      '<div style="font-weight:700;color:#555;margin-bottom:5px"><i class="fas fa-university"></i> Bank Transfer</div>' +
+      '<div style="color:#888">Customer will transfer via bank. Verify receipt before confirming.</div></div>';
+  }
+
+  const statusColor = o.orderStatus === 'delivered' ? '#22c55e' : o.orderStatus === 'cancelled' ? '#ef4444' : '#f97316';
+  const payStatusColor = o.paymentStatus === 'paid' ? '#22c55e' : '#f97316';
+  const qrData = encodeURIComponent('JOBIJAD-ORDER-' + receiptNum + '-' + (o.orderStatus||'pending'));
+  const addr = o.shippingAddress || {};
+
+  document.getElementById('receipt-body').innerHTML =
+    fraudHtml +
+    '<div id="receipt-print">' +
+    '<div style="text-align:center;margin-bottom:20px;border-bottom:2px solid #1a1a2e;padding-bottom:16px">' +
+    '<div style="font-size:22px;font-weight:700;color:#1a1a2e">Jobijad <span style="color:#f97316">Express</span></div>' +
+    '<div style="font-size:12px;color:#888;margin-top:4px">Premium African Fashion Marketplace</div>' +
+    '<div style="font-size:11px;color:#aaa">alitajudith2002@gmail.com | +46 762 593 231</div>' +
+    '</div>' +
+    '<div style="display:flex;justify-content:space-between;margin-bottom:16px;font-size:13px;flex-wrap:wrap;gap:10px">' +
+    '<div><div style="font-weight:700;font-size:15px;letter-spacing:1px">RECEIPT</div>' +
+    '<div style="color:#888">#' + receiptNum + '</div>' +
+    '<div style="color:#888;margin-top:4px">' + fmtDate(o.createdAt) + '</div></div>' +
+    '<div style="text-align:right">' +
+    '<div style="font-weight:600">' + (addr.name||'—') + '</div>' +
+    '<div style="color:#888;font-size:12px">' + (addr.street||'') + '</div>' +
+    '<div style="color:#888;font-size:12px">' + (addr.city||'') + ', ' + (addr.country||'') + '</div>' +
+    '<div style="color:#888;font-size:12px">' + (addr.phone||'') + '</div>' +
+    '</div></div>' +
+    '<table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px">' +
+    '<thead><tr style="background:#1a1a2e;color:#fff">' +
+    '<th style="padding:8px 10px;text-align:left">Item</th>' +
+    '<th style="padding:8px 10px;text-align:center">Qty</th>' +
+    '<th style="padding:8px 10px;text-align:right">Unit Price</th>' +
+    '<th style="padding:8px 10px;text-align:right">Subtotal</th>' +
+    '</tr></thead><tbody>' + itemRows + '</tbody></table>' +
+    '<div style="border-top:2px solid #eee;padding-top:12px;font-size:13px;max-width:260px;margin-left:auto">' +
+    '<div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="color:#666">Subtotal</span><span>$' + (parseFloat(o.subtotal)||0).toFixed(2) + '</span></div>' +
+    '<div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="color:#666">Shipping</span><span>$' + (parseFloat(o.shippingCost)||0).toFixed(2) + '</span></div>' +
+    '<div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="color:#666">Tax (8%)</span><span>$' + (parseFloat(o.tax)||0).toFixed(2) + '</span></div>' +
+    '<div style="display:flex;justify-content:space-between;font-size:17px;font-weight:700;border-top:2px solid #1a1a2e;padding-top:10px">' +
+    '<span>TOTAL</span><span style="color:#f97316">$' + (parseFloat(o.total)||0).toFixed(2) + '</span></div></div>' +
+    '<div style="margin-top:16px;padding:10px 14px;background:#f8f9fa;border-radius:6px;font-size:12px;color:#555;display:flex;gap:20px;flex-wrap:wrap">' +
+    '<span><strong>Payment:</strong> ' + (o.paymentMethod||'').replace(/_/g,' ').toUpperCase() + '</span>' +
+    '<span><strong>Payment Status:</strong> <span style="color:' + payStatusColor + ';font-weight:700;text-transform:uppercase">' + (o.paymentStatus||'pending') + '</span></span>' +
+    '<span><strong>Order Status:</strong> <span style="color:' + statusColor + ';font-weight:700;text-transform:uppercase">' + o.orderStatus + '</span></span>' +
+    '</div>' +
+    paymentDetails +
+    '<div style="text-align:center;margin-top:20px;font-size:11px;color:#aaa;border-top:1px solid #eee;padding-top:12px">' +
+    '<img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=' + qrData + '" style="margin-bottom:6px;border:2px solid #eee;border-radius:4px;" alt="QR Code"><br>' +
+    '<div style="font-size:10px;color:#bbb;margin-bottom:6px">Scan to verify order authenticity</div>' +
+    'Thank you for shopping with Jobijad Express!</div>' +
+    '</div>';
+
+  document.getElementById('receipt-modal').classList.add('open');
+}
+
+function printReceipt() {
+  const content = document.getElementById('receipt-print').innerHTML;
+  const w = window.open('', '_blank', 'width=640,height=820');
+  w.document.write(`<!DOCTYPE html><html><head><title>Receipt — Jobijad Express</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>*{box-sizing:border-box;}body{font-family:Roboto,sans-serif;padding:32px;color:#222;max-width:580px;margin:0 auto;}table{width:100%;border-collapse:collapse;}@media print{.no-print{display:none!important;}}</style>
+    </head><body>
+    ${content}
+    <div class="no-print" style="margin-top:20px;display:flex;gap:10px">
+      <button onclick="window.print()" style="background:#f97316;color:#fff;border:none;padding:10px 24px;border-radius:6px;font-size:14px;cursor:pointer;font-weight:600">🖨 Print Receipt</button>
+      <button onclick="window.close()" style="background:#f4f6f8;color:#555;border:1px solid #ddd;padding:10px 20px;border-radius:6px;font-size:14px;cursor:pointer">Close</button>
+    </div>
+    <!-- Delivery Schedule Modal -->
+<div class="modal-bg" id="delivery-modal">
+  <div class="modal" style="max-width:500px">
+    <h3><i class="fas fa-truck" style="color:#f97316;margin-right:8px"></i>Set Delivery Schedule</h3>
+    <input type="hidden" id="dm-order-id">
+    <div style="background:#f0fdf4;border:1.5px solid #22c55e;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:#15803d">
+      <i class="fas fa-check-circle"></i> Payment will be approved and delivery schedule sent to customer.
+    </div>
+    <div class="form-group">
+      <label>Customer Country / Region</label>
+      <select id="dm-country" onchange="estimateDelivery()" style="width:100%;padding:9px 11px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:13px;outline:none;font-family:inherit;">
+        <option value="">-- Select country --</option>
+        <optgroup label="East Africa (3-5 days)">
+          <option value="Uganda" data-days="3">Uganda (3-5 days)</option>
+          <option value="Kenya" data-days="4">Kenya (3-5 days)</option>
+          <option value="Tanzania" data-days="4">Tanzania (4-6 days)</option>
+          <option value="Rwanda" data-days="4">Rwanda (3-5 days)</option>
+          <option value="Burundi" data-days="5">Burundi (4-6 days)</option>
+          <option value="Ethiopia" data-days="5">Ethiopia (5-7 days)</option>
+        </optgroup>
+        <optgroup label="West Africa (5-8 days)">
+          <option value="Nigeria" data-days="6">Nigeria (5-8 days)</option>
+          <option value="Ghana" data-days="6">Ghana (5-8 days)</option>
+          <option value="Senegal" data-days="7">Senegal (6-9 days)</option>
+          <option value="Ivory Coast" data-days="7">Ivory Coast (6-9 days)</option>
+        </optgroup>
+        <optgroup label="Southern Africa (5-8 days)">
+          <option value="South Africa" data-days="6">South Africa (5-8 days)</option>
+          <option value="Zimbabwe" data-days="6">Zimbabwe (5-7 days)</option>
+          <option value="Zambia" data-days="6">Zambia (5-7 days)</option>
+          <option value="Mozambique" data-days="7">Mozambique (6-8 days)</option>
+        </optgroup>
+        <optgroup label="Europe (7-14 days)">
+          <option value="Sweden" data-days="10">Sweden (8-14 days)</option>
+          <option value="UK" data-days="9">United Kingdom (7-12 days)</option>
+          <option value="Germany" data-days="10">Germany (8-14 days)</option>
+          <option value="France" data-days="10">France (8-14 days)</option>
+          <option value="Netherlands" data-days="10">Netherlands (8-14 days)</option>
+          <option value="Italy" data-days="11">Italy (9-14 days)</option>
+          <option value="Spain" data-days="11">Spain (9-14 days)</option>
+        </optgroup>
+        <optgroup label="North America (10-16 days)">
+          <option value="USA" data-days="12">United States (10-16 days)</option>
+          <option value="Canada" data-days="13">Canada (10-16 days)</option>
+        </optgroup>
+        <optgroup label="Middle East (6-10 days)">
+          <option value="UAE" data-days="7">UAE (6-10 days)</option>
+          <option value="Saudi Arabia" data-days="8">Saudi Arabia (7-11 days)</option>
+        </optgroup>
+        <optgroup label="Asia (10-18 days)">
+          <option value="China" data-days="12">China (10-16 days)</option>
+          <option value="India" data-days="12">India (10-16 days)</option>
+        </optgroup>
+        <option value="Other" data-days="14">Other / International (14-21 days)</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Ship Date *</label>
+        <input type="date" id="dm-ship-date" oninput="estimateDelivery()" style="width:100%;padding:9px 11px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:13px;outline:none;font-family:inherit;">
+      </div>
+      <div class="form-group">
+        <label>Est. Delivery Date</label>
+        <input type="date" id="dm-delivery-date" style="width:100%;padding:9px 11px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:13px;outline:none;font-family:inherit;">
+      </div>
+    </div>
+    <div id="dm-estimate-info" style="display:none;background:#fff7ed;border:1px solid #fed7aa;border-radius:7px;padding:10px 14px;font-size:12px;color:#92400e;margin-bottom:12px;">
+      <i class="fas fa-info-circle"></i> <span id="dm-estimate-text"></span>
+    </div>
+    <div class="form-group">
+      <label>Tracking Number <span style="color:#aaa;font-weight:400">(optional)</span></label>
+      <input type="text" id="dm-tracking" placeholder="e.g. JB123456789" style="width:100%;padding:9px 11px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:13px;outline:none;font-family:inherit;">
+    </div>
+    <div class="form-group">
+      <label>Message to Customer <span style="color:#aaa;font-weight:400">(optional)</span></label>
+      <textarea id="dm-note" rows="3" placeholder="e.g. Your order will be shipped via DHL Express. You will receive a tracking email once dispatched." style="width:100%;padding:9px 11px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:13px;outline:none;font-family:inherit;resize:vertical;"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="document.getElementById('delivery-modal').classList.remove('open')">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmApprovePayment()"><i class="fas fa-check-circle"></i> Approve & Notify Customer</button>
+    </div>
+  </div>
+</div>
+
+</body></html>`);
+  w.document.close();
+}
+
+// ===== PRODUCTS =====
+function renderProducts() {
+  const filtered = allProducts.filter(p =>
+    !productSearch || p.name.toLowerCase().includes(productSearch) || (p.category||'').toLowerCase().includes(productSearch));
+  const total = filtered.length;
+  const pages = Math.ceil(total / PAGE_SIZE) || 1;
+  productPage = Math.min(productPage, pages);
+  const slice = filtered.slice((productPage-1)*PAGE_SIZE, productPage*PAGE_SIZE);
+  document.getElementById('main-content').innerHTML = `
+    <div class="section">
+      <div class="section-head">
+        <h2>Products (${total})</h2>
+        <div class="head-actions">
+          <input class="search-input" placeholder="Search products..." value="${productSearch}" oninput="productSearch=this.value.toLowerCase();productPage=1;renderProducts()">
+          <button class="btn btn-primary" onclick="openProductModal()"><i class="fas fa-plus"></i> Add Product</button>
+          <button class="btn btn-secondary" onclick="init()"><i class="fas fa-sync"></i></button>
+        </div>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Featured</th><th>Actions</th></tr></thead>
+        <tbody>${slice.map(p=>`
+          <tr>
+            <td><img src="${p.images?.[0]?.url||'https://via.placeholder.com/44'}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
+            <td><strong>${p.name}</strong></td>
+            <td><span class="badge badge-customer">${p.category}</span></td>
+            <td style="font-weight:600;color:#f97316">$${(parseFloat(p.price)||0).toFixed(2)}</td>
+            <td>${(p.sizes||[]).reduce((t,s)=>t+(s.stock||0),0)}</td>
+            <td>${p.featured?'⭐ Yes':'—'}</td>
+            <td style="white-space:nowrap">
+              <button class="btn btn-secondary" onclick="openEditProduct('${p.id}')"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-danger" onclick="deleteProduct('${p.id}','${p.name.replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>`).join('') || '<tr class="empty-row"><td colspan="7">No products found</td></tr>'}
+        </tbody>
+      </table></div>
+      ${paginator(productPage, pages, 'productPage', 'renderProducts')}
+    </div>`;
+}
+
+function openProductModal(product = null) {
+  document.getElementById('modal-title').textContent = product ? 'Edit Product' : 'Add Product';
+  document.getElementById('edit-product-id').value = product?.id || '';
+  document.getElementById('p-name').value = product?.name || '';
+  document.getElementById('p-price').value = product?.price || '';
+  document.getElementById('p-category').value = product?.category || 'women';
+  document.getElementById('p-desc').value = product?.description || '';
+  document.getElementById('p-image').value = product?.images?.[0]?.url || '';
+  document.getElementById('p-stock').value = (product?.sizes||[]).reduce((t,s)=>t+(s.stock||0),0) || '';
+  document.getElementById('p-featured').value = product?.featured ? 'true' : 'false';
+  document.getElementById('product-modal').classList.add('open');
+}
+
+function openEditProduct(id) {
+  const p = allProducts.find(x => x.id === id);
+  if (p) openProductModal(p);
+}
+
+function closeProductModal() {
+  document.getElementById('product-modal').classList.remove('open');
+}
+
+async function saveProduct() {
+  const id = document.getElementById('edit-product-id').value;
+  const name = document.getElementById('p-name').value.trim();
+  const price = parseFloat(document.getElementById('p-price').value);
+  const category = document.getElementById('p-category').value;
+  const description = document.getElementById('p-desc').value.trim();
+  const imageUrl = document.getElementById('p-image').value.trim();
+  const stock = parseInt(document.getElementById('p-stock').value) || 0;
+  const featured = document.getElementById('p-featured').value === 'true';
+
+  if (!name || !price) { showToast('Name and price are required', true); return; }
+
+  const body = {
+    name, price, category, description, featured,
+    images: imageUrl ? [{ url: imageUrl, alt: name }] : [],
+    sizes: [{ size: 'One Size', stock }]
+  };
+
+  try {
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? `${API}/products/${id}` : `${API}/products`;
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error();
+    showToast(id ? 'Product updated' : 'Product added');
+    closeProductModal();
+    await fetchAll();
+    renderProducts();
+  } catch(e) { showToast('Failed to save product', true); }
+}
+
+async function deleteProduct(id, name) {
+  if (!confirm(`Delete "${name}"?`)) return;
+  try {
+    const res = await fetch(`${API}/products/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error();
+    showToast('Product deleted');
+    await fetchAll();
+    renderProducts();
+  } catch(e) { showToast('Failed to delete product', true); }
+}
+
+// ===== INQUIRIES =====
+async function renderInquiries() {
+  document.getElementById('main-content').innerHTML = '<div style="padding:40px;text-align:center;color:#aaa"><i class="fas fa-spinner fa-spin fa-2x"></i></div>';
+  try {
+    const res = await fetch(`${API}/inquiries`, { headers: { Authorization: `Bearer ${token}` } });
+    allInquiries = (await res.json()).inquiries || [];
+  } catch(e) { allInquiries = []; }
+
+  const rows = allInquiries.map(q => `
+    <tr>
+      <td><strong>${q.name}</strong><br><span style="font-size:11px;color:#aaa">${q.email}</span></td>
+      <td>${q.productName || '—'}</td>
+      <td style="max-width:220px;font-size:12px;color:#555">${q.message}</td>
+      <td>${q.adminReply ? `<span style="font-size:12px;color:#555;background:#f0fdf4;padding:4px 8px;border-radius:4px;display:block">${q.adminReply}</span>` : '<span style="color:#aaa;font-size:12px">No reply yet</span>'}</td>
+      <td><span class="badge badge-${q.status === 'replied' ? 'confirmed' : 'pending'}">${q.status || 'open'}</span></td>
+      <td style="font-size:11px">${fmtDate(q.createdAt)}</td>
+      <td><button class="btn btn-primary" onclick="openReplyModal('${q.id}','inquiry','${(q.name||'').replace(/'/g,"\\'")}')"><i class="fas fa-reply"></i> Reply</button></td>
+    </tr>`).join('') || '<tr class="empty-row"><td colspan="7">No inquiries yet</td></tr>';
+
+  document.getElementById('main-content').innerHTML = `
+    <div class="section">
+      <div class="section-head">
+        <h2>Customer Inquiries (${allInquiries.length})</h2>
+        <button class="btn btn-secondary" onclick="renderInquiries()"><i class="fas fa-sync"></i> Refresh</button>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Customer</th><th>Product</th><th>Message</th><th>Admin Reply</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table></div>
+    </div>`;
+}
+
+// ===== FEEDBACK =====
+async function renderFeedback() {
+  document.getElementById('main-content').innerHTML = '<div style="padding:40px;text-align:center;color:#aaa"><i class="fas fa-spinner fa-spin fa-2x"></i></div>';
+  try {
+    const res = await fetch(`${API}/feedback`, { headers: { Authorization: `Bearer ${token}` } });
+    allFeedbacks = (await res.json()).feedbacks || [];
+  } catch(e) { allFeedbacks = []; }
+
+  const rows = allFeedbacks.map(fb => {
+    const stars = Array.from({length:5},(_,i)=>`<span style="color:${i<fb.rating?'#f97316':'#ddd'};font-size:14px">&#9733;</span>`).join('');
+    return `<tr>
+      <td><strong>${fb.name}</strong><br><span style="font-size:11px;color:#aaa">${fb.email||'—'}</span></td>
+      <td>${stars}</td>
+      <td style="font-size:12px;color:#555;max-width:200px">${fb.subject ? `<strong>${fb.subject}</strong><br>` : ''}${fb.message}</td>
+      <td>${fb.adminReply ? `<span style="font-size:12px;color:#555;background:#f0fdf4;padding:4px 8px;border-radius:4px;display:block">${fb.adminReply}</span>` : '<span style="color:#aaa;font-size:12px">No reply yet</span>'}</td>
+      <td><span class="badge badge-${fb.status === 'replied' ? 'confirmed' : 'pending'}">${fb.status || 'new'}</span></td>
+      <td style="font-size:11px">${fmtDate(fb.createdAt)}</td>
+      <td><button class="btn btn-primary" onclick="openReplyModal('${fb.id}','feedback','${(fb.name||'').replace(/'/g,"\\'")}')"><i class="fas fa-reply"></i> Reply</button></td>
+    </tr>`;
+  }).join('') || '<tr class="empty-row"><td colspan="7">No feedback yet</td></tr>';
+
+  document.getElementById('main-content').innerHTML = `
+    <div class="section">
+      <div class="section-head">
+        <h2>Customer Feedback (${allFeedbacks.length})</h2>
+        <button class="btn btn-secondary" onclick="renderFeedback()"><i class="fas fa-sync"></i> Refresh</button>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Customer</th><th>Rating</th><th>Review</th><th>Admin Reply</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table></div>
+    </div>`;
+}
+
+// ===== REPLY MODAL =====
+function openReplyModal(id, type, name) {
+  document.getElementById('reply-item-id').value = id;
+  document.getElementById('reply-item-type').value = type;
+  document.getElementById('reply-modal-title').textContent = `Reply to ${name}`;
+  document.getElementById('reply-text').value = '';
+  document.getElementById('reply-modal').classList.add('open');
+}
+function closeReplyModal() {
+  document.getElementById('reply-modal').classList.remove('open');
+}
+async function sendReply() {
+  const id = document.getElementById('reply-item-id').value;
+  const type = document.getElementById('reply-item-type').value;
+  const reply = document.getElementById('reply-text').value.trim();
+  if (!reply) { showToast('Please type a reply', true); return; }
+  const endpoint = type === 'inquiry' ? `${API}/inquiries/${id}/reply` : `${API}/feedback/${id}/reply`;
+  try {
+    const res = await fetch(endpoint, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ reply })
+    });
+    if (!res.ok) throw new Error();
+    showToast('Reply sent successfully');
+    closeReplyModal();
+    if (type === 'inquiry') renderInquiries();
+    else renderFeedback();
+  } catch(e) { showToast('Failed to send reply', true); }
+}
+
+
+function openDeliveryModal(id) {
+  const o = allOrders.find(x => x.id === id);
+  if (!o) return;
+  document.getElementById('dm-order-id').value = id;
+  // Pre-fill country from shipping address
+  const country = (o.shippingAddress && o.shippingAddress.country) || '';
+  const sel = document.getElementById('dm-country');
+  for (let i = 0; i < sel.options.length; i++) {
+    if (sel.options[i].value.toLowerCase() === country.toLowerCase()) {
+      sel.selectedIndex = i; break;
+    }
+  }
+  // Default ship date = today
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('dm-ship-date').value = today;
+  document.getElementById('dm-tracking').value = '';
+  document.getElementById('dm-note').value = '';
+  estimateDelivery();
+  document.getElementById('delivery-modal').classList.add('open');
+}
+
+function estimateDelivery() {
+  const sel = document.getElementById('dm-country');
+  const shipDateVal = document.getElementById('dm-ship-date').value;
+  const infoBox = document.getElementById('dm-estimate-info');
+  const infoText = document.getElementById('dm-estimate-text');
+  if (!sel.value || !shipDateVal) { infoBox.style.display = 'none'; return; }
+  const opt = sel.options[sel.selectedIndex];
+  const days = parseInt(opt.getAttribute('data-days')) || 14;
+  const shipDate = new Date(shipDateVal);
+  const deliveryDate = new Date(shipDate);
+  deliveryDate.setDate(deliveryDate.getDate() + days);
+  // Skip weekends for delivery date
+  while (deliveryDate.getDay() === 0 || deliveryDate.getDay() === 6) {
+    deliveryDate.setDate(deliveryDate.getDate() + 1);
+  }
+  const fmt = d => d.toLocaleDateString('en-GB', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+  document.getElementById('dm-delivery-date').value = deliveryDate.toISOString().split('T')[0];
+  infoText.textContent = 'Estimated delivery to ' + sel.value + ': ' + fmt(deliveryDate) + ' (approx. ' + days + ' days from ship date)';
+  infoBox.style.display = 'block';
+}
+
+async function confirmApprovePayment() {
+  const id = document.getElementById('dm-order-id').value;
+  const shipDate = document.getElementById('dm-ship-date').value;
+  const deliveryDate = document.getElementById('dm-delivery-date').value;
+  const tracking = document.getElementById('dm-tracking').value.trim();
+  const note = document.getElementById('dm-note').value.trim();
+  const country = document.getElementById('dm-country').value;
+
+  if (!shipDate) { showToast('Please set a ship date', true); return; }
+
+  const autoNote = note || ('Your order will be shipped on ' + new Date(shipDate).toLocaleDateString('en-GB', {weekday:'long',day:'2-digit',month:'long',year:'numeric'}) +
+    (deliveryDate ? ' and is estimated to arrive by ' + new Date(deliveryDate).toLocaleDateString('en-GB', {weekday:'long',day:'2-digit',month:'long',year:'numeric'}) : '') +
+    (country ? ' (' + country + ')' : '') + '.');
+
+  try {
+    const res = await fetch(API + '/orders/' + id + '/approve-payment', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ shippingDate: shipDate, estimatedDelivery: deliveryDate, deliveryNote: autoNote, trackingNumber: tracking })
+    });
+    if (!res.ok) throw new Error();
+    showToast('Payment approved — delivery schedule set!');
+    document.getElementById('delivery-modal').classList.remove('open');
+    const o = allOrders.find(x => x.id === id);
+    if (o) { o.paymentStatus = 'paid'; o.orderStatus = 'confirmed'; o.shippingDate = shipDate; o.estimatedDelivery = deliveryDate; o.deliveryNote = autoNote; }
+    renderOrders();
+  } catch(e) { showToast('Failed to approve payment', true); }
+}
+
+// ===== CSV EXPORT =====
+function exportCSV(type) {
+  let rows, filename;
+  if (type === 'users') {
+    rows = [['Name','Email','Role','Joined'], ...allUsers.map(u=>[u.name,u.email,u.role,fmtDate(u.createdAt)])];
+    filename = 'users.csv';
+  } else {
+    rows = [['Order#','Customer','City','Total','Payment','Status','Date'],
+      ...allOrders.map(o=>[o.orderNumber||o.id,o.shippingAddress?.name||'',o.shippingAddress?.city||'',o.total,o.paymentMethod,o.orderStatus,fmtDate(o.createdAt)])];
+    filename = 'orders.csv';
+  }
+  const csv = rows.map(r => r.map(c => `"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = filename;
+  a.click();
+}
+
+// ===== PAGINATION =====
+function paginator(page, pages, pageVar, renderFn) {
+  if (pages <= 1) return '';
+  let btns = '';
+  for (let i = 1; i <= pages; i++) {
+    btns += `<button class="page-btn ${i===page?'active':''}" onclick="${pageVar}=${i};${renderFn}()">${i}</button>`;
+  }
+  return `<div class="pagination"><span>Page ${page} of ${pages}</span><div class="page-btns">${btns}</div></div>`;
+}
+
+// ===== HELPERS =====
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});
+}
+
+function showToast(msg, err = false) {
+  const t = document.createElement('div');
+  t.style.cssText = `position:fixed;bottom:24px;right:24px;background:${err?'#ef4444':'#22c55e'};color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:500;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,.2);`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+// ===== AUTO REFRESH =====
+function startAutoRefresh() {
+  setInterval(async () => {
+    const prev = allUsers.length;
+    await fetchAll();
+    if (allUsers.length > prev) {
+      showToast(`New signup: ${allUsers[allUsers.length-1]?.name}`);
+      document.getElementById('users-dot').style.display = 'inline-block';
+    }
+  }, 15000);
+}
+
+// ===== INIT =====
+async function init() {
+  const ok = await checkAccess();
+  if (!ok) return;
+  await fetchAll();
+  renderOverview();
+  startAutoRefresh();
+}
+
+init();
+</script>
+<!-- Delivery Schedule Modal -->
+<div class="modal-bg" id="delivery-modal">
+  <div class="modal" style="max-width:500px">
+    <h3><i class="fas fa-truck" style="color:#f97316;margin-right:8px"></i>Set Delivery Schedule</h3>
+    <input type="hidden" id="dm-order-id">
+    <div style="background:#f0fdf4;border:1.5px solid #22c55e;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:#15803d">
+      <i class="fas fa-check-circle"></i> Payment will be approved and delivery schedule sent to customer.
+    </div>
+    <div class="form-group">
+      <label>Customer Country / Region</label>
+      <select id="dm-country" onchange="estimateDelivery()" style="width:100%;padding:9px 11px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:13px;outline:none;font-family:inherit;">
+        <option value="">-- Select country --</option>
+        <optgroup label="East Africa (3-5 days)">
+          <option value="Uganda" data-days="3">Uganda (3-5 days)</option>
+          <option value="Kenya" data-days="4">Kenya (3-5 days)</option>
+          <option value="Tanzania" data-days="4">Tanzania (4-6 days)</option>
+          <option value="Rwanda" data-days="4">Rwanda (3-5 days)</option>
+          <option value="Burundi" data-days="5">Burundi (4-6 days)</option>
+          <option value="Ethiopia" data-days="5">Ethiopia (5-7 days)</option>
+        </optgroup>
+        <optgroup label="West Africa (5-8 days)">
+          <option value="Nigeria" data-days="6">Nigeria (5-8 days)</option>
+          <option value="Ghana" data-days="6">Ghana (5-8 days)</option>
+          <option value="Senegal" data-days="7">Senegal (6-9 days)</option>
+          <option value="Ivory Coast" data-days="7">Ivory Coast (6-9 days)</option>
+        </optgroup>
+        <optgroup label="Southern Africa (5-8 days)">
+          <option value="South Africa" data-days="6">South Africa (5-8 days)</option>
+          <option value="Zimbabwe" data-days="6">Zimbabwe (5-7 days)</option>
+          <option value="Zambia" data-days="6">Zambia (5-7 days)</option>
+          <option value="Mozambique" data-days="7">Mozambique (6-8 days)</option>
+        </optgroup>
+        <optgroup label="Europe (7-14 days)">
+          <option value="Sweden" data-days="10">Sweden (8-14 days)</option>
+          <option value="UK" data-days="9">United Kingdom (7-12 days)</option>
+          <option value="Germany" data-days="10">Germany (8-14 days)</option>
+          <option value="France" data-days="10">France (8-14 days)</option>
+          <option value="Netherlands" data-days="10">Netherlands (8-14 days)</option>
+          <option value="Italy" data-days="11">Italy (9-14 days)</option>
+          <option value="Spain" data-days="11">Spain (9-14 days)</option>
+        </optgroup>
+        <optgroup label="North America (10-16 days)">
+          <option value="USA" data-days="12">United States (10-16 days)</option>
+          <option value="Canada" data-days="13">Canada (10-16 days)</option>
+        </optgroup>
+        <optgroup label="Middle East (6-10 days)">
+          <option value="UAE" data-days="7">UAE (6-10 days)</option>
+          <option value="Saudi Arabia" data-days="8">Saudi Arabia (7-11 days)</option>
+        </optgroup>
+        <optgroup label="Asia (10-18 days)">
+          <option value="China" data-days="12">China (10-16 days)</option>
+          <option value="India" data-days="12">India (10-16 days)</option>
+        </optgroup>
+        <option value="Other" data-days="14">Other / International (14-21 days)</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Ship Date *</label>
+        <input type="date" id="dm-ship-date" oninput="estimateDelivery()" style="width:100%;padding:9px 11px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:13px;outline:none;font-family:inherit;">
+      </div>
+      <div class="form-group">
+        <label>Est. Delivery Date</label>
+        <input type="date" id="dm-delivery-date" style="width:100%;padding:9px 11px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:13px;outline:none;font-family:inherit;">
+      </div>
+    </div>
+    <div id="dm-estimate-info" style="display:none;background:#fff7ed;border:1px solid #fed7aa;border-radius:7px;padding:10px 14px;font-size:12px;color:#92400e;margin-bottom:12px;">
+      <i class="fas fa-info-circle"></i> <span id="dm-estimate-text"></span>
+    </div>
+    <div class="form-group">
+      <label>Tracking Number <span style="color:#aaa;font-weight:400">(optional)</span></label>
+      <input type="text" id="dm-tracking" placeholder="e.g. JB123456789" style="width:100%;padding:9px 11px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:13px;outline:none;font-family:inherit;">
+    </div>
+    <div class="form-group">
+      <label>Message to Customer <span style="color:#aaa;font-weight:400">(optional)</span></label>
+      <textarea id="dm-note" rows="3" placeholder="e.g. Your order will be shipped via DHL Express. You will receive a tracking email once dispatched." style="width:100%;padding:9px 11px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:13px;outline:none;font-family:inherit;resize:vertical;"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="document.getElementById('delivery-modal').classList.remove('open')">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmApprovePayment()"><i class="fas fa-check-circle"></i> Approve & Notify Customer</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

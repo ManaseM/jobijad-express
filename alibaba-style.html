@@ -1,0 +1,378 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jobijad Express - African Fashion Marketplace</title>
+<link rel="stylesheet" href="alibaba-styles.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- Sidebar Overlay -->
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+<!-- Sidebar -->
+<div id="sidebar" class="sidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-logo-text">Jobijad <span>Express</span></span>
+    <button class="sidebar-close-btn" id="sidebar-close"><i class="fas fa-times"></i></button>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="login.html" class="sidebar-item" id="sidebar-auth-link">
+      <i class="fas fa-user-circle sidebar-item-icon"></i><span>Login / Register</span>
+    </a>
+    <a href="#" class="sidebar-item">
+      <i class="fas fa-home sidebar-item-icon"></i><span>Home</span>
+    </a>
+    
+    
+    
+    
+    <a href="orders.html" class="sidebar-item">
+      <i class="fas fa-box sidebar-item-icon"></i><span>My Orders</span>
+    </a>
+    <a href="#" class="sidebar-item" id="sidebar-wishlist-link" onclick="openWishlist();closeSidebar();return false;">
+      <i class="fas fa-heart sidebar-item-icon"></i><span>Wishlist <span id="wishlist-sidebar-count" style="background:#f97316;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:4px;display:none">0</span></span>
+    </a>
+    <a href="#" class="sidebar-item" id="sidebar-messages-link" onclick="openMessages();closeSidebar();return false;">
+      <i class="fas fa-envelope sidebar-item-icon"></i><span>Messages <span id="messages-sidebar-count" style="background:#f97316;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:4px;display:none">0</span></span>
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="sidebar-footer-btn" title="Offers" onclick="showOffers()"><i class="fas fa-tag"></i></button>
+    <button class="sidebar-footer-btn" title="Account" onclick="handleAccountBtn()"><i class="fas fa-user"></i></button>
+    <button class="sidebar-footer-btn" title="Orders" onclick="window.location.href='orders.html'"><i class="fas fa-box"></i></button>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-container">
+    <div class="header-left">
+      <button class="menu-icon" id="menu-btn"><i class="fas fa-bars"></i></button>
+      <span class="logo-text">Jobijad <span>Express</span></span>
+    </div>
+    <div class="header-center">
+      <div class="search-bar">
+        <input type="text" id="header-search" placeholder="Search products, brands, categories...">
+        <button onclick="doHeaderSearch()"><i class="fas fa-search"></i> Search</button>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="header-actions">
+        <a href="login.html" class="login-header-btn" id="login-header-btn">
+          <i class="fas fa-user-circle"></i>
+          <span id="auth-link-text">Sign In</span>
+        </a>
+        <button class="cart-icon-btn" id="cart-toggle-btn" title="Cart">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-badge" id="cart-badge">0</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Hero Banner -->
+<div class="hero-banner">
+  <h1>Discover <span>African Fashion</span> Worldwide</h1>
+  <p>Premium Kitenge, Ankara, Dashiki & more — shipped globally</p>
+  
+</div>
+
+<!-- Main Content -->
+<main class="main-content">
+  <div class="section-title">Featured Products</div>
+  <div class="products-grid" id="products-grid">
+    <!-- WOMEN -->
+    <div class="product-card"><div class="product-image"><img src="pics/f8e0a4890c23e5d61aef471df1b74039.jpg" alt="Kitenge Maxi Dress"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div><span class="product-badge">HOT</span></div><div class="product-info"><h3 class="product-title">Elegant Kitenge Maxi Dress</h3><div class="product-price">$89.99</div><div class="product-meta">In stock · Free shipping over $75</div><span class="supplier-badge">Women</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/14095d41061e0f899bf662a6fef669fe.jpg" alt="Kitenge Wrap Dress"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div><span class="product-badge">NEW</span></div><div class="product-info"><h3 class="product-title">Kitenge Wrap Dress</h3><div class="product-price">$75.99</div><div class="product-meta">In stock · Multiple colors</div><span class="supplier-badge">Women</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/eb87c22d59a058b965b0b15d13bf9e45.jpg" alt="Ankara Peplum Dress"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div></div><div class="product-info"><h3 class="product-title">Ankara Peplum Dress</h3><div class="product-price">$69.99</div><div class="product-meta">In stock · Office &amp; events</div><span class="supplier-badge">Women</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/e3b29c618f38caf520fb6a800799b6f4.jpg" alt="Kitenge Off-Shoulder Gown"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div><span class="product-badge">&#11088;</span></div><div class="product-info"><h3 class="product-title">Kitenge Off-Shoulder Gown</h3><div class="product-price">$95.99</div><div class="product-meta">In stock · Formal occasions</div><span class="supplier-badge">Women</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/04bf22c44bcabc6b72ed15f42e38e2cc.jpg" alt="Ankara Bodycon Dress"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div></div><div class="product-info"><h3 class="product-title">Ankara Bodycon Dress</h3><div class="product-price">$62.99</div><div class="product-meta">In stock · Modern African style</div><span class="supplier-badge">Women</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/56b658941dab5ebc7361f38ccaf15c07.jpg" alt="Kitenge Skirt Blouse Set"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div></div><div class="product-info"><h3 class="product-title">Kitenge Skirt &amp; Blouse Set</h3><div class="product-price">$78.99</div><div class="product-meta">In stock · Work &amp; casual</div><span class="supplier-badge">Women</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/Classy Style Outfits.jpg" alt="Classy Kitenge Evening Dress"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div><span class="product-badge">HOT</span></div><div class="product-info"><h3 class="product-title">Classy Kitenge Evening Dress</h3><div class="product-price">$110.00</div><div class="product-meta">In stock · Premium piece</div><span class="supplier-badge">Women</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/584174be4ccaba405a5cb129cdadd5de.jpg" alt="Ankara Midi Dress"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div></div><div class="product-info"><h3 class="product-title">Ankara Print Midi Dress</h3><div class="product-price">$58.99</div><div class="product-meta">In stock · Everyday elegance</div><span class="supplier-badge">Women</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/eb5e1057feffa4764d4230fdfe7b5be2.jpg" alt="Kitenge Jumpsuit"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div></div><div class="product-info"><h3 class="product-title">Kitenge Jumpsuit</h3><div class="product-price">$82.99</div><div class="product-meta">In stock · Wide-leg cut</div><span class="supplier-badge">Women</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/f31a2361647e9062367a073ade64449d.jpg" alt="Ankara Flare Dress"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div></div><div class="product-info"><h3 class="product-title">Ankara Flare Dress</h3><div class="product-price">$67.99</div><div class="product-meta">In stock · All-day comfort</div><span class="supplier-badge">Women</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <!-- MEN -->
+    <div class="product-card"><div class="product-image"><img src="pics/861c38a0e805f4c155dac11fe8469e2d.jpg" alt="Mens Kitenge Shirt"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div><span class="product-badge">HOT</span></div><div class="product-info"><h3 class="product-title">Men's Kitenge Shirt</h3><div class="product-price">$55.99</div><div class="product-meta">In stock · Formal &amp; casual</div><span class="supplier-badge">Men</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/8fff9b88ac46570ad8c102490e1461d4.jpg" alt="Mens Ankara Kaftan"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div><span class="product-badge">&#11088;</span></div><div class="product-info"><h3 class="product-title">Men's Ankara Kaftan</h3><div class="product-price">$72.99</div><div class="product-meta">In stock · Ceremonies &amp; events</div><span class="supplier-badge">Men</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/2351772c970228aeb62b55ffc4e3c920.jpg" alt="Mens Kitenge Suit"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div><span class="product-badge">NEW</span></div><div class="product-info"><h3 class="product-title">Men's Kitenge Suit Set</h3><div class="product-price">$125.00</div><div class="product-meta">In stock · Sharp &amp; professional</div><span class="supplier-badge">Men</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/17cc08d7ed892547715bec038ec624ba.jpg" alt="Traditional Dashiki"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div></div><div class="product-info"><h3 class="product-title">Traditional Dashiki</h3><div class="product-price">$42.99</div><div class="product-meta">In stock · Handcrafted</div><span class="supplier-badge">Men</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/2c7e4b9cf9a5ba63bd916772dd6521b2.jpg" alt="Mens Ankara Trousers"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div></div><div class="product-info"><h3 class="product-title">Men's Ankara Print Trousers</h3><div class="product-price">$58.99</div><div class="product-meta">In stock · Work &amp; casual</div><span class="supplier-badge">Men</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <!-- CHILDREN -->
+    <div class="product-card"><div class="product-image"><img src="pics/3ac1625a123967529a1be01ddcb3f60a.jpg" alt="Girls Kitenge Party Dress"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div><span class="product-badge">&#11088;</span></div><div class="product-info"><h3 class="product-title">Girls' Kitenge Party Dress</h3><div class="product-price">$32.99</div><div class="product-meta">In stock · Ages 2-7</div><span class="supplier-badge">Children</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/3b693b3d526f032126a351467cc9cbbc.jpg" alt="Boys Kitenge Shirt"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div></div><div class="product-info"><h3 class="product-title">Boys' Kitenge Shirt</h3><div class="product-price">$28.99</div><div class="product-meta">In stock · Ages 4-9</div><span class="supplier-badge">Children</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/5a40bb24158a27b377765ea50da13d0c.jpg" alt="Childrens Ankara Outfit Set"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div><span class="product-badge">NEW</span></div><div class="product-info"><h3 class="product-title">Children's Ankara Outfit Set</h3><div class="product-price">$35.99</div><div class="product-meta">In stock · Ages 2-7</div><span class="supplier-badge">Children</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/6c04c8180b7d173942e5fb65ed41ddeb.jpg" alt="Girls Kitenge Skirt Set"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div></div><div class="product-info"><h3 class="product-title">Girls' Kitenge Skirt Set</h3><div class="product-price">$30.99</div><div class="product-meta">In stock · Ages 3-8</div><span class="supplier-badge">Children</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/6c8c756b39fa032cedb7418ecaa1d59d.jpg" alt="Boys Ankara Kaftan"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div></div><div class="product-info"><h3 class="product-title">Boys' Ankara Kaftan</h3><div class="product-price">$27.99</div><div class="product-meta">In stock · Ages 4-9</div><span class="supplier-badge">Children</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/748bb7a87755837e7ab51aa3d08de6da.jpg" alt="Childrens Kitenge Dress"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div></div><div class="product-info"><h3 class="product-title">Children's Kitenge Dress</h3><div class="product-price">$33.99</div><div class="product-meta">In stock · Ages 2-7</div><span class="supplier-badge">Children</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <!-- ACCESSORIES -->
+    <div class="product-card"><div class="product-image"><img src="pics/7ae9546f19636a743c6795d627a42eec.jpg" alt="Kitenge Handbag"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div><span class="product-badge">&#11088;</span></div><div class="product-info"><h3 class="product-title">Kitenge Fabric Handbag</h3><div class="product-price">$38.99</div><div class="product-meta">In stock · Handmade</div><span class="supplier-badge">Accessories</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/a1291d73b7ce6bdb896f2599bc1db315.jpg" alt="African Beaded Necklace"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div></div><div class="product-info"><h3 class="product-title">African Beaded Necklace</h3><div class="product-price">$22.99</div><div class="product-meta">In stock · Handcrafted</div><span class="supplier-badge">Accessories</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/a4f4872d78f5c49961c08805e06b5ff6.jpg" alt="Kitenge Head Wrap"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div></div><div class="product-info"><h3 class="product-title">Kitenge Head Wrap</h3><div class="product-price">$18.99</div><div class="product-meta">In stock · One size</div><span class="supplier-badge">Accessories</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/a68f8572b3410fbe86e65fb884cf1d58.jpg" alt="Ankara Tote Bag"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div></div><div class="product-info"><h3 class="product-title">Ankara Print Tote Bag</h3><div class="product-price">$29.99</div><div class="product-meta">In stock · Everyday carry</div><span class="supplier-badge">Accessories</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/ab5e89192eddcaca65f4a664225c91fb.jpg" alt="African Fabric Earrings"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div></div><div class="product-info"><h3 class="product-title">African Fabric Earrings</h3><div class="product-price">$14.99</div><div class="product-meta">In stock · Lightweight</div><span class="supplier-badge">Accessories</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/DSC_6066.JPG" alt="Kitenge Fabric Roll"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div></div><div class="product-info"><h3 class="product-title">Kitenge Fabric Roll (2 yards)</h3><div class="product-price">$24.99</div><div class="product-meta">In stock · Custom tailoring</div><span class="supplier-badge">Accessories</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+    <div class="product-card"><div class="product-image"><img src="pics/be31aa38c917e81506193f649d246809.jpg" alt="Beaded Waist Belt"><div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div></div><div class="product-info"><h3 class="product-title">Beaded Waist Belt</h3><div class="product-price">$19.99</div><div class="product-meta">In stock · Traditional design</div><span class="supplier-badge">Accessories</span></div><div class="product-actions"><button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button><button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button></div></div>
+  </div>
+
+  <div class="bottom-search">
+    <div class="search-input-container" id="search-container">
+      <!-- Image preview chip (shown after attaching) -->
+      <div id="attach-preview" style="display:none;align-items:center;gap:6px;background:#fff7ed;border:1px solid #f97316;border-radius:16px;padding:3px 10px 3px 6px;font-size:12px;color:#f97316;flex-shrink:0;">
+        <img id="attach-thumb" src="" style="width:22px;height:22px;object-fit:cover;border-radius:4px;">
+        <span id="attach-name" style="max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+        <button onclick="clearAttachment()" style="background:none;border:none;color:#f97316;cursor:pointer;font-size:13px;padding:0;line-height:1;">&times;</button>
+      </div>
+      <input type="text" placeholder="Describe what you're looking for..." class="search-input" id="bottom-search-input">
+      <!-- Hidden file input -->
+      <input type="file" id="attach-file-input" accept="image/*" style="display:none" onchange="handleAttachment(this)">
+      <button class="attach-btn" title="Attach image to search" onclick="document.getElementById('attach-file-input').click()"><i class="fas fa-paperclip"></i></button>
+      <button class="fast-btn" onclick="filterCategory('')"><i class="fas fa-bolt"></i> Quick</button>
+      <button class="send-btn" onclick="doBottomSearch()" title="Search"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+</main>
+
+<!-- Cart Panel -->
+<div id="cart-panel" class="cart-panel">
+  <div class="cart-panel-header">
+    <h2><i class="fas fa-shopping-cart"></i> My Cart</h2>
+    <button class="cart-close-btn" id="cart-close-btn"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="cart-items" id="cart-items">
+    <div class="cart-empty"><i class="fas fa-shopping-cart"></i><p>Your cart is empty</p></div>
+  </div>
+  <div class="cart-footer" id="cart-footer" style="display:none">
+    <div class="cart-total">Total <span id="cart-total">$0.00</span></div>
+    <button class="checkout-btn" onclick="checkout()"><i class="fas fa-lock"></i> Proceed to Checkout</button>
+  </div>
+</div>
+<div id="cart-overlay" class="cart-overlay"></div>
+
+<!-- Wishlist Panel -->
+<div id="wishlist-panel" class="side-panel">
+  <div class="side-panel-header">
+    <h2><i class="fas fa-heart" style="color:#f97316;margin-right:8px"></i>My Wishlist</h2>
+    <button class="side-panel-close" onclick="closeWishlist()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="side-panel-body" id="wishlist-items"></div>
+</div>
+
+<!-- Messages Panel -->
+<div id="messages-panel" class="side-panel">
+  <div class="side-panel-header">
+    <h2><i class="fas fa-envelope" style="color:#f97316;margin-right:8px"></i>My Messages</h2>
+    <button class="side-panel-close" onclick="closeMessages()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="side-panel-body" id="messages-body">
+    <div style="text-align:center;padding:40px;color:#aaa"><i class="fas fa-spinner fa-spin" style="font-size:24px;color:#f97316"></i><p style="margin-top:8px">Loading messages...</p></div>
+  </div>
+  <div class="side-panel-footer" id="messages-footer" style="display:none">
+    <button class="new-inquiry-btn" onclick="showNewMessageForm()"><i class="fas fa-plus"></i> New Message</button>
+  </div>
+</div>
+
+<div id="side-panel-overlay" class="cart-overlay" onclick="closeSidePanels()"></div>
+
+<style>
+.side-panel{position:fixed;top:0;right:0;width:380px;height:100%;background:#fff;z-index:2000;display:flex;flex-direction:column;box-shadow:-4px 0 20px rgba(0,0,0,.15);transform:translateX(100%);transition:transform .3s ease;}
+.side-panel.open{transform:translateX(0);}
+.side-panel-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid #f0f0f0;background:#1a1a2e;color:#fff;flex-shrink:0;}
+.side-panel-header h2{font-size:16px;font-weight:600;margin:0;color:#fff;}
+.side-panel-close{background:none;border:none;color:#fff;font-size:18px;padding:4px;border-radius:4px;cursor:pointer;transition:background .2s;}
+.side-panel-close:hover{background:rgba(255,255,255,.15);}
+.side-panel-body{flex:1;overflow-y:auto;padding:14px;}
+.side-panel-footer{padding:14px 20px;border-top:1px solid #f0f0f0;flex-shrink:0;}
+.new-inquiry-btn{width:100%;background:#f97316;color:#fff;border:none;padding:11px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .2s;}
+.new-inquiry-btn:hover{background:#ea6c0a;}
+/* Wishlist item */
+.wishlist-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #f5f5f5;align-items:flex-start;}
+.wishlist-item-img{width:68px;height:68px;object-fit:cover;border-radius:8px;flex-shrink:0;}
+.wishlist-item-info{flex:1;}
+.wishlist-item-title{font-size:13px;color:#333;margin-bottom:4px;font-weight:500;}
+.wishlist-item-price{font-size:15px;font-weight:700;color:#f97316;margin-bottom:8px;}
+.wishlist-item-actions{display:flex;gap:6px;}
+.wl-cart-btn{background:#f97316;color:#fff;border:none;padding:5px 12px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;transition:background .2s;}
+.wl-cart-btn:hover{background:#ea6c0a;}
+.wl-remove-btn{background:#fee2e2;color:#991b1b;border:none;padding:5px 10px;border-radius:5px;font-size:12px;cursor:pointer;transition:background .2s;}
+.wl-remove-btn:hover{background:#fecaca;}
+/* Heart button on product card */
+.heart-btn{position:absolute;top:8px;right:44px;background:rgba(255,255,255,.9);border:none;width:32px;height:32px;border-radius:6px;color:#ccc;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;transition:all .2s;z-index:2;}
+.heart-btn:hover,.heart-btn.active{color:#ef4444;background:#fff;}
+/* Message thread */
+.msg-thread{background:#f8f9fa;border-radius:10px;padding:14px;margin-bottom:14px;border-left:3px solid #f97316;}
+.msg-thread-product{font-size:11px;font-weight:700;color:#f97316;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.msg-thread-date{font-size:11px;color:#bbb;float:right;}
+.msg-bubble{background:#fff;border-radius:8px;padding:10px 12px;font-size:13px;color:#444;line-height:1.5;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.msg-bubble.sent{background:#fff7ed;border-left:3px solid #f97316;}
+.msg-bubble.reply{background:#f0fdf4;border-left:3px solid #22c55e;}
+.msg-bubble-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.msg-bubble.sent .msg-bubble-label{color:#f97316;}
+.msg-bubble.reply .msg-bubble-label{color:#16a34a;}
+.msg-status{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;text-transform:uppercase;}
+.msg-status-open{background:#fef9c3;color:#854d0e;}
+.msg-status-replied{background:#dcfce7;color:#15803d;}
+.msg-empty{text-align:center;padding:50px 20px;color:#aaa;}
+.msg-empty i{font-size:40px;color:#e0e0e0;display:block;margin-bottom:10px;}
+@media(max-width:480px){.side-panel{width:100%;}}
+</style>
+
+<!-- Footer -->
+<footer style="background:#1a1a2e;color:rgba(255,255,255,.7);padding:48px 24px 24px;margin-top:40px;">
+  <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:32px;">
+    <div>
+      <div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:12px;">Jobijad <span style="color:#f97316">Express</span></div>
+      <p style="font-size:13px;line-height:1.7;">Premium African fashion shipped worldwide. Authentic Kitenge, Ankara, Dashiki and more.</p>
+      <div style="display:flex;gap:12px;margin-top:16px;">
+        <a href="https://www.facebook.com/search/top?q=Jobijad%20Express" target="_blank" title="Facebook" style="color:#f97316;font-size:20px;transition:opacity .2s;" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'"><i class="fab fa-facebook"></i></a>
+        <a href="https://www.instagram.com/explore/tags/jobijadexpress/" target="_blank" title="Instagram" style="color:#f97316;font-size:20px;transition:opacity .2s;" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'"><i class="fab fa-instagram"></i></a>
+        <a href="https://twitter.com/search?q=JobijadExpress" target="_blank" title="Twitter / X" style="color:#f97316;font-size:20px;transition:opacity .2s;" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'"><i class="fab fa-twitter"></i></a>
+        <a href="https://wa.me/46762593231" target="_blank" title="WhatsApp us" style="color:#f97316;font-size:20px;transition:opacity .2s;" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://www.tiktok.com/search?q=JobijadExpress" target="_blank" title="TikTok" style="color:#f97316;font-size:20px;transition:opacity .2s;" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'"><i class="fab fa-tiktok"></i></a>
+      </div>
+    </div>
+    <div>
+      <div style="font-weight:600;color:#fff;margin-bottom:12px;font-size:14px;text-transform:uppercase;letter-spacing:.5px;">Shop</div>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
+        <a href="#" onclick="filterCategory('women')" style="color:rgba(255,255,255,.7);text-decoration:none;">Women's Fashion</a>
+        <a href="#" onclick="filterCategory('men')" style="color:rgba(255,255,255,.7);text-decoration:none;">Men's Fashion</a>
+        <a href="#" onclick="filterCategory('children')" style="color:rgba(255,255,255,.7);text-decoration:none;">Children's Fashion</a>
+        <a href="#" onclick="filterCategory('accessories')" style="color:rgba(255,255,255,.7);text-decoration:none;">Accessories</a>
+        <a href="#" onclick="filterCategory('')" style="color:rgba(255,255,255,.7);text-decoration:none;">All Products</a>
+      </div>
+    </div>
+    <div>
+      <div style="font-weight:600;color:#fff;margin-bottom:12px;font-size:14px;text-transform:uppercase;letter-spacing:.5px;">Account</div>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
+        <a href="login.html" style="color:rgba(255,255,255,.7);text-decoration:none;">Login / Register</a>
+        <a href="orders.html" style="color:rgba(255,255,255,.7);text-decoration:none;">My Orders</a>
+        <a href="checkout.html" style="color:rgba(255,255,255,.7);text-decoration:none;">Checkout</a>
+      </div>
+    </div>
+    <div>
+      <div style="font-weight:600;color:#fff;margin-bottom:12px;font-size:14px;text-transform:uppercase;letter-spacing:.5px;">Contact</div>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
+        <span><i class="fas fa-envelope" style="color:#f97316;margin-right:6px"></i>alitajudith2002@gmail.com</span>
+        <span><i class="fas fa-phone" style="color:#f97316;margin-right:6px"></i>+46 762 593 231</span>
+        <span><i class="fas fa-map-marker-alt" style="color:#f97316;margin-right:6px"></i>Worldwide Shipping</span>
+      </div>
+    </div>
+  </div>
+  <div style="border-top:1px solid rgba(255,255,255,.1);margin-top:32px;padding-top:20px;text-align:center;font-size:12px;">
+    © 2026 Jobijad Express. All rights reserved.
+  </div>
+</footer>
+
+<!-- Account Panel Overlay -->
+<div id="account-overlay" class="sidebar-overlay" onclick="closeAccountPanel()"></div>
+
+<!-- Account Panel -->
+<div id="account-panel" style="position:fixed;top:0;right:0;width:320px;height:100%;background:#fff;z-index:2000;display:flex;flex-direction:column;box-shadow:-4px 0 24px rgba(0,0,0,.18);transition:transform .3s ease;">
+  <!-- Header -->
+  <div style="background:linear-gradient(135deg,#1a1a2e,#0f3460);padding:28px 20px 24px;color:#fff;position:relative;">
+    <button onclick="closeAccountPanel()" style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,.12);border:none;color:#fff;width:30px;height:30px;border-radius:50%;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;"><i class="fas fa-times"></i></button>
+    <!-- Avatar with upload -->
+    <div style="position:relative;width:72px;margin-bottom:12px;">
+      <div id="ap-avatar-wrap" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#f97316,#ea6c0a);display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;box-shadow:0 4px 16px rgba(249,115,22,.4);overflow:hidden;">
+        <i class="fas fa-user" id="ap-avatar-icon"></i>
+        <img id="ap-avatar-img" src="" alt="avatar" style="display:none;width:100%;height:100%;object-fit:cover;">
+      </div>
+      <label for="ap-avatar-input" title="Change photo" style="position:absolute;bottom:0;right:0;width:24px;height:24px;background:#f97316;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid #1a1a2e;">
+        <i class="fas fa-camera" style="font-size:10px;color:#fff;"></i>
+      </label>
+      <input type="file" id="ap-avatar-input" accept="image/*" style="display:none;" onchange="handleAvatarUpload(this)">
+    </div>
+    <div style="font-size:18px;font-weight:700;" id="ap-name">—</div>
+    <div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:3px;" id="ap-email">—</div>
+    <div style="margin-top:8px;display:inline-block;background:rgba(249,115,22,.25);border:1px solid rgba(249,115,22,.5);color:#f97316;font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px;letter-spacing:1px;" id="ap-role">CUSTOMER</div>
+  </div>
+
+  <!-- Details -->
+  <div style="flex:1;overflow-y:auto;padding:20px;">
+
+    <!-- VIEW MODE -->
+    <div id="ap-view-mode">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:1px;">Account Details</div>
+        <button onclick="toggleEditMode(true)" style="background:none;border:1px solid #f97316;color:#f97316;font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;cursor:pointer;font-family:inherit;"><i class="fas fa-pen"></i> Edit</button>
+      </div>
+      <div style="background:#f8f9fa;border-radius:10px;padding:16px;margin-bottom:14px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div style="width:34px;height:34px;background:#fff7ed;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#f97316;font-size:14px;flex-shrink:0;"><i class="fas fa-user"></i></div>
+          <div><div style="font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;">Full Name</div><div style="font-size:14px;font-weight:600;color:#1a1a2e;" id="ap-name2">—</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div style="width:34px;height:34px;background:#fff7ed;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#f97316;font-size:14px;flex-shrink:0;"><i class="fas fa-envelope"></i></div>
+          <div><div style="font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;">Email</div><div style="font-size:13px;font-weight:500;color:#333;word-break:break-all;" id="ap-email2">—</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:34px;height:34px;background:#fff7ed;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#f97316;font-size:14px;flex-shrink:0;"><i class="fas fa-calendar"></i></div>
+          <div><div style="font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;">Member Since</div><div style="font-size:13px;font-weight:500;color:#333;" id="ap-joined">—</div></div>
+        </div>
+      </div>
+
+      <!-- Quick links -->
+      <div style="font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Quick Links</div>
+      <a href="orders.html" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#f8f9fa;border-radius:8px;text-decoration:none;color:#333;margin-bottom:8px;" onmouseover="this.style.background='#fff7ed'" onmouseout="this.style.background='#f8f9fa'">
+        <i class="fas fa-box" style="color:#f97316;width:16px;text-align:center;"></i>
+        <span style="font-size:13px;font-weight:500;">My Orders</span>
+        <i class="fas fa-chevron-right" style="margin-left:auto;color:#ccc;font-size:11px;"></i>
+      </a>
+      <a href="orders.html" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#f8f9fa;border-radius:8px;text-decoration:none;color:#333;margin-bottom:8px;" onmouseover="this.style.background='#fff7ed'" onmouseout="this.style.background='#f8f9fa'">
+        <i class="fas fa-star" style="color:#f97316;width:16px;text-align:center;"></i>
+        <span style="font-size:13px;font-weight:500;">Leave a Review</span>
+        <i class="fas fa-chevron-right" style="margin-left:auto;color:#ccc;font-size:11px;"></i>
+      </a>
+      <a href="checkout.html" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#f8f9fa;border-radius:8px;text-decoration:none;color:#333;margin-bottom:8px;" onmouseover="this.style.background='#fff7ed'" onmouseout="this.style.background='#f8f9fa'">
+        <i class="fas fa-shopping-bag" style="color:#f97316;width:16px;text-align:center;"></i>
+        <span style="font-size:13px;font-weight:500;">Checkout</span>
+        <i class="fas fa-chevron-right" style="margin-left:auto;color:#ccc;font-size:11px;"></i>
+      </a>
+    </div>
+
+    <!-- EDIT MODE -->
+    <div id="ap-edit-mode" style="display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div style="font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:1px;">Edit Profile</div>
+        <button onclick="toggleEditMode(false)" style="background:none;border:none;color:#aaa;font-size:12px;cursor:pointer;font-family:inherit;"><i class="fas fa-arrow-left"></i> Back</button>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="display:block;font-size:11px;font-weight:700;color:#666;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;">Full Name *</label>
+        <input id="ap-edit-name" type="text" placeholder="Your full name" style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;font-family:inherit;box-sizing:border-box;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'">
+      </div>
+      <div style="margin-bottom:18px;">
+        <label style="display:block;font-size:11px;font-weight:700;color:#666;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;">Email Address *</label>
+        <input id="ap-edit-email" type="email" placeholder="your@email.com" style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;font-family:inherit;box-sizing:border-box;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'">
+      </div>
+      <div id="ap-edit-msg" style="display:none;padding:10px 12px;border-radius:7px;font-size:13px;margin-bottom:12px;"></div>
+      <button onclick="saveProfile()" id="ap-save-btn" style="width:100%;background:linear-gradient(135deg,#f97316,#ea6c0a);color:#fff;border:none;padding:12px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;">
+        <i class="fas fa-save"></i> Save Changes
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Logout -->
+  <div style="padding:16px 20px;border-top:1px solid #f0f0f0;">
+    <button onclick="doLogout()" style="width:100%;background:#fee2e2;color:#991b1b;border:none;padding:12px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit;" onmouseover="this.style.background='#fecaca'" onmouseout="this.style.background='#fee2e2'">
+      <i class="fas fa-sign-out-alt"></i> Sign Out
+    </button>
+  </div>
+</div>
+
+<script src="alibaba-script.js"></script>
+<script>
+// Only redirect admin if they didn't navigate here from admin panel (allow "View Store")
+(function() {
+  var user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  var fromAdmin = document.referrer.indexOf('admin.html') !== -1 || location.search.indexOf('preview=1') !== -1;
+  if (user.role === 'admin' && !fromAdmin) window.location.href = 'admin.html';
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,410 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Orders - Jobijad Express</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;min-height:100vh;}
+.header{background:#1a1a2e;padding:0 20px;height:60px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.3);position:sticky;top:0;z-index:100;}
+.logo{font-size:18px;font-weight:700;color:#fff;}.logo span{color:#f97316;}
+.back-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+.back-btn:hover{background:rgba(255,255,255,.22);}
+.container{max-width:900px;margin:0 auto;padding:28px 16px;}
+.page-title{font-size:22px;font-weight:700;color:#1a1a2e;margin-bottom:6px;}
+.page-sub{font-size:13px;color:#888;margin-bottom:24px;}
+.tabs{display:flex;gap:0;border-bottom:2px solid #e0e0e0;margin-bottom:24px;}
+.tab{padding:10px 22px;font-size:13px;font-weight:600;color:#888;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;}
+.tab.active{color:#f97316;border-bottom-color:#f97316;}
+.tab:hover:not(.active){color:#555;}
+.tab-content{display:none;}.tab-content.active{display:block;}
+.order-card{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:16px;overflow:hidden;}
+.order-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #f0f0f0;flex-wrap:wrap;gap:8px;}
+.order-num{font-size:13px;font-weight:700;color:#1a1a2e;font-family:monospace;}
+.order-date{font-size:11px;color:#aaa;}
+.badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;text-transform:uppercase;}
+.badge-pending{background:#fef9c3;color:#854d0e;}.badge-confirmed{background:#dbeafe;color:#1e40af;}
+.badge-processing{background:#ede9fe;color:#5b21b6;}.badge-shipped{background:#dcfce7;color:#15803d;}
+.badge-delivered{background:#dcfce7;color:#15803d;}.badge-cancelled{background:#fee2e2;color:#991b1b;}
+.order-body{padding:14px 18px;}
+.order-item-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f8f8f8;font-size:13px;color:#555;}
+.order-item-row:last-child{border-bottom:none;}
+.order-totals{display:flex;justify-content:flex-end;gap:24px;font-size:13px;margin-top:10px;padding-top:10px;border-top:1px solid #f0f0f0;}
+.order-total-val{font-weight:700;color:#f97316;font-size:16px;}
+.order-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.btn{padding:7px 16px;border-radius:6px;font-size:12px;cursor:pointer;border:none;font-family:inherit;font-weight:600;display:inline-flex;align-items:center;gap:5px;transition:all .2s;}
+.btn-primary{background:#f97316;color:#fff;}.btn-primary:hover{background:#ea6c0a;}
+.btn-secondary{background:#f4f6f8;color:#555;border:1px solid #e0e0e0;}.btn-secondary:hover{background:#e8eaed;}
+.empty-state{text-align:center;padding:60px 20px;color:#aaa;}
+.empty-state i{font-size:48px;color:#e0e0e0;margin-bottom:12px;display:block;}
+.empty-state a{color:#f97316;text-decoration:none;font-weight:600;}
+.loading{text-align:center;padding:40px;color:#aaa;}
+.review-form-card{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);padding:24px;}
+.form-group{margin-bottom:14px;}
+.form-group label{display:block;font-size:11px;font-weight:700;color:#666;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;}
+.form-group input,.form-group textarea{width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:13px;outline:none;font-family:inherit;}
+.form-group input:focus,.form-group textarea:focus{border-color:#f97316;}
+.stars{display:flex;gap:6px;margin-bottom:4px;}
+.star{font-size:28px;color:#e0e0e0;cursor:pointer;transition:color .15s;}.star.active{color:#f97316;}
+.fb-msg{padding:10px 14px;border-radius:7px;font-size:13px;margin-top:10px;display:none;}
+.fb-msg.success{background:#dcfce7;color:#15803d;display:block;}
+.fb-msg.error{background:#fee2e2;color:#991b1b;display:block;}
+.reviews-summary{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.avg-score{font-size:48px;font-weight:700;color:#f97316;line-height:1;}
+.avg-label{font-size:13px;color:#888;}
+.review-card{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);padding:18px 20px;margin-bottom:14px;}
+.review-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px;}
+.reviewer-name{font-weight:700;font-size:14px;color:#1a1a2e;}
+.review-stars{color:#f97316;font-size:14px;letter-spacing:1px;}
+.review-date{font-size:11px;color:#bbb;}
+.review-comment{font-size:13px;color:#555;line-height:1.6;margin-bottom:10px;}
+.admin-reply{border:2px solid #f97316;border-radius:8px;padding:12px 14px;background:#fff7ed;margin-top:10px;}
+.admin-reply-label{font-size:11px;font-weight:700;color:#f97316;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;display:flex;align-items:center;gap:5px;}
+.admin-reply-text{font-size:13px;color:#555;line-height:1.6;}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="logo">Jobijad <span>Express</span></div>
+  <div><a href="alibaba-style.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Store</a></div>
+</header>
+<div class="container">
+  <div class="page-title"><i class="fas fa-box" style="color:#f97316;margin-right:8px"></i>Orders &amp; Reviews</div>
+  <div class="page-sub">Track your orders, leave feedback, and read customer reviews.</div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('orders')"><i class="fas fa-box"></i> My Orders</button>
+    <button class="tab" onclick="switchTab('review')"><i class="fas fa-star"></i> Leave a Review</button>
+    <button class="tab" onclick="switchTab('public')"><i class="fas fa-comments"></i> Customer Reviews</button>
+  </div>
+  <div id="tab-orders" class="tab-content active">
+    <div id="orders-list"><div class="loading"><i class="fas fa-spinner fa-spin" style="font-size:24px;color:#f97316"></i><p style="margin-top:8px">Loading orders...</p></div></div>
+  </div>
+  <div id="tab-review" class="tab-content">
+    <div class="review-form-card">
+      <h3 style="font-size:16px;font-weight:700;color:#1a1a2e;margin-bottom:18px;"><i class="fas fa-star" style="color:#f97316;margin-right:8px"></i>Share Your Experience</h3>
+      <div class="form-group"><label>Your Name</label><input type="text" id="fb-name" placeholder="Your name"></div>
+      <div class="form-group">
+        <label>Rating *</label>
+        <div class="stars" id="stars-row">
+          <span class="star" data-v="1">&#9733;</span>
+          <span class="star" data-v="2">&#9733;</span>
+          <span class="star" data-v="3">&#9733;</span>
+          <span class="star" data-v="4">&#9733;</span>
+          <span class="star" data-v="5">&#9733;</span>
+        </div>
+        <input type="hidden" id="fb-rating" value="0">
+      </div>
+      <div class="form-group"><label>Your Review *</label><textarea id="fb-comment" rows="4" placeholder="Tell us about your experience with Jobijad Express..."></textarea></div>
+      <button class="btn btn-primary" onclick="submitFeedback()" style="width:100%;justify-content:center;padding:11px;"><i class="fas fa-paper-plane"></i> Submit Review</button>
+      <div id="fb-msg" class="fb-msg"></div>
+    </div>
+  </div>
+  <div id="tab-public" class="tab-content">
+    <div id="reviews-summary-box"></div>
+    <div id="public-reviews-list"><div class="loading"><i class="fas fa-spinner fa-spin" style="font-size:24px;color:#f97316"></i><p style="margin-top:8px">Loading reviews...</p></div></div>
+  </div>
+</div>
+
+<!-- Receipt Modal -->
+<div id="receipt-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:12px;padding:24px;width:90%;max-width:560px;max-height:90vh;overflow-y:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h3 style="font-size:16px;font-weight:700;color:#1a1a2e;margin:0;">Order Receipt</h3>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-primary" onclick="printOrderReceipt()"><i class="fas fa-print"></i> Print</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('receipt-modal').style.display='none'"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+    <div id="receipt-body"></div>
+  </div>
+</div>
+
+<script>
+var API = (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?(window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?'http://localhost:3000/api':window.location.origin+'/api'):window.location.origin+'/api');
+var token = localStorage.getItem('jobiToken');
+var currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+
+function switchTab(name) {
+  var tabs = document.querySelectorAll('.tab');
+  var contents = document.querySelectorAll('.tab-content');
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+  for (var i = 0; i < contents.length; i++) contents[i].classList.remove('active');
+  var tabMap = {orders: 0, review: 1, public: 2};
+  tabs[tabMap[name]].classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'orders') loadOrders();
+  if (name === 'public') loadPublicReviews();
+}
+
+function fmtDate(d) {
+  if (!d) return '---';
+  var dt = new Date(d);
+  return dt.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+}
+
+function statusBadge(s) {
+  return '<span class="badge badge-' + s + '">' + s + '</span>';
+}
+
+function starsHtml(n) {
+  var s = '';
+  for (var i = 1; i <= 5; i++) {
+    s += (i <= n) ? '&#9733;' : '&#9734;';
+  }
+  return s;
+}
+
+function setRating(val) {
+  document.getElementById('fb-rating').value = val;
+  var stars = document.querySelectorAll('#stars-row .star');
+  for (var i = 0; i < stars.length; i++) {
+    if (i < val) stars[i].classList.add('active');
+    else stars[i].classList.remove('active');
+  }
+}
+
+(function() {
+  var stars = document.querySelectorAll('#stars-row .star');
+  for (var i = 0; i < stars.length; i++) {
+    (function(el) {
+      el.addEventListener('click', function() {
+        setRating(parseInt(el.getAttribute('data-v')));
+      });
+    })(stars[i]);
+  }
+})();
+
+function prefillUser() {
+  if (currentUser && currentUser.name) {
+    var nameEl = document.getElementById('fb-name');
+    if (nameEl) nameEl.value = currentUser.name;
+  }
+}
+
+function loadOrders() {
+  var list = document.getElementById('orders-list');
+  if (!token) {
+    list.innerHTML = '<div class="empty-state"><i class="fas fa-lock"></i><p>Please <a href="login.html">log in</a> to view your orders.</p></div>';
+    return;
+  }
+  list.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin" style="font-size:24px;color:#f97316"></i><p style="margin-top:8px">Loading orders...</p></div>';
+  fetch(API + '/orders/my', { headers: { Authorization: 'Bearer ' + token } })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var orders = data.orders || [];
+      if (!orders.length) {
+        list.innerHTML = '<div class="empty-state"><i class="fas fa-box"></i><p>No orders yet. <a href="alibaba-style.html">Start shopping!</a></p></div>';
+        return;
+      }
+      var html = '';
+      for (var i = 0; i < orders.length; i++) {
+        var o = orders[i];
+        var receiptNum = o.orderNumber || String(o.id).substring(0, 8).toUpperCase();
+        var items = o.items || [];
+        var itemsHtml = '';
+        for (var j = 0; j < items.length; j++) {
+          var it = items[j];
+          itemsHtml += '<div class="order-item-row"><span>' + (it.name || 'Item') + ' x' + (it.quantity || 1) + '</span>';
+          itemsHtml += '<span style="font-weight:600">$' + ((parseFloat(it.price) || 0) * (it.quantity || 1)).toFixed(2) + '</span></div>';
+        }
+        html += '<div class="order-card">';
+        html += '<div class="order-head">';
+        html += '<div><div class="order-num">#' + receiptNum + '</div><div class="order-date">' + fmtDate(o.createdAt) + '</div></div>';
+        html += '<div>' + statusBadge(o.orderStatus || 'pending') + '</div>';
+        html += '</div>';
+        html += '<div class="order-body">';
+        html += '<div>' + itemsHtml + '</div>';
+        html += '<div class="order-totals"><span style="color:#888;font-size:12px;">Total:</span>';
+        html += '<span class="order-total-val">$' + (parseFloat(o.total) || 0).toFixed(2) + '</span></div>';
+              // Delivery info block
+      if (o.shippingDate || o.estimatedDelivery || o.deliveryNote) {
+        html += '<div style="margin-top:10px;padding:10px 12px;background:#f0fdf4;border:1.5px solid #22c55e;border-radius:8px;font-size:12px;">';
+        html += '<div style="font-weight:700;color:#15803d;margin-bottom:6px"><i class="fas fa-truck"></i> Delivery Schedule</div>';
+        if (o.shippingDate) html += '<div style="color:#555;margin-bottom:3px"><i class="fas fa-box-open" style="color:#f97316;margin-right:5px"></i><strong>Ships:</strong> ' + fmtDate(o.shippingDate) + '</div>';
+        if (o.estimatedDelivery) html += '<div style="color:#555;margin-bottom:3px"><i class="fas fa-calendar-check" style="color:#22c55e;margin-right:5px"></i><strong>Est. Delivery:</strong> ' + fmtDate(o.estimatedDelivery) + '</div>';
+        if (o.deliveryNote) html += '<div style="color:#666;margin-top:6px;font-style:italic">' + o.deliveryNote + '</div>';
+        html += '</div>';
+      }
+      html += '<div class="order-actions">';
+        html += '<button class="btn btn-secondary" onclick="openReceipt(\'' + o.id + '\')"><i class="fas fa-receipt"></i> View Receipt</button>';
+        html += '</div></div></div>';
+      }
+      list.innerHTML = html;
+    })
+    .catch(function() {
+      list.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Could not load orders. Make sure the server is running.</p></div>';
+    });
+}
+
+function openReceipt(orderId) {
+  if (!token) return;
+  fetch(API + '/orders/' + orderId, { headers: { Authorization: 'Bearer ' + token } })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var o = data.order || data;
+      var receiptNum = o.orderNumber || String(o.id).substring(0, 8).toUpperCase();
+      var items = o.items || [];
+      var itemRows = '';
+      for (var i = 0; i < items.length; i++) {
+        var it = items[i];
+        itemRows += '<tr style="border-bottom:1px solid #f0f0f0">';
+        itemRows += '<td style="padding:8px 10px">' + (it.name || 'Item') + '</td>';
+        itemRows += '<td style="padding:8px 10px;text-align:center">' + (it.quantity || 1) + '</td>';
+        itemRows += '<td style="padding:8px 10px;text-align:right">$' + (parseFloat(it.price) || 0).toFixed(2) + '</td>';
+        itemRows += '<td style="padding:8px 10px;text-align:right;font-weight:600">$' + ((parseFloat(it.price) || 0) * (it.quantity || 1)).toFixed(2) + '</td>';
+        itemRows += '</tr>';
+      }
+      var addr = o.shippingAddress || {};
+      var statusColor = '#f97316';
+      if (o.orderStatus === 'delivered') statusColor = '#22c55e';
+      if (o.orderStatus === 'cancelled') statusColor = '#ef4444';
+      var qrData = encodeURIComponent('JOBIJAD-ORDER-' + receiptNum + '-' + (o.orderStatus || 'pending'));
+      var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=' + qrData;
+      var html = '<div id="receipt-print">';
+      html += '<div style="text-align:center;margin-bottom:20px;border-bottom:2px solid #1a1a2e;padding-bottom:16px">';
+      html += '<div style="font-size:22px;font-weight:700;color:#1a1a2e">Jobijad <span style="color:#f97316">Express</span></div>';
+      html += '<div style="font-size:12px;color:#888;margin-top:4px">Premium African Fashion Marketplace</div>';
+      html += '<div style="font-size:11px;color:#aaa;margin-top:3px">alitajudith2002@gmail.com | +46 762 593 231</div>';
+      html += '</div>';
+      html += '<div style="display:flex;justify-content:space-between;margin-bottom:16px;font-size:13px;flex-wrap:wrap;gap:10px">';
+      html += '<div><div style="font-weight:700;font-size:15px;letter-spacing:1px">RECEIPT</div>';
+      html += '<div style="color:#888">#' + receiptNum + '</div>';
+      html += '<div style="color:#888;margin-top:4px">' + fmtDate(o.createdAt) + '</div></div>';
+      html += '<div style="text-align:right"><div style="font-weight:600">' + (addr.name || '---') + '</div>';
+      html += '<div style="color:#888;font-size:12px">' + (addr.street || '') + '</div>';
+      html += '<div style="color:#888;font-size:12px">' + (addr.city || '') + ', ' + (addr.country || '') + '</div></div>';
+      html += '</div>';
+      html += '<table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px">';
+      html += '<thead><tr style="background:#1a1a2e;color:#fff">';
+      html += '<th style="padding:8px 10px;text-align:left">Item</th>';
+      html += '<th style="padding:8px 10px;text-align:center">Qty</th>';
+      html += '<th style="padding:8px 10px;text-align:right">Unit Price</th>';
+      html += '<th style="padding:8px 10px;text-align:right">Subtotal</th>';
+      html += '</tr></thead><tbody>' + itemRows + '</tbody></table>';
+      html += '<div style="border-top:2px solid #eee;padding-top:12px;font-size:13px;max-width:260px;margin-left:auto">';
+      html += '<div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="color:#666">Subtotal</span><span>$' + (parseFloat(o.subtotal) || 0).toFixed(2) + '</span></div>';
+      html += '<div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="color:#666">Shipping</span><span>$' + (parseFloat(o.shippingCost) || 0).toFixed(2) + '</span></div>';
+      html += '<div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="color:#666">Tax (8%)</span><span>$' + (parseFloat(o.tax) || 0).toFixed(2) + '</span></div>';
+      html += '<div style="display:flex;justify-content:space-between;font-size:17px;font-weight:700;border-top:2px solid #1a1a2e;padding-top:10px">';
+      html += '<span>TOTAL</span><span style="color:#f97316">$' + (parseFloat(o.total) || 0).toFixed(2) + '</span></div></div>';
+      html += '<div style="margin-top:16px;padding:10px 14px;background:#f8f9fa;border-radius:6px;font-size:12px;color:#555;display:flex;gap:20px;flex-wrap:wrap">';
+      html += '<span><strong>Payment:</strong> ' + (o.paymentMethod || '').replace(/_/g, ' ').toUpperCase() + '</span>';
+      html += '<span><strong>Status:</strong> <span style="color:' + statusColor + ';font-weight:700;text-transform:uppercase">' + (o.orderStatus || '') + '</span></span></div>';
+      html += '<div style="text-align:center;margin-top:20px;font-size:11px;color:#aaa;border-top:1px solid #eee;padding-top:12px">';
+      html += '<img src="' + qrUrl + '" style="margin-bottom:6px;border:2px solid #eee;border-radius:4px;" alt="QR Code"><br>';
+      html += '<div style="font-size:10px;color:#bbb;margin-bottom:6px">Scan to verify order authenticity</div>';
+      html += 'Thank you for shopping with Jobijad Express!</div>';
+      html += '</div>';
+      document.getElementById('receipt-body').innerHTML = html;
+      document.getElementById('receipt-modal').style.display = 'flex';
+    })
+    .catch(function() { alert('Could not load receipt. Please try again.'); });
+}
+
+function printOrderReceipt() {
+  var content = document.getElementById('receipt-print');
+  if (!content) return;
+  var w = window.open('', '_blank', 'width=640,height=820');
+  w.document.write('<!DOCTYPE html><html><head><title>Receipt - Jobijad Express</title>');
+  w.document.write('<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700&display=swap" rel="stylesheet">');
+  w.document.write('<style>*{box-sizing:border-box;}body{font-family:Roboto,sans-serif;padding:32px;color:#222;max-width:580px;margin:0 auto;}table{width:100%;border-collapse:collapse;}@media print{.no-print{display:none!important;}}</style>');
+  w.document.write('</head><body>');
+  w.document.write(content.innerHTML);
+  w.document.write('<div class="no-print" style="margin-top:20px;display:flex;gap:10px">');
+  w.document.write('<button onclick="window.print()" style="padding:10px 20px;background:#f97316;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600">Print Receipt</button>');
+  w.document.write('<button onclick="window.close()" style="padding:10px 20px;background:#f4f6f8;color:#555;border:1px solid #e0e0e0;border-radius:6px;cursor:pointer;font-size:14px">Close</button>');
+  w.document.write('</div></body></html>');
+  w.document.close();
+  w.focus();
+}
+
+function submitFeedback() {
+  var name = document.getElementById('fb-name').value.trim();
+  var rating = parseInt(document.getElementById('fb-rating').value) || 5;
+  var comment = document.getElementById('fb-comment').value.trim();
+  if (!comment) { showFbMsg('Please write something — anything!', true); return; }
+  var payload = { rating: rating, comment: comment, message: comment };
+  if (name) payload.customerName = name;
+  else payload.customerName = 'Anonymous';
+  var headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  fetch(API + '/feedback', { method: 'POST', headers: headers, body: JSON.stringify(payload) })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.feedback || data.id) {
+        showFbMsg('Thank you for your review! It has been submitted.', false);
+        document.getElementById('fb-comment').value = '';
+        document.getElementById('fb-rating').value = '0';
+        setRating(0);
+      } else {
+        showFbMsg(data.message || 'Could not submit review.', true);
+      }
+    })
+    .catch(function() { showFbMsg('Server error. Please try again.', true); });
+}
+
+function showFbMsg(msg, isError) {
+  var el = document.getElementById('fb-msg');
+  el.textContent = msg;
+  el.className = 'fb-msg ' + (isError ? 'error' : 'success');
+  el.style.display = 'block';
+}
+
+function loadPublicReviews() {
+  var list = document.getElementById('public-reviews-list');
+  var summaryBox = document.getElementById('reviews-summary-box');
+  list.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin" style="font-size:24px;color:#f97316"></i><p style="margin-top:8px">Loading reviews...</p></div>';
+  fetch(API + '/feedback')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var reviews = data.feedbacks || data.feedback || [];
+      if (!reviews.length) {
+        summaryBox.innerHTML = '';
+        list.innerHTML = '<div class="empty-state"><i class="fas fa-star"></i><p>No reviews yet. Be the first to leave one!</p></div>';
+        return;
+      }
+      var total = 0;
+      for (var i = 0; i < reviews.length; i++) total += (parseInt(reviews[i].rating) || 0);
+      var avg = (total / reviews.length).toFixed(1);
+      var avgRounded = Math.round(parseFloat(avg));
+      var sumStars = '';
+      for (var i = 1; i <= 5; i++) sumStars += (i <= avgRounded) ? '&#9733;' : '&#9734;';
+      summaryBox.innerHTML = '<div class="reviews-summary"><div class="avg-score">' + avg + '</div><div><div class="review-stars" style="font-size:22px">' + sumStars + '</div><div class="avg-label">' + reviews.length + ' review' + (reviews.length !== 1 ? 's' : '') + '</div></div></div>';
+      var html = '';
+      for (var i = 0; i < reviews.length; i++) {
+        var r = reviews[i];
+        var rName = r.customerName || (r.User && r.User.name) || 'Anonymous';
+        var rStars = '';
+        var rVal = parseInt(r.rating) || 0;
+        for (var k = 1; k <= 5; k++) rStars += (k <= rVal) ? '&#9733;' : '&#9734;';
+        html += '<div class="review-card">';
+        html += '<div class="review-header">';
+        html += '<div><div class="reviewer-name"><i class="fas fa-user-circle" style="color:#f97316;margin-right:5px"></i>' + rName + '</div>';
+        html += '<div class="review-stars">' + rStars + '</div></div>';
+        html += '<div class="review-date">' + fmtDate(r.createdAt) + '</div>';
+        html += '</div>';
+        html += '<div class="review-comment">' + (r.comment || '') + '</div>';
+        if (r.adminReply) {
+          html += '<div class="admin-reply">';
+          html += '<div class="admin-reply-label"><i class="fas fa-store"></i> Jobijad Express replied:</div>';
+          html += '<div class="admin-reply-text">' + r.adminReply + '</div>';
+          html += '</div>';
+        }
+        html += '</div>';
+      }
+      list.innerHTML = html;
+    })
+    .catch(function() {
+      summaryBox.innerHTML = '';
+      list.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Could not load reviews. Make sure the server is running.</p></div>';
+    });
+}
+
+prefillUser();
+loadOrders();
+</script>
+</body>
+</html>

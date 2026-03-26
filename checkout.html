@@ -1,0 +1,434 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout — Jobijad Express</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;}
+.header{background:#1a1a2e;padding:0 20px;height:60px;display:flex;align-items:center;gap:16px;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+.header a{color:#fff;font-size:14px;display:flex;align-items:center;gap:6px;opacity:.8;transition:opacity .2s;}
+.header a:hover{opacity:1;}
+.logo{font-size:20px;font-weight:700;color:#fff;margin-left:auto;}
+.logo span{color:#f97316;}
+.page{max-width:1000px;margin:30px auto;padding:0 16px 80px;}
+.page-title{font-size:22px;font-weight:700;color:#1a1a2e;margin-bottom:24px;display:flex;align-items:center;gap:10px;}
+.grid{display:grid;grid-template-columns:1fr 360px;gap:24px;}
+.card{background:#fff;border-radius:10px;padding:24px;box-shadow:0 2px 10px rgba(0,0,0,.07);margin-bottom:16px;}
+.card h2{font-size:15px;font-weight:600;color:#1a1a2e;margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid #f97316;display:flex;align-items:center;gap:8px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-group{margin-bottom:14px;}
+.form-group label{display:block;font-size:12px;font-weight:600;color:#666;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;}
+.form-group input,.form-group select{width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:14px;outline:none;transition:border .2s;font-family:inherit;}
+.form-group input:focus,.form-group select:focus{border-color:#f97316;}
+.pay-option{display:flex;align-items:center;gap:12px;padding:13px 16px;border:1.5px solid #e0e0e0;border-radius:8px;cursor:pointer;margin-bottom:10px;transition:all .2s;}
+.pay-option:has(input:checked){border-color:#f97316;background:#fff7ed;}
+.pay-option input{accent-color:#f97316;}
+.pay-option i{font-size:20px;width:24px;text-align:center;}
+.pay-option span{font-size:14px;font-weight:500;}
+.pay-option small{color:#aaa;font-size:12px;margin-left:auto;}
+.summary-sticky{position:sticky;top:80px;}
+.summary-items{max-height:220px;overflow-y:auto;margin-bottom:16px;}
+.s-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #f5f5f5;align-items:center;}
+.s-item img{width:50px;height:50px;object-fit:cover;border-radius:6px;flex-shrink:0;}
+.s-item-title{font-size:12px;color:#444;margin-bottom:2px;}
+.s-item-price{font-size:13px;font-weight:600;color:#f97316;}
+.s-row{display:flex;justify-content:space-between;font-size:14px;color:#666;margin-bottom:8px;}
+.s-total{display:flex;justify-content:space-between;font-size:18px;font-weight:700;color:#1a1a2e;border-top:1px solid #eee;padding-top:12px;margin-top:4px;}
+.s-total span{color:#f97316;}
+.place-btn{width:100%;background:#f97316;color:#fff;border:none;padding:14px;border-radius:8px;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;transition:background .2s;cursor:pointer;}
+.place-btn:hover{background:#ea6c0a;}
+.place-btn:disabled{background:#ccc;cursor:not-allowed;}
+.secure-note{text-align:center;font-size:12px;color:#aaa;margin-top:8px;}
+.empty-msg{text-align:center;padding:60px 20px;color:#aaa;}
+.empty-msg i{font-size:52px;margin-bottom:12px;display:block;}
+.empty-msg a{color:#f97316;}
+@media(max-width:768px){.grid{grid-template-columns:1fr;}.form-row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header class="header">
+  <a href="alibaba-style.html"><i class="fas fa-arrow-left"></i> Back to Shopping</a>
+  <div class="logo">Jobijad <span>Express</span></div>
+</header>
+
+<div class="page">
+  <div class="page-title"><i class="fas fa-lock" style="color:#f97316"></i> Secure Checkout</div>
+
+  <div id="empty-msg" class="empty-msg" style="display:none">
+    <i class="fas fa-shopping-cart"></i>
+    <p>Your cart is empty. <a href="alibaba-style.html">Continue shopping</a></p>
+  </div>
+
+  <!-- Success Screen (shown after order placed) -->
+  <div id="success-screen" style="display:none;text-align:center;padding:60px 20px;max-width:520px;margin:0 auto;">
+    <div style="width:80px;height:80px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:36px;color:#16a34a;">
+      <i class="fas fa-check-circle"></i>
+    </div>
+    <h2 style="font-size:22px;font-weight:700;color:#1a1a2e;margin-bottom:8px;">Order Placed Successfully!</h2>
+    <p style="color:#666;font-size:14px;margin-bottom:6px;">Your order number is:</p>
+    <div style="font-size:22px;font-weight:700;color:#f97316;font-family:monospace;margin-bottom:16px;" id="success-order-num"></div>
+    <div id="success-momo-info" style="display:none;background:#fff7ed;border:1.5px solid #f97316;border-radius:8px;padding:14px;margin-bottom:16px;font-size:13px;color:#555;">
+      <i class="fas fa-mobile-alt" style="color:#f97316;margin-right:6px"></i>
+      <strong>Mobile Money Payment Pending</strong><br>
+      <span style="font-size:12px;margin-top:6px;display:block">
+        Please send payment to: <strong id="success-momo-num"></strong> (<span id="success-momo-net"></span>)<br>
+        The admin will verify and confirm your order once payment is received.
+      </span>
+    </div>
+    <p style="color:#888;font-size:13px;margin-bottom:24px;">You will receive a confirmation email shortly. The admin will review and approve your order.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <a href="orders.html" style="background:#f97316;color:#fff;padding:12px 24px;border-radius:8px;font-weight:600;font-size:14px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;"><i class="fas fa-box"></i> View My Orders</a>
+      <a href="alibaba-style.html" style="background:#f4f6f8;color:#555;padding:12px 24px;border-radius:8px;font-weight:600;font-size:14px;text-decoration:none;border:1px solid #e0e0e0;display:inline-flex;align-items:center;gap:6px;"><i class="fas fa-shopping-bag"></i> Continue Shopping</a>
+    </div>
+  </div>
+
+  <div class="grid" id="checkout-grid">
+    <div>
+      <div class="card">
+        <h2><i class="fas fa-map-marker-alt" style="color:#f97316"></i> Shipping Address</h2>
+        <div class="form-row">
+          <div class="form-group"><label>Full Name *</label><input id="s-name" placeholder="John Doe"></div>
+          <div class="form-group"><label>Phone *</label><input id="s-phone" placeholder="+1 555 000 0000" type="tel"></div>
+        </div>
+        <div class="form-group"><label>Street Address *</label><input id="s-street" placeholder="123 Main Street"></div>
+        <div class="form-row">
+          <div class="form-group"><label>City *</label><input id="s-city" placeholder="New York"></div>
+          <div class="form-group"><label>State *</label><input id="s-state" placeholder="NY"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>ZIP Code</label><input id="s-zip" placeholder="10001 (optional)"></div>
+          <div class="form-group"><label>Country *</label><input id="s-country" placeholder="United States"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><i class="fas fa-credit-card" style="color:#f97316"></i> Payment Method</h2>
+        <label class="pay-option">
+          <input type="radio" name="pay" value="bank_transfer" checked onchange="toggleMomo()">
+          <i class="fas fa-university" style="color:#1a1a2e"></i>
+          <span>Bank Transfer</span>
+        </label>
+        <label class="pay-option">
+          <input type="radio" name="pay" value="mobile_money" onchange="toggleMomo()">
+          <i class="fas fa-mobile-alt" style="color:#f97316"></i>
+          <span>Mobile Money</span>
+          <small style="margin-left:auto;display:flex;gap:6px;align-items:center">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/MTN_Logo.svg/40px-MTN_Logo.svg.png" style="height:16px" alt="MTN">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Airtel_logo.svg/40px-Airtel_logo.svg.png" style="height:16px" alt="Airtel">
+          </small>
+        </label>
+        <!-- Mobile Money number input — shown only when mobile_money selected -->
+        <div id="momo-fields" style="display:none;margin-top:4px;padding:14px;background:#fff7ed;border:1.5px solid #f97316;border-radius:8px;">
+          <div class="form-group" style="margin-bottom:10px">
+            <label>Mobile Network</label>
+            <select id="momo-network" style="width:100%;padding:9px 12px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:14px;outline:none;font-family:inherit;">
+              <option value="mtn">MTN Mobile Money</option>
+              <option value="airtel">Airtel Money</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label>Mobile Money Number *</label>
+            <input type="tel" id="momo-number" placeholder="e.g. 0771234567" style="width:100%;padding:9px 12px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:14px;outline:none;font-family:inherit;">
+            <small style="color:#888;font-size:11px;margin-top:4px;display:block">Enter the number registered with your mobile money account</small>
+          </div>
+        </div>
+        <label class="pay-option">
+          <input type="radio" name="pay" value="paypal" onchange="togglePayFields()">
+          <i class="fab fa-paypal" style="color:#003087"></i>
+          <span>PayPal</span>
+          <small><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/60px-PayPal.svg.png" style="height:14px" alt="PayPal"></small>
+        </label>
+        <!-- PayPal fields -->
+        <div id="paypal-fields" style="display:none;margin-top:4px;padding:14px;background:#e8f0fe;border:1.5px solid #003087;border-radius:8px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(0,48,135,.15);">
+            <i class="fab fa-paypal" style="color:#003087;font-size:20px"></i>
+            <span style="font-size:12px;font-weight:700;color:#003087;text-transform:uppercase;letter-spacing:.5px">Pay with PayPal Card</span>
+          </div>
+          <div class="form-group">
+            <label>Cardholder Name *</label>
+            <input type="text" id="pp-name" placeholder="Name as on card">
+          </div>
+          <div class="form-group">
+            <label>Card Number *</label>
+            <div style="position:relative">
+              <input type="text" id="pp-number" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatPPNumber(this)" style="padding-right:44px">
+              <i id="pp-brand-icon" class="fab fa-paypal" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#003087;font-size:18px;pointer-events:none"></i>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="form-group" style="margin-bottom:0">
+              <label>Expiry Date *</label>
+              <input type="text" id="pp-expiry" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)">
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label>CVV *</label>
+              <div style="position:relative">
+                <input type="password" id="pp-cvv" placeholder="•••" maxlength="4">
+                <i class="fas fa-question-circle" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:#aaa;cursor:pointer;font-size:14px" title="3-digit security code on back of card"></i>
+              </div>
+            </div>
+          </div>
+          <small style="color:#003087;font-size:11px;margin-top:8px;display:block"><i class="fas fa-lock"></i> Secured by PayPal — your card details are protected</small>
+        </div>
+        <label class="pay-option">
+          <input type="radio" name="pay" value="credit_card" onchange="togglePayFields()">
+          <i class="fas fa-credit-card" style="color:#1a1a2e"></i>
+          <span>Credit / Debit Card</span>
+          <small style="display:flex;gap:4px;align-items:center">
+            <i class="fab fa-cc-visa" style="font-size:18px;color:#1a1a2e"></i>
+            <i class="fab fa-cc-mastercard" style="font-size:18px;color:#eb001b"></i>
+          </small>
+        </label>
+        <!-- Credit Card fields -->
+        <div id="card-fields" style="display:none;margin-top:4px;padding:14px;background:#f8f9fa;border:1.5px solid #1a1a2e;border-radius:8px;">
+          <div class="form-group">
+            <label>Cardholder Name *</label>
+            <input type="text" id="card-name" placeholder="Name as on card">
+          </div>
+          <div class="form-group">
+            <label>Card Number *</label>
+            <div style="position:relative">
+              <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCardNumber(this)" style="padding-right:44px">
+              <i id="card-brand-icon" class="fas fa-credit-card" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#aaa;font-size:18px;pointer-events:none"></i>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="form-group" style="margin-bottom:0">
+              <label>Expiry Date *</label>
+              <input type="text" id="card-expiry" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)">
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label>CVV *</label>
+              <div style="position:relative">
+                <input type="password" id="card-cvv" placeholder="•••" maxlength="4">
+                <i class="fas fa-question-circle" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:#aaa;cursor:pointer;font-size:14px" title="3-digit code on back of card (4 digits for Amex)"></i>
+              </div>
+            </div>
+          </div>
+          <small style="color:#888;font-size:11px;margin-top:8px;display:block"><i class="fas fa-lock" style="color:#22c55e"></i> Your card details are encrypted and secure</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-sticky">
+      <div class="card">
+        <h2><i class="fas fa-receipt" style="color:#f97316"></i> Order Summary</h2>
+        <div class="summary-items" id="summary-items"></div>
+        <div class="s-row"><span>Subtotal</span><span id="s-subtotal">$0.00</span></div>
+        <div class="s-row"><span>Shipping</span><span id="s-shipping">$10.00</span></div>
+        <div class="s-row"><span>Tax (8%)</span><span id="s-tax">$0.00</span></div>
+        <div class="s-total"><span>Total</span><span id="s-total">$0.00</span></div>
+        <button class="place-btn" id="place-btn" onclick="placeOrder()">
+          <i class="fas fa-check-circle"></i> Place Order
+        </button>
+        <p class="secure-note"><i class="fas fa-lock"></i> 256-bit SSL secured</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const cart = JSON.parse(localStorage.getItem('jobiCart') || '[]');
+
+function init() {
+  if (!cart.length) {
+    document.getElementById('empty-msg').style.display = 'block';
+    document.getElementById('checkout-grid').style.display = 'none';
+    return;
+  }
+  const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  if (user.name) document.getElementById('s-name').value = user.name;
+
+  const items = document.getElementById('summary-items');
+  items.innerHTML = cart.map(i => `
+    <div class="s-item">
+      <img src="${i.image}" alt="${i.title}">
+      <div><div class="s-item-title">${i.title.substring(0,40)}</div>
+      <div class="s-item-price">$${(i.price*i.qty).toFixed(2)} × ${i.qty}</div></div>
+    </div>`).join('');
+
+  const sub = cart.reduce((s,i) => s + i.price*i.qty, 0);
+  const ship = sub > 75 ? 0 : 10;
+  const tax = sub * 0.08;
+  document.getElementById('s-subtotal').textContent = `$${sub.toFixed(2)}`;
+  document.getElementById('s-shipping').textContent = ship === 0 ? 'FREE' : `$${ship.toFixed(2)}`;
+  document.getElementById('s-tax').textContent = `$${tax.toFixed(2)}`;
+  document.getElementById('s-total').textContent = `$${(sub+ship+tax).toFixed(2)}`;
+}
+
+function togglePayFields() {
+  var val = document.querySelector('input[name="pay"]:checked').value;
+  document.getElementById('momo-fields').style.display = val === 'mobile_money' ? 'block' : 'none';
+  document.getElementById('paypal-fields').style.display = val === 'paypal' ? 'block' : 'none';
+  document.getElementById('card-fields').style.display = val === 'credit_card' ? 'block' : 'none';
+}
+
+// Keep old name working (used by mobile money radio)
+function toggleMomo() { togglePayFields(); }
+
+function formatCardNumber(el) {
+  var v = el.value.replace(/\D/g, '').substring(0, 16);
+  el.value = v.replace(/(.{4})/g, '$1 ').trim();
+  var icon = document.getElementById('card-brand-icon');
+  if (/^4/.test(v)) { icon.className = 'fab fa-cc-visa'; icon.style.color = '#1a1a2e'; }
+  else if (/^5[1-5]/.test(v) || /^2[2-7]/.test(v)) { icon.className = 'fab fa-cc-mastercard'; icon.style.color = '#eb001b'; }
+  else if (/^3[47]/.test(v)) { icon.className = 'fab fa-cc-amex'; icon.style.color = '#007bc1'; }
+  else { icon.className = 'fas fa-credit-card'; icon.style.color = '#aaa'; }
+}
+
+function formatPPNumber(el) {
+  var v = el.value.replace(/\D/g, '').substring(0, 16);
+  el.value = v.replace(/(.{4})/g, '$1 ').trim();
+}
+
+function formatExpiry(el) {
+  var v = el.value.replace(/\D/g, '').substring(0, 4);
+  if (v.length >= 3) el.value = v.substring(0,2) + ' / ' + v.substring(2);
+  else el.value = v;
+}
+
+async function placeOrder() {
+  const name = document.getElementById('s-name').value.trim();
+  const phone = document.getElementById('s-phone').value.trim();
+  const street = document.getElementById('s-street').value.trim();
+  const city = document.getElementById('s-city').value.trim();
+  const state = document.getElementById('s-state').value.trim();
+  const zip = document.getElementById('s-zip').value.trim();
+  const country = document.getElementById('s-country').value.trim();
+  const payment = document.querySelector('input[name="pay"]:checked').value;
+
+  if (!name || !street || !city || !state || !country) {
+    alert('Please fill in all required shipping fields.');
+    return;
+  }
+
+  // Validate mobile money number
+  let momoNumber = '', momoNetwork = '';
+  if (payment === 'mobile_money') {
+    momoNumber = document.getElementById('momo-number').value.trim();
+    momoNetwork = document.getElementById('momo-network').value;
+    if (!momoNumber) { alert('Please enter your Mobile Money number.'); return; }
+  }
+
+  // Validate PayPal
+  let paypalName = '', paypalNumber = '', paypalExpiry = '', paypalCvv = '';
+  if (payment === 'paypal') {
+    paypalName = document.getElementById('pp-name').value.trim();
+    paypalNumber = document.getElementById('pp-number').value.replace(/\s/g, '');
+    paypalExpiry = document.getElementById('pp-expiry').value.trim();
+    paypalCvv = document.getElementById('pp-cvv').value.trim();
+    if (!paypalName) { alert('Please enter the cardholder name for PayPal.'); return; }
+    if (paypalNumber.length < 13 || paypalNumber.length > 16) { alert('Please enter a valid PayPal card number.'); return; }
+    if (!paypalExpiry || paypalExpiry.length < 4) { alert('Please enter the card expiry date.'); return; }
+    if (!paypalCvv || paypalCvv.length < 3) { alert('Please enter the CVV.'); return; }
+    var ppParts = paypalExpiry.replace(/\s/g,'').split('/');
+    var ppMonth = parseInt(ppParts[0]), ppYear = parseInt('20' + ppParts[1]);
+    var ppNow = new Date();
+    if (ppYear < ppNow.getFullYear() || (ppYear === ppNow.getFullYear() && ppMonth < ppNow.getMonth()+1)) {
+      alert('Your PayPal card has expired. Please use a different card.'); return;
+    }
+  }
+
+  // Validate Credit Card
+  let cardName = '', cardNumber = '', cardExpiry = '', cardCvv = '';
+  if (payment === 'credit_card') {
+    cardName = document.getElementById('card-name').value.trim();
+    cardNumber = document.getElementById('card-number').value.replace(/\s/g, '');
+    cardExpiry = document.getElementById('card-expiry').value.trim();
+    cardCvv = document.getElementById('card-cvv').value.trim();
+    if (!cardName) { alert('Please enter the cardholder name.'); return; }
+    if (cardNumber.length < 13 || cardNumber.length > 16) { alert('Please enter a valid card number.'); return; }
+    if (!cardExpiry || cardExpiry.length < 4) { alert('Please enter a valid expiry date.'); return; }
+    if (!cardCvv || cardCvv.length < 3) { alert('Please enter the CVV.'); return; }
+    // Check expiry not in past
+    var parts = cardExpiry.replace(/\s/g,'').split('/');
+    var expMonth = parseInt(parts[0]), expYear = parseInt('20' + parts[1]);
+    var now = new Date();
+    if (expYear < now.getFullYear() || (expYear === now.getFullYear() && expMonth < now.getMonth()+1)) {
+      alert('Your card has expired. Please use a different card.'); return;
+    }
+  }
+
+  const btn = document.getElementById('place-btn');
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Placing Order...';
+  btn.disabled = true;
+
+  const sub = cart.reduce((s,i) => s + i.price*i.qty, 0);
+  const ship = sub > 75 ? 0 : 10;
+  const tax = sub * 0.08;
+
+  const orderData = {
+    items: cart.map(i => ({ name: i.title, price: i.price, quantity: i.qty, image: i.image })),
+    shippingAddress: { name, phone, street, city, state, zipCode: zip, country },
+    paymentMethod: payment,
+    momoNumber: momoNumber || undefined,
+    momoNetwork: momoNetwork || undefined,
+    paypalEmail: undefined,
+    paypalCardName: paypalName || undefined,
+    paypalCardLast4: paypalNumber ? paypalNumber.slice(-4) : undefined,
+    paypalCardExpiry: paypalExpiry || undefined,
+    cardName: cardName || undefined,
+    cardLast4: cardNumber ? cardNumber.slice(-4) : undefined,
+    cardExpiry: cardExpiry || undefined,
+    subtotal: sub, shippingCost: ship, tax, total: sub + ship + tax
+  };
+
+  let orderId = null;
+  let orderNumber = null;
+  const token = localStorage.getItem('jobiToken');
+
+  if (!token) {
+    alert('Please log in to place an order.');
+    window.location.href = 'login.html';
+    return;
+  }
+
+  try {
+    const res = await fetch('' + (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?'http://localhost:3000/api':window.location.origin+'/api').Replace('(','').Replace(')','') + '/orders/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify(orderData)
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      btn.innerHTML = '<i class="fas fa-check-circle"></i> Place Order';
+      btn.disabled = false;
+      alert(data.message || 'Failed to place order. Please try again.');
+      return;
+    }
+    orderId = data.order?.id;
+    orderNumber = data.order?.orderNumber;
+  } catch(e) {
+    btn.innerHTML = '<i class="fas fa-check-circle"></i> Place Order';
+    btn.disabled = false;
+    alert('Could not connect to server. Make sure the server is running.');
+    return;
+  }
+
+  // Save to localStorage as fallback and clear cart
+  const saved = { ...orderData, id: orderId, orderNumber, orderStatus: 'pending', createdAt: new Date().toISOString() };
+  const orders = JSON.parse(localStorage.getItem('jobiOrders') || '[]');
+  orders.push(saved);
+  localStorage.setItem('jobiOrders', JSON.stringify(orders));
+  localStorage.removeItem('jobiCart');
+
+  // Show success screen
+  document.getElementById('checkout-grid').style.display = 'none';
+  document.querySelector('.page-title').style.display = 'none';
+  document.getElementById('success-screen').style.display = 'block';
+  document.getElementById('success-order-num').textContent = orderNumber || orderId || 'N/A';
+  if (payment === 'mobile_money') {
+    document.getElementById('success-momo-info').style.display = 'block';
+    document.getElementById('success-momo-num').textContent = momoNumber;
+    document.getElementById('success-momo-net').textContent = momoNetwork.toUpperCase();
+  }
+}
+
+init();
+</script>
+</body>
+</html>
