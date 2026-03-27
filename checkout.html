@@ -388,7 +388,7 @@ async function placeOrder() {
   }
 
   try {
-    const res = await fetch('' + (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?'http://localhost:3000/api':window.location.origin+'/api').Replace('(','').Replace(')','') + '/orders/create', {
+    const res = await fetch((window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?'http://localhost:3000/api':window.location.origin+'/api') + '/orders/create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify(orderData)

@@ -279,7 +279,7 @@ async function doLogin() {
   var btn = document.getElementById('login-btn');
   btn.textContent = 'LOGGING IN...'; btn.disabled = true;
   try {
-    var res = await fetch('' + (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?'http://localhost:3000/api':window.location.origin+'/api').Replace('(','').Replace(')','') + '/auth/login', {
+    var res = await fetch((window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?'http://localhost:3000/api':window.location.origin+'/api') + '/auth/login', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ email, password: pass })
     });
@@ -308,7 +308,7 @@ async function doRegister() {
   var btn = document.getElementById('register-btn');
   btn.textContent = 'CREATING...'; btn.disabled = true;
   try {
-    var res = await fetch('' + (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?'http://localhost:3000/api':window.location.origin+'/api').Replace('(','').Replace(')','') + '/auth/register', {
+    var res = await fetch((window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?'http://localhost:3000/api':window.location.origin+'/api') + '/auth/register', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ name, email, password: pass })
     });
