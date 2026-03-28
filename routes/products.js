@@ -10,7 +10,19 @@ router.get('/', async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 20;
         const offset = (page - 1) * limit;
-        const where = { isActive: true };
+
+        // Admin requests (with valid admin token) can see all products
+        let isAdmin = false;
+        try {
+            const jwt = require('jsonwebtoken');
+            const authHeader = req.headers.authorization;
+            if (authHeader) {
+                const decoded = jwt.verify(authHeader.split(' ')[1], process.env.JWT_SECRET);
+                if (decoded.role === 'admin') isAdmin = true;
+            }
+        } catch(e) { /* not admin */ }
+
+        const where = isAdmin ? {} : { isActive: true };
 
         if (req.query.category) where.category = req.query.category;
         if (req.query.featured === 'true') where.featured = true;
