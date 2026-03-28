@@ -682,42 +682,52 @@ function printReceipt() {
 }
 
 // ===== PRODUCTS =====
-function renderProducts() {
+async function renderProducts() {
+  document.getElementById('main-content').innerHTML = '<div style="padding:40px;text-align:center;color:#aaa"><i class="fas fa-spinner fa-spin fa-2x"></i></div>';
+  try {
+    const res = await fetch(API + '/products?limit=500', { headers: { Authorization: 'Bearer ' + token } });
+    const data = await res.json();
+    allProducts = data.products || [];
+  } catch(e) { allProducts = []; }
   const filtered = allProducts.filter(p =>
     !productSearch || p.name.toLowerCase().includes(productSearch) || (p.category||'').toLowerCase().includes(productSearch));
   const total = filtered.length;
   const pages = Math.ceil(total / PAGE_SIZE) || 1;
   productPage = Math.min(productPage, pages);
   const slice = filtered.slice((productPage-1)*PAGE_SIZE, productPage*PAGE_SIZE);
-  document.getElementById('main-content').innerHTML = `
-    <div class="section">
-      <div class="section-head">
-        <h2>Products (${total})</h2>
-        <div class="head-actions">
-          <input class="search-input" placeholder="Search products..." value="${productSearch}" oninput="productSearch=this.value.toLowerCase();productPage=1;renderProducts()">
-          <button class="btn btn-primary" onclick="openProductModal()"><i class="fas fa-plus"></i> Add Product</button>
-          <button class="btn btn-secondary" onclick="init()"><i class="fas fa-sync"></i></button>
-        </div>
-      </div>
-      <div class="table-wrap"><table>
-        <thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Featured</th><th>Actions</th></tr></thead>
-        <tbody>${slice.map(p=>`
-          <tr>
-            <td><img src="${p.images?.[0]?.url||'https://via.placeholder.com/44'}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
-            <td><strong>${p.name}</strong></td>
-            <td><span class="badge badge-customer">${p.category}</span></td>
-            <td style="font-weight:600;color:#f97316">$${(parseFloat(p.price)||0).toFixed(2)}</td>
-            <td>${(p.sizes||[]).reduce((t,s)=>t+(s.stock||0),0)}</td>
-            <td>${p.featured?'⭐ Yes':'—'}</td>
-            <td style="white-space:nowrap">
-              <button class="btn btn-secondary" onclick="openEditProduct('${p.id}')"><i class="fas fa-edit"></i></button>
-              <button class="btn btn-danger" onclick="deleteProduct('${p.id}','${p.name.replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i></button>
-            </td>
-          </tr>`).join('') || '<tr class="empty-row"><td colspan="7">No products found</td></tr>'}
-        </tbody>
-      </table></div>
-      ${paginator(productPage, pages, 'productPage', 'renderProducts')}
-    </div>`;
+  const rows = slice.map(p => {
+    const imgUrl = (p.images && p.images[0] && p.images[0].url) ? p.images[0].url : 'https://via.placeholder.com/44';
+    const stock = (p.sizes||[]).reduce((t,s)=>t+(s.stock||0),0);
+    const featured = p.featured ? '&#11088; Yes' : '&mdash;';
+    const safeName = p.name.replace(/'/g, "\\'");
+    return '<tr>' +
+      '<td><img src="' + imgUrl + '" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>' +
+      '<td><strong>' + p.name + '</strong></td>' +
+      '<td><span class="badge badge-customer">' + p.category + '</span></td>' +
+      '<td style="font-weight:600;color:#f97316">' + (parseFloat(p.price)||0).toFixed(2) + '</td>' +
+      '<td>' + stock + '</td>' +
+      '<td>' + featured + '</td>' +
+      '<td style="white-space:nowrap">' +
+        '<button class="btn btn-secondary" onclick="openEditProduct(\'' + p.id + '\')"><i class="fas fa-edit"></i></button> ' +
+        '<button class="btn btn-danger" onclick="deleteProduct(\'' + p.id + '\',\'' + safeName + '\')"><i class="fas fa-trash"></i></button>' +
+      '</td>' +
+      '</tr>';
+  }).join('') || '<tr class="empty-row"><td colspan="7">No products found</td></tr>';
+  document.getElementById('main-content').innerHTML =
+    '<div class="section">' +
+    '<div class="section-head">' +
+    '<h2>Products (' + total + ')</h2>' +
+    '<div class="head-actions">' +
+    '<input class="search-input" placeholder="Search products..." value="' + productSearch + '" oninput="productSearch=this.value.toLowerCase();productPage=1;renderProducts()">' +
+    '<button class="btn btn-primary" onclick="openProductModal()"><i class="fas fa-plus"></i> Add Product</button>' +
+    '<button class="btn btn-secondary" onclick="renderProducts()"><i class="fas fa-sync"></i></button>' +
+    '</div></div>' +
+    '<div class="table-wrap"><table>' +
+    '<thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Featured</th><th>Actions</th></tr></thead>' +
+    '<tbody>' + rows + '</tbody>' +
+    '</table></div>' +
+    paginator(productPage, pages, 'productPage', 'renderProducts') +
+    '</div>';
 }
 
 function openProductModal(product = null) {
