@@ -87,16 +87,16 @@ function setAvatarDisplay(src) {
 function handleAvatarUpload(input) {
     const file = input.files[0];
     if (!file) return;
-    if (file.size > 2 * 1024 * 1024) {
-        showNotification('Image too large. Max 2MB.', 'error'); return;
-    }
     const reader = new FileReader();
     reader.onload = async function(e) {
         const base64 = e.target.result;
         setAvatarDisplay(base64);
         // Save to server
         try {
-            const res = await fetch('http://localhost:3000/api/users/profile', {
+            const apiBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+                ? 'http://localhost:3000/api'
+                : window.location.origin + '/api';
+            const res = await fetch(apiBase + '/users/profile', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() },
                 body: JSON.stringify({
