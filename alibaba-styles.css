@@ -82,8 +82,8 @@ button{cursor:pointer;font-family:inherit;}
 .inquiry-btn:hover{background:#f97316;color:#fff;}
 
 /* BOTTOM SEARCH */
-.bottom-search{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e8e8e8;padding:12px 20px;box-shadow:0 -2px 12px rgba(0,0,0,.08);z-index:999;}
-.search-input-container{max-width:800px;margin:0 auto;display:flex;align-items:center;gap:10px;background:#f4f6f8;border-radius:28px;padding:8px 16px;border:1.5px solid #e0e0e0;transition:border .2s;}
+.bottom-search{position:fixed;bottom:0;left:0;right:0;width:100%;background:#fff;border-top:1px solid #e8e8e8;padding:12px 20px;box-shadow:0 -2px 12px rgba(0,0,0,.08);z-index:999;box-sizing:border-box;}
+.search-input-container{max-width:800px;width:100%;margin:0 auto;display:flex;align-items:center;gap:10px;background:#f4f6f8;border-radius:28px;padding:8px 16px;border:1.5px solid #e0e0e0;transition:border .2s;box-sizing:border-box;overflow:hidden;}
 .search-input-container:focus-within{border-color:#f97316;}
 .search-input{flex:1;border:none;background:none;outline:none;font-size:14px;color:#333;}
 .search-input::placeholder{color:#aaa;}
@@ -159,12 +159,36 @@ button{cursor:pointer;font-family:inherit;}
   .main-content{padding:16px 12px 90px;}
   .cart-panel{width:100%;}
   .hero-banner h1{font-size:20px;}
+  .bottom-search{padding:8px 12px;}
+  .search-input-container{padding:6px 12px;gap:6px;}
+  .search-input{font-size:13px;}
+  .fast-btn{padding:4px 8px;font-size:11px;}
 }
 @media(max-width:480px){
   .products-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
   .product-info{padding:8px;}
   .product-actions{padding:0 8px 8px;}
   .logo-text{font-size:17px;}
+  .bottom-search{padding:6px 8px;}
+  .search-input-container{padding:5px 10px;gap:4px;border-radius:22px;}
+  .search-input{font-size:12px;}
+  .fast-btn{display:none;}
+  .send-btn{width:30px;height:30px;font-size:13px;}
+  .attach-btn{font-size:14px;padding:2px;}
+  .hero-banner{padding:20px 12px;}
+  .hero-banner h1{font-size:18px;}
+  .hero-banner p{font-size:13px;}
+  .hero-cats{gap:6px;}
+  .hero-cat{padding:5px 12px;font-size:12px;}
+  .header-container{padding:0 12px;gap:10px;}
+  .login-header-btn span{display:none;}
+  .login-header-btn{padding:7px 10px;}
+  .section-title{font-size:15px;}
+  .product-title{font-size:12px;}
+  .product-price{font-size:15px;}
+  .add-to-cart-btn{font-size:12px;padding:8px;}
+  .inquiry-btn{font-size:12px;padding:7px;}
+  .notification{right:8px;left:8px;min-width:unset;}
 }
 
 /* ACCOUNT PANEL */
