@@ -123,20 +123,22 @@
   </div>
 
   <div class="bottom-search">
-    <div class="search-input-container" id="search-container">
-      <!-- Image preview chip (shown after attaching) -->
-      <div id="attach-preview" style="display:none;align-items:center;gap:6px;background:#fff7ed;border:1px solid #f97316;border-radius:16px;padding:3px 10px 3px 6px;font-size:12px;color:#f97316;flex-shrink:0;">
-        <img id="attach-thumb" src="" style="width:22px;height:22px;object-fit:cover;border-radius:4px;">
-        <span id="attach-name" style="max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
-        <button onclick="clearAttachment()" style="background:none;border:none;color:#f97316;cursor:pointer;font-size:13px;padding:0;line-height:1;">&times;</button>
+    <div class="bottom-search-inner">
+      <div class="search-input-container" id="search-container">
+        <!-- Image preview chip (shown after attaching) -->
+        <div id="attach-preview" style="display:none;align-items:center;gap:4px;background:#fff7ed;border:1px solid #f97316;border-radius:14px;padding:2px 8px 2px 4px;font-size:11px;color:#f97316;flex-shrink:0;max-width:100px;">
+          <img id="attach-thumb" src="" style="width:18px;height:18px;object-fit:cover;border-radius:3px;">
+          <span id="attach-name" style="max-width:50px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+          <button onclick="clearAttachment()" style="background:none;border:none;color:#f97316;cursor:pointer;font-size:12px;padding:0;line-height:1;">&times;</button>
+        </div>
+        <input type="text" placeholder="Describe what you're looking for..." class="search-input" id="bottom-search-input">
+        <!-- Hidden file input -->
+        <input type="file" id="attach-file-input" accept="image/*" style="display:none" onchange="handleAttachment(this)">
+        <button class="attach-btn" title="Attach image" onclick="document.getElementById('attach-file-input').click()"><i class="fas fa-paperclip"></i></button>
+        <button class="fast-btn" onclick="filterCategory('')"><i class="fas fa-bolt"></i> Quick</button>
       </div>
-      <input type="text" placeholder="Describe what you're looking for..." class="search-input" id="bottom-search-input">
-      <!-- Hidden file input -->
-      <input type="file" id="attach-file-input" accept="image/*" style="display:none" onchange="handleAttachment(this)">
-      <button class="attach-btn" title="Attach image to search" onclick="document.getElementById('attach-file-input').click()"><i class="fas fa-paperclip"></i></button>
-      <button class="fast-btn" onclick="filterCategory('')"><i class="fas fa-bolt"></i> Quick</button>
       <button class="send-btn" onclick="doBottomSearch()" title="Search"><i class="fas fa-paper-plane"></i></button>
-    </div>
+    </div></div>
   </div>
 </main>
 
