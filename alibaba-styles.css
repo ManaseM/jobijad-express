@@ -5,9 +5,9 @@ button{cursor:pointer;font-family:inherit;}
 
 /* HEADER */
 .header{background:#1a1a2e;position:sticky;top:0;z-index:1000;box-shadow:0 2px 12px rgba(0,0,0,.3);}
-.header-logo-bar{position:absolute;top:0;left:0;z-index:1001;padding:4px 8px;}
-.header-container{display:flex;align-items:center;padding:0 20px;height:62px;max-width:1400px;margin:0 auto;gap:16px;}
-.header-left{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.header-container{display:flex;align-items:flex-start;padding:12px 16px;min-height:420px;max-width:1400px;margin:0 auto;gap:16px;}
+.header-logo-bar{display:none;}
+.header-left{display:flex;flex-direction:column;align-items:flex-start;gap:4px;flex-shrink:0;}
 .menu-icon{font-size:20px;color:#fff;padding:6px;border-radius:4px;transition:background .2s;border:none;background:none;}
 .menu-icon:hover{background:rgba(255,255,255,.12);}
 .logo-text{font-size:21px;font-weight:700;color:#fff;white-space:nowrap;}
@@ -209,30 +209,30 @@ button{cursor:pointer;font-family:inherit;}
 
 /* LOGO IMAGE */
 .logo-link{display:flex;align-items:center;text-decoration:none;transition:transform .25s ease;}
-.logo-link:hover{transform:scale(1.06);}
+.logo-link:hover{transform:scale(1.04);}
 .logo-img{
-  height:110px;
-  width:auto;
+  height:400px;
+  width:410px;
   object-fit:contain;
-  transition:filter .3s ease,transform .3s ease;
-  /* Black art preserved, white outline added via drop-shadow */
+  transition:filter .3s ease;
+  /* Black art with white outline */
   filter:
-    drop-shadow(-1px -1px 0 #fff)
-    drop-shadow(1px -1px 0 #fff)
-    drop-shadow(-1px 1px 0 #fff)
-    drop-shadow(1px 1px 0 #fff)
-    drop-shadow(0 0 3px rgba(255,255,255,.6));
+    drop-shadow(-2px -2px 0 #fff)
+    drop-shadow(2px -2px 0 #fff)
+    drop-shadow(-2px 2px 0 #fff)
+    drop-shadow(2px 2px 0 #fff)
+    drop-shadow(0 0 4px rgba(255,255,255,.5));
 }
 .logo-img:hover{
   filter:
-    drop-shadow(-1px -1px 0 #fff)
-    drop-shadow(1px -1px 0 #fff)
-    drop-shadow(-1px 1px 0 #fff)
-    drop-shadow(1px 1px 0 #fff)
-    drop-shadow(0 0 10px rgba(249,115,22,.8));
+    drop-shadow(-2px -2px 0 #fff)
+    drop-shadow(2px -2px 0 #fff)
+    drop-shadow(-2px 2px 0 #fff)
+    drop-shadow(2px 2px 0 #fff)
+    drop-shadow(0 0 12px rgba(249,115,22,.9));
 }
-@media(max-width:768px){.logo-img{height:90px;}}
-@media(max-width:480px){.logo-img{height:75px;}}
+@media(max-width:768px){.logo-img{height:260px;width:auto;}}
+@media(max-width:480px){.logo-img{height:180px;width:auto;}}
 
 /* ANIMATIONS */
 @keyframes fadeInUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
