@@ -218,7 +218,7 @@ button{cursor:pointer;font-family:inherit;}
   width:410px;
   object-fit:contain;
   transition:filter .3s ease;
-  filter:drop-shadow(0 2px 8px rgba(0,0,0,.4));
+  filter:drop-shadow(0 2px 8px rgba(0,0,0,.3));
 }
 .logo-img:hover{
   filter:drop-shadow(0 0 16px rgba(249,115,22,.8));
