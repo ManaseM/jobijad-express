@@ -213,21 +213,15 @@ button{cursor:pointer;font-family:inherit;}
 .logo-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;transition:transform .25s ease;}
 .logo-link:hover{transform:scale(1.03);}
 .hero-logo-link{display:block;margin:0 auto 16px;}
-.logo-img{height:400px;width:410px;object-fit:contain;transition:filter .3s ease;
-  filter:
-    drop-shadow(-2px -2px 0 #fff)
-    drop-shadow(2px -2px 0 #fff)
-    drop-shadow(-2px 2px 0 #fff)
-    drop-shadow(2px 2px 0 #fff)
-    drop-shadow(0 0 6px rgba(255,255,255,.4));
+.logo-img{
+  height:400px;
+  width:410px;
+  object-fit:contain;
+  transition:filter .3s ease;
+  filter:drop-shadow(0 2px 8px rgba(0,0,0,.4));
 }
 .logo-img:hover{
-  filter:
-    drop-shadow(-2px -2px 0 #fff)
-    drop-shadow(2px -2px 0 #fff)
-    drop-shadow(-2px 2px 0 #fff)
-    drop-shadow(2px 2px 0 #fff)
-    drop-shadow(0 0 14px rgba(249,115,22,.9));
+  filter:drop-shadow(0 0 16px rgba(249,115,22,.8));
 }
 @media(max-width:768px){.logo-img{height:280px;width:auto;}}
 @media(max-width:480px){.logo-img{height:200px;width:auto;}}
