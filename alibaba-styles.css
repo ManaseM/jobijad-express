@@ -3,10 +3,12 @@ body{font-family:'Roboto',-apple-system,sans-serif;background:#f4f6f8;color:#222
 a{text-decoration:none;color:inherit;}
 button{cursor:pointer;font-family:inherit;}
 
-/* HEADER */
+/* HEADER - compact sticky nav */
 .header{background:#1a1a2e;position:sticky;top:0;z-index:1000;box-shadow:0 2px 12px rgba(0,0,0,.3);}
-.header-container{display:flex;align-items:flex-start;padding:12px 16px;min-height:420px;max-width:1400px;margin:0 auto;gap:16px;}
 .header-logo-bar{display:none;}
+.header-container{display:flex;align-items:center;padding:0 20px;height:62px;max-width:1400px;margin:0 auto;gap:16px;}
+.header-left{display:flex;align-items:center;flex-shrink:0;}
+
 .header-left{display:flex;flex-direction:column;align-items:flex-start;gap:4px;flex-shrink:0;}
 .menu-icon{font-size:20px;color:#fff;padding:6px;border-radius:4px;transition:background .2s;border:none;background:none;}
 .menu-icon:hover{background:rgba(255,255,255,.12);}
@@ -45,7 +47,7 @@ button{cursor:pointer;font-family:inherit;}
 .sidebar-footer-btn:hover{background:#fff7ed;color:#f97316;}
 
 /* HERO BANNER */
-.hero-banner{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);padding:32px 20px;text-align:center;color:#fff;}
+.hero-banner{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);padding:40px 20px 32px;text-align:center;color:#fff;}
 .hero-banner h1{font-size:28px;font-weight:700;margin-bottom:8px;}
 .hero-banner h1 span{color:#f97316;}
 .hero-banner p{font-size:15px;color:rgba(255,255,255,.7);margin-bottom:20px;}
@@ -207,21 +209,17 @@ button{cursor:pointer;font-family:inherit;}
   #attach-preview{max-width:80px;}
 }
 
-/* LOGO IMAGE */
-.logo-link{display:flex;align-items:center;text-decoration:none;transition:transform .25s ease;}
-.logo-link:hover{transform:scale(1.04);}
-.logo-img{
-  height:400px;
-  width:410px;
-  object-fit:contain;
-  transition:filter .3s ease;
-  /* Black art with white outline */
+/* LOGO IMAGE - lives in hero banner, centered */
+.logo-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;transition:transform .25s ease;}
+.logo-link:hover{transform:scale(1.03);}
+.hero-logo-link{display:block;margin:0 auto 16px;}
+.logo-img{height:400px;width:410px;object-fit:contain;transition:filter .3s ease;
   filter:
     drop-shadow(-2px -2px 0 #fff)
     drop-shadow(2px -2px 0 #fff)
     drop-shadow(-2px 2px 0 #fff)
     drop-shadow(2px 2px 0 #fff)
-    drop-shadow(0 0 4px rgba(255,255,255,.5));
+    drop-shadow(0 0 6px rgba(255,255,255,.4));
 }
 .logo-img:hover{
   filter:
@@ -229,10 +227,10 @@ button{cursor:pointer;font-family:inherit;}
     drop-shadow(2px -2px 0 #fff)
     drop-shadow(-2px 2px 0 #fff)
     drop-shadow(2px 2px 0 #fff)
-    drop-shadow(0 0 12px rgba(249,115,22,.9));
+    drop-shadow(0 0 14px rgba(249,115,22,.9));
 }
-@media(max-width:768px){.logo-img{height:260px;width:auto;}}
-@media(max-width:480px){.logo-img{height:180px;width:auto;}}
+@media(max-width:768px){.logo-img{height:280px;width:auto;}}
+@media(max-width:480px){.logo-img{height:200px;width:auto;}}
 
 /* ANIMATIONS */
 @keyframes fadeInUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
