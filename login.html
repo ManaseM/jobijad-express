@@ -199,7 +199,9 @@ body::after{
 
 <div class="card">
   <div class="brand">
-    <div class="brand-icon"><i class="fas fa-shopping-bag"></i></div>
+    <div class="brand-icon" style="background:none;box-shadow:none;width:auto;height:auto;">
+      <img src="pics/logo_white.png" alt="Jobijad Express" style="height:120px;width:auto;object-fit:contain;filter:brightness(1.4) drop-shadow(0 0 6px #fff) drop-shadow(0 0 16px #fff) drop-shadow(0 0 35px rgba(255,255,255,.8));">
+    </div>
     <div class="brand-name">Jobijad <span>Express</span></div>
     <div class="brand-sub">Premium African Fashion</div>
   </div>
@@ -222,7 +224,18 @@ body::after{
       <input type="password" id="l-pass" placeholder="PASSWORD">
     </div>
     <button class="main-btn" id="login-btn" onclick="doLogin()">LOGIN</button>
-    <div class="forgot"><a>Forgot password?</a></div>
+    <div class="forgot"><a onclick="showForgotPassword()">Forgot password?</a></div>
+  </div>
+
+  <!-- Forgot Password form -->
+  <div id="form-forgot" style="display:none">
+    <p style="color:rgba(255,255,255,.6);font-size:13px;margin-bottom:14px;text-align:center;">Enter your email and we'll send a reset link.</p>
+    <div class="input-group">
+      <span class="ico"><i class="fas fa-envelope"></i></span>
+      <input type="email" id="fp-email" placeholder="EMAIL ADDRESS">
+    </div>
+    <button class="main-btn" id="fp-btn" onclick="doForgotPassword()">SEND RESET LINK</button>
+    <div class="forgot" style="text-align:center;margin-top:12px;"><a onclick="switchTab('login')"><i class="fas fa-arrow-left" style="margin-right:4px"></i>Back to Login</a></div>
   </div>
 
   <!-- Register form -->
@@ -257,12 +270,49 @@ body::after{
 function switchTab(t) {
   document.getElementById('form-login').style.display = t==='login' ? '' : 'none';
   document.getElementById('form-register').style.display = t==='register' ? '' : 'none';
+  document.getElementById('form-forgot').style.display = 'none';
   document.getElementById('tab-login').classList.toggle('active', t==='login');
   document.getElementById('tab-register').classList.toggle('active', t==='register');
   document.getElementById('bottom-link').innerHTML = t==='login'
     ? "Don't have an account? <a onclick=\"switchTab('register')\">Sign up free</a>"
     : "Already have an account? <a onclick=\"switchTab('login')\">Login</a>";
   hideError();
+}
+
+function showForgotPassword() {
+  document.getElementById('form-login').style.display = 'none';
+  document.getElementById('form-register').style.display = 'none';
+  document.getElementById('form-forgot').style.display = '';
+  document.getElementById('bottom-link').innerHTML = '';
+  hideError();
+}
+
+async function doForgotPassword() {
+  var email = document.getElementById('fp-email').value.trim();
+  hideError();
+  if (!email) { showError('Please enter your email address.'); return; }
+  var btn = document.getElementById('fp-btn');
+  btn.textContent = 'SENDING...'; btn.disabled = true;
+  try {
+    var res = await fetch('/api/auth/forgot-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    var data = await res.json();
+    btn.textContent = 'SEND RESET LINK'; btn.disabled = false;
+    if (res.ok) {
+      showError('✓ Reset link sent! Check your email inbox.');
+      document.getElementById('error-msg').style.background = 'rgba(34,197,94,.18)';
+      document.getElementById('error-msg').style.borderColor = 'rgba(34,197,94,.4)';
+      document.getElementById('error-msg').style.color = '#86efac';
+    } else {
+      showError(data.message || 'Could not send reset email. Try again.');
+    }
+  } catch(e) {
+    btn.textContent = 'SEND RESET LINK'; btn.disabled = false;
+    showError('Server error. Please try again.');
+  }
 }
 
 function showError(msg) {
