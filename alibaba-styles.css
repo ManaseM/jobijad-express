@@ -218,10 +218,10 @@ button{cursor:pointer;font-family:inherit;}
   width:410px;
   object-fit:contain;
   transition:filter .3s ease;
-  filter:drop-shadow(0 2px 8px rgba(0,0,0,.3));
+  filter:drop-shadow(0 0 18px rgba(249,115,22,.9)) drop-shadow(0 0 8px rgba(255,255,255,.6));
 }
 .logo-img:hover{
-  filter:drop-shadow(0 0 16px rgba(249,115,22,.8));
+  filter:drop-shadow(0 0 28px rgba(249,115,22,1)) drop-shadow(0 0 14px rgba(255,255,255,.9));
 }
 @media(max-width:768px){.logo-img{height:280px;width:auto;}}
 @media(max-width:480px){.logo-img{height:200px;width:auto;}}
