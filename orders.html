@@ -104,7 +104,7 @@ body{font-family:"Roboto",sans-serif;background:#f4f6f8;color:#222;min-height:10
 </div>
 
 <div id="receipt-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;">
-  <div style="background:#fff;border-radius:12px;padding:24px;width:90%;max-width:560px;max-height:90vh;overflow-y:auto;">
+  <div style="background:#fff;border-radius:12px;padding:16px;width:95%;max-width:560px;max-height:92vh;overflow-y:auto;overflow-x:hidden;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
       <h3 style="font-size:16px;font-weight:700;color:#1a1a2e;margin:0;">Order Receipt</h3>
       <div style="display:flex;gap:8px;">
@@ -219,6 +219,7 @@ function openReceipt(orderId) {
       // Header with orange accent bar
       html += '<div style="background:#1a1a2e;border-radius:10px 10px 0 0;padding:24px 28px;text-align:center;position:relative;">';
       html += '<div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#f97316,#fb923c,#f97316);border-radius:10px 10px 0 0;"></div>';
+      html += '<img src="' + window.location.origin + '/pics/logo.png" alt="Jobijad Express" style="height:70px;width:auto;object-fit:contain;filter:brightness(0) invert(1);display:block;margin:0 auto 8px;">';
       html += '<div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:1px;">JOBIJAD <span style="color:#f97316">EXPRESS</span></div>';
       html += '<div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:4px;letter-spacing:2px;text-transform:uppercase;">Premium African Fashion Marketplace</div>';
       html += '<div style="margin-top:10px;display:flex;justify-content:center;gap:16px;font-size:11px;color:rgba(255,255,255,.6);">';
@@ -269,7 +270,7 @@ function openReceipt(orderId) {
       html += '<div style="background:#f8f9fa;border-top:2px solid #f0f0f0;border-radius:0 0 10px 10px;padding:20px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">';
       html += '<div style="flex:1;min-width:160px;"><div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:6px;">Thank you for your order!</div>';
       html += '<div style="font-size:11px;color:#888;line-height:1.6;">For support, contact us at<br><span style="color:#f97316;">alitajudith2002@gmail.com</span><br>or WhatsApp: <span style="color:#f97316;">+46 762 593 231</span></div></div>';
-      html += '<div style="text-align:center;"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsAQMAAABDsxw2AAAABlBMVEX///8AAABVwtN+AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAB5klEQVRoge2auZHDMAxFsaPAIUtwKSqNKs2lqASFG2iMJS6Ss+PACWwFHxFMPkd/cFJE71llt+b/8KOcxPtNfp9E97jbgSVju4qxMN1/Gya+OJs5phSwfEykORa2k3LabVWxGi+qAfscJgHyKBIg7WQL1YBdEqPb0+Po5hkP2Oewnt/4SaveNqeqfC/TILAEjHmSxmt9YHEHLBmbTGNH8hU/Tb7XBuxrmGnaFGzWIksdbcwWHuICS8YmjTyy7ERjja3oa2QBS8QqR3HRUVEOud9G60XAroFJ+KzsI4zMMsxsHZo1Zh6AwDIx12ix2cSGFLKu2MV0B1gi1sVqxcUuHHPbKLYrwBIxvS3jnMeOaxYL2BUw0bRvwNaDIr/1SX+kQWBZmN2y13qe2+NZLGCpWLXZhGycp/FE4raVc7THwLKw3eOCe6TcxY/tylamxAXsAthqSxW2VZjUnXpoXPUQA5aMEflSha09tlof1X+zhhlYKjZMxbISzzEhep8M7BpYde3i9UrMNe3vWUTAkjHTK6Q5fEspYwtFfosABJaHRYDYRkv/5LdiPQ0C+xAWGsnLCLOlNXeAXQzj3ieLnRSe92/AMrHIb4pZcaHpIT52+MAysa6IHNrnEJLf+ltJ+d8SAPsa9p79ASB2qFDrJ7HGAAAAAElFTkSuQmCC" style="width:80px;height:80px;border:3px solid #1a1a2e;border-radius:8px;display:block;margin:0 auto 4px;" alt="QR"><div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:1px;">Scan to verify</div></div>';
+      html += '<div style="text-align:center;"><img src=\"https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=JOBIJAD-ORDER\" style=\"width:80px;height:80px;border:3px solid #1a1a2e;border-radius:8px;display:block;margin:0 auto 4px;\" alt=\"QR\"><div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:1px;">Scan to verify</div></div>';
       html += '</div>';
       html += '</div>';
 
@@ -282,8 +283,8 @@ function openReceipt(orderId) {
 function printOrderReceipt() {
   var content = document.getElementById('receipt-print');
   if (!content) return;
-  var w = window.open('', '_blank', 'width=640,height=820');
-  w.document.write('<!DOCTYPE html><html><head><title>Receipt</title><style>*{box-sizing:border-box;}body{font-family:Arial,sans-serif;padding:32px;color:#222;max-width:580px;margin:0 auto;}table{width:100%;border-collapse:collapse;}@media print{.no-print{display:none!important;}}</style></head><body>');
+  var w = window.open('', '_blank');
+  w.document.write('<!DOCTYPE html><html><head><title>Receipt — Jobijad Express</title><meta name="viewport" content="width=device-width,initial-scale=1"><link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Roboto,Arial,sans-serif;background:#fff;color:#222;width:100%;max-width:600px;margin:0 auto;padding:16px;}table{width:100%;border-collapse:collapse;}img{max-width:100%;height:auto;}@media(max-width:480px){body{padding:10px;}th,td{padding:6px 8px!important;font-size:11px!important;}.receipt-header{padding:12px!important;}.totals-section{padding:10px 12px!important;}.footer-section{padding:12px!important;flex-direction:column!important;align-items:center!important;text-align:center!important;}}@media print{.no-print{display:none!important;}body{padding:0;}}</style></head><body>');
   w.document.write(content.innerHTML);
   w.document.write('<div class="no-print" style="margin-top:20px;display:flex;gap:10px"><button onclick="window.print()" style="padding:10px 20px;background:#f97316;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600">Print</button><button onclick="window.close()" style="padding:10px 20px;background:#f4f6f8;color:#555;border:1px solid #e0e0e0;border-radius:6px;cursor:pointer;font-size:14px">Close</button></div></body></html>');
   w.document.close(); w.focus();
