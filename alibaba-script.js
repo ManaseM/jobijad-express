@@ -464,7 +464,7 @@ function submitInquiry(title) {
 // ===== PRODUCTS FROM DB =====
 async function loadProductsFromDB() {
     try {
-        const data = await apiCall('/products?limit=20');
+        const data = await apiCall('/products?limit=100');
         if (data.products && data.products.length > 0) renderDBProducts(data.products);
     } catch (e) { /* keep static products */ }
 }

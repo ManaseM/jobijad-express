@@ -302,7 +302,7 @@ async function doForgotPassword() {
     var data = await res.json();
     btn.textContent = 'SEND RESET LINK'; btn.disabled = false;
     if (res.ok) {
-      showError('✓ Reset link sent! Check your email inbox.');
+      showError('✓ New password sent to your email! Check your inbox.');
       document.getElementById('error-msg').style.background = 'rgba(34,197,94,.18)';
       document.getElementById('error-msg').style.borderColor = 'rgba(34,197,94,.4)';
       document.getElementById('error-msg').style.color = '#86efac';
