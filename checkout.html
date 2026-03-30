@@ -108,10 +108,28 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;}
       <div class="card">
         <h2><i class="fas fa-credit-card" style="color:#f97316"></i> Payment Method</h2>
         <label class="pay-option">
-          <input type="radio" name="pay" value="bank_transfer" checked onchange="toggleMomo()">
+          <input type="radio" name="pay" value="bank_transfer" checked onchange="togglePayFields()">
           <i class="fas fa-university" style="color:#1a1a2e"></i>
           <span>Bank Transfer</span>
         </label>
+        <!-- Bank Transfer details — shown by default -->
+        <div id="bank-fields" style="margin-top:4px;padding:14px;background:#f0f4ff;border:1.5px solid #1a1a2e;border-radius:8px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(26,26,46,.15);">
+            <i class="fas fa-university" style="color:#1a1a2e;font-size:18px"></i>
+            <span style="font-size:12px;font-weight:700;color:#1a1a2e;text-transform:uppercase;letter-spacing:.5px">Bank Transfer Details</span>
+          </div>
+          <div style="font-size:13px;color:#333;line-height:2;">
+            <div><strong>Bank Name:</strong> Stanbic Bank Uganda</div>
+            <div><strong>Account Name:</strong> Jobijad Express Ltd</div>
+            <div><strong>Account Number:</strong> 9030012345678</div>
+            <div><strong>Branch:</strong> Kampala Main Branch</div>
+            <div><strong>Swift Code:</strong> SBICUGKX</div>
+          </div>
+          <div style="margin-top:10px;background:#fff;border-radius:6px;padding:10px;font-size:12px;color:#666;border:1px solid #e0e0e0;">
+            <i class="fas fa-info-circle" style="color:#f97316;margin-right:5px"></i>
+            After placing your order, transfer the exact total amount and use your <strong>Order Number</strong> as the payment reference. Send proof of payment to <strong>alitajudith2002@gmail.com</strong>
+          </div>
+        </div>
         <label class="pay-option">
           <input type="radio" name="pay" value="mobile_money" onchange="toggleMomo()">
           <i class="fas fa-mobile-alt" style="color:#f97316"></i>
@@ -262,6 +280,7 @@ function init() {
 
 function togglePayFields() {
   var val = document.querySelector('input[name="pay"]:checked').value;
+  document.getElementById('bank-fields').style.display = val === 'bank_transfer' ? 'block' : 'none';
   document.getElementById('momo-fields').style.display = val === 'mobile_money' ? 'block' : 'none';
   document.getElementById('paypal-fields').style.display = val === 'paypal' ? 'block' : 'none';
   document.getElementById('card-fields').style.display = val === 'credit_card' ? 'block' : 'none';
