@@ -233,6 +233,41 @@ tr:hover td{background:#fafafa;}
 
 <script>
 const API = (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?(window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?'http://localhost:3000/api':window.location.origin+'/api'):window.location.origin+'/api');
+
+// ===== ADMIN SECURITY =====
+// Session timeout: auto-logout after 30 minutes of inactivity
+let sessionTimer;
+function resetSessionTimer() {
+  clearTimeout(sessionTimer);
+  sessionTimer = setTimeout(() => {
+    alert('Session expired due to inactivity. Please log in again.');
+    logout();
+  }, 30 * 60 * 1000);
+}
+['click','keypress','mousemove','touchstart'].forEach(e => document.addEventListener(e, resetSessionTimer, { passive: true }));
+resetSessionTimer();
+
+// Prevent right-click context menu on admin page
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+// Detect devtools open (basic deterrent)
+(function() {
+  const threshold = 160;
+  setInterval(() => {
+    if (window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold) {
+      // DevTools likely open — just log, don't block (would break legitimate debugging)
+      console.warn('[SECURITY] Developer tools detected');
+    }
+  }, 3000);
+})();
+
+// Prevent page caching (so back button doesn't show admin after logout)
+window.addEventListener('pageshow', function(e) {
+  if (e.persisted) { window.location.reload(); }
+});
+history.pushState(null, null, location.href);
+window.addEventListener('popstate', function() { history.pushState(null, null, location.href); });
+
 let token = localStorage.getItem('jobiToken');
 let allUsers = [], allOrders = [], allProducts = [];
 let currentTab = 'overview';
