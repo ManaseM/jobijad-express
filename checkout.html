@@ -1,9 +1,9 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Checkout â€” Jobijad Express</title>
+<title>Checkout — Jobijad Express</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -112,7 +112,7 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;}
           <i class="fas fa-university" style="color:#1a1a2e"></i>
           <span>Bank Transfer</span>
         </label>
-        <!-- Bank Transfer details â€” shown by default -->
+        <!-- Bank Transfer details — shown by default -->
         <div id="bank-fields" style="margin-top:4px;padding:14px;background:#f0f4ff;border:1.5px solid #1a1a2e;border-radius:8px;">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(26,26,46,.15);">
             <i class="fas fa-university" style="color:#1a1a2e;font-size:18px"></i>
@@ -138,7 +138,7 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;}
             <img src="pics/airmtn.jpg" style="height:28px;border-radius:4px;object-fit:contain;" alt="MTN & Airtel">
           </small>
         </label>
-        <!-- Mobile Money number input â€” shown only when mobile_money selected -->
+        <!-- Mobile Money number input — shown only when mobile_money selected -->
         <div id="momo-fields" style="display:none;margin-top:4px;padding:14px;background:#fff7ed;border:1.5px solid #f97316;border-radius:8px;">
           <div class="form-group" style="margin-bottom:10px">
             <label>Mobile Network</label>
@@ -184,12 +184,12 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;}
             <div class="form-group" style="margin-bottom:0">
               <label>CVV *</label>
               <div style="position:relative">
-                <input type="password" id="pp-cvv" placeholder="â€¢â€¢â€¢" maxlength="4">
+                <input type="password" id="pp-cvv" placeholder="•••" maxlength="4">
                 <i class="fas fa-question-circle" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:#aaa;cursor:pointer;font-size:14px" title="3-digit security code on back of card"></i>
               </div>
             </div>
           </div>
-          <small style="color:#003087;font-size:11px;margin-top:8px;display:block"><i class="fas fa-lock"></i> Secured by PayPal â€” your card details are protected</small>
+          <small style="color:#003087;font-size:11px;margin-top:8px;display:block"><i class="fas fa-lock"></i> Secured by PayPal — your card details are protected</small>
         </div>
         <label class="pay-option">
           <input type="radio" name="pay" value="credit_card" onchange="togglePayFields()">
@@ -221,12 +221,32 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;}
             <div class="form-group" style="margin-bottom:0">
               <label>CVV *</label>
               <div style="position:relative">
-                <input type="password" id="card-cvv" placeholder="â€¢â€¢â€¢" maxlength="4">
+                <input type="password" id="card-cvv" placeholder="•••" maxlength="4">
                 <i class="fas fa-question-circle" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:#aaa;cursor:pointer;font-size:14px" title="3-digit code on back of card (4 digits for Amex)"></i>
               </div>
             </div>
           </div>
           <small style="color:#888;font-size:11px;margin-top:8px;display:block"><i class="fas fa-lock" style="color:#22c55e"></i> Your card details are encrypted and secure</small>
+        </div>
+
+        <!-- Cash on Delivery -->
+        <div style="margin-top:6px;font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.5px;padding:8px 0 4px;">Payment on Delivery</div>
+        <label class="pay-option">
+          <input type="radio" name="pay" value="cash_on_delivery" onchange="togglePayFields()">
+          <i class="fas fa-hand-holding-usd" style="color:#22c55e"></i>
+          <div style="flex:1;">
+            <span style="display:block;font-size:14px;font-weight:500;">Pay on Delivery</span>
+            <small style="color:#888;font-size:12px;">Pay with Mobile Money or Bank Cards on delivery</small>
+          </div>
+          <i class="fas fa-info-circle" style="color:#aaa;font-size:16px;" title="Pay when your order arrives"></i>
+        </label>
+        <div id="cod-fields" style="display:none;margin-top:4px;padding:14px;background:#f0fdf4;border:1.5px solid #22c55e;border-radius:8px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <i class="fas fa-check-circle" style="color:#22c55e;font-size:18px;"></i>
+            <span style="font-size:13px;font-weight:600;color:#15803d;">Pay on Delivery selected</span>
+          </div>
+          <p style="font-size:12px;color:#555;line-height:1.6;">Your order will be delivered first. You pay when it arrives using Mobile Money or Bank Card. Available for select locations only.</p>
+          <p style="font-size:11px;color:#888;margin-top:6px;"><i class="fas fa-info-circle" style="color:#f97316;margin-right:4px;"></i>A small verification fee may apply. Our team will contact you to confirm delivery details.</p>
         </div>
       </div>
     </div>
@@ -250,6 +270,15 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;}
 
 <script>
 const cart = JSON.parse(localStorage.getItem('jobiCart') || '[]');
+const API_URL = (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?'http://localhost:3000/api':window.location.origin+'/api');
+
+function showPaymentAuth(msg) {
+  document.getElementById('pay-auth-screen').style.display = 'flex';
+  document.getElementById('pay-auth-msg').textContent = msg || 'Validating your authentication...';
+}
+function hidePaymentAuth() {
+  document.getElementById('pay-auth-screen').style.display = 'none';
+}
 
 function init() {
   if (!cart.length) {
@@ -265,7 +294,7 @@ function init() {
     <div class="s-item">
       <img src="${i.image}" alt="${i.title}">
       <div><div class="s-item-title">${i.title.substring(0,40)}</div>
-      <div class="s-item-price">$${(i.price*i.qty).toFixed(2)} Ã— ${i.qty}</div></div>
+      <div class="s-item-price">$${(i.price*i.qty).toFixed(2)} × ${i.qty}</div></div>
     </div>`).join('');
 
   const sub = cart.reduce((s,i) => s + i.price*i.qty, 0);
@@ -406,7 +435,7 @@ async function placeOrder() {
   }
 
   try {
-    const res = await fetch((window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?'http://localhost:3000/api':window.location.origin+'/api') + '/orders/create', {
+    const res = await fetch(API_URL + '/orders/create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify(orderData)
@@ -427,6 +456,7 @@ async function placeOrder() {
     return;
   }
 
+  hidePaymentAuth();
   // Save to localStorage as fallback and clear cart
   const saved = { ...orderData, id: orderId, orderNumber, orderStatus: 'pending', createdAt: new Date().toISOString() };
   const orders = JSON.parse(localStorage.getItem('jobiOrders') || '[]');
@@ -448,5 +478,24 @@ async function placeOrder() {
 
 init();
 </script>
-</body>
+
+<!-- Payment Authentication Screen -->
+<div id="pay-auth-screen" style="display:none;position:fixed;inset:0;background:#fff;z-index:9999;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;">
+  <div style="width:80px;height:80px;background:#f97316;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:24px;box-shadow:0 8px 24px rgba(249,115,22,.4);">
+    <i class="fas fa-star" style="color:#fff;font-size:36px;"></i>
+  </div>
+  <div style="width:260px;height:4px;background:#f0f0f0;border-radius:2px;margin-bottom:24px;overflow:hidden;position:relative;">
+    <div style="position:absolute;left:0;top:0;height:100%;width:60%;background:#f97316;border-radius:2px;animation:authBar 2s ease-in-out infinite;"></div>
+  </div>
+  <h2 style="font-size:22px;font-weight:700;color:#1a1a2e;margin-bottom:8px;">Authenticating</h2>
+  <p style="font-size:14px;color:#888;margin-bottom:40px;">Please wait while we verify your session.</p>
+  <div style="width:52px;height:52px;border:4px solid #f0f0f0;border-top:4px solid #f97316;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:20px;"></div>
+  <p id="pay-auth-msg" style="font-size:13px;color:#aaa;">Validating your authentication...</p>
+  <p style="font-size:12px;color:#ccc;margin-top:40px;">Jobijad Express will never ask for your password, PIN, CVV or full card details over the phone or via email.</p>
+  <p style="font-size:12px;color:#aaa;margin-top:6px;">Need help? <a href="https://wa.me/46762593231" target="_blank" style="color:#f97316;text-decoration:none;">Contact us</a></p>
+</div>
+<style>
+@keyframes authBar{0%{left:-60%;width:60%;}100%{left:100%;width:60%;}}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style></body>
 </html>

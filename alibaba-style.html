@@ -93,17 +93,44 @@
 
 <!-- Hero Banner -->
 <div class="hero-banner">
-  <a href="alibaba-style.html" class="logo-link hero-logo-link">
-    <img src="pics/logo_white.png" alt="Jobijad Express" class="logo-img hero-logo-img">
+  <div class="hero-inner">
+    <a href="alibaba-style.html" class="logo-link hero-logo-link">
+      <img src="pics/logo_white.png" alt="Jobijad Express" class="logo-img hero-logo-img">
+    </a>
+    <div class="hero-text">
+      <h1>Discover <span>African Fashion</span> Worldwide</h1>
+      <p>Premium Kitenge & more — shipped globally</p>
+      <div class="hero-cats">
+        <button class="hero-cat" onclick="filterCategory('women')"><i class="fas fa-female"></i> Women</button>
+        <button class="hero-cat" onclick="filterCategory('men')"><i class="fas fa-male"></i> Men</button>
+        <button class="hero-cat" onclick="filterCategory('children')"><i class="fas fa-child"></i> Children</button>
+        <button class="hero-cat" onclick="filterCategory('accessories')"><i class="fas fa-gem"></i> Accessories</button>
+        <button class="hero-cat" onclick="filterCategory('')"><i class="fas fa-th-large"></i> All</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Trust Bar -->
+<div class="trust-bar">
+  <a href="https://wa.me/46762593231" target="_blank" class="trust-item">
+    <i class="fas fa-headset"></i>
+    <div><span class="trust-label">Need Help?</span><span class="trust-sub">Contact us</span></div>
   </a>
-  <h1>Discover <span>African Fashion</span> Worldwide</h1>
-  <p>Premium Kitenge & more — shipped globally</p>
-  <div class="hero-cats">
-    <button class="hero-cat" onclick="filterCategory('women')"><i class="fas fa-female"></i> Women's Fashion</button>
-    <button class="hero-cat" onclick="filterCategory('men')"><i class="fas fa-male"></i> Men's Fashion</button>
-    <button class="hero-cat" onclick="filterCategory('children')"><i class="fas fa-child"></i> Children's Fashion</button>
-    <button class="hero-cat" onclick="filterCategory('accessories')"><i class="fas fa-gem"></i> Accessories</button>
-    <button class="hero-cat" onclick="filterCategory('')"><i class="fas fa-th-large"></i> All Products</button>
+  <div class="trust-divider"></div>
+  <div class="trust-item" onclick="showPolicy('returns')">
+    <i class="fas fa-undo-alt"></i>
+    <div><span class="trust-label">Easy Returns</span><span class="trust-sub">14-day policy</span></div>
+  </div>
+  <div class="trust-divider"></div>
+  <div class="trust-item">
+    <i class="fas fa-shield-alt"></i>
+    <div><span class="trust-label">Secure Payments</span><span class="trust-sub">256-bit SSL</span></div>
+  </div>
+  <div class="trust-divider"></div>
+  <div class="trust-item">
+    <i class="fas fa-truck"></i>
+    <div><span class="trust-label">Free Shipping</span><span class="trust-sub">Orders over $75</span></div>
   </div>
 </div>
 

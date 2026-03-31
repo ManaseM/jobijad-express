@@ -7,7 +7,7 @@ const Order = sequelize.define('Order', {
     orderNumber: { type: DataTypes.STRING, unique: true },
     items: { type: DataTypes.JSONB, defaultValue: [] },
     shippingAddress: { type: DataTypes.JSONB, allowNull: false },
-    paymentMethod: { type: DataTypes.ENUM('credit_card', 'paypal', 'bank_transfer', 'mobile_money'), allowNull: false },
+    paymentMethod: { type: DataTypes.ENUM('credit_card', 'paypal', 'bank_transfer', 'mobile_money', 'cash_on_delivery'), allowNull: false },
     paymentStatus: { type: DataTypes.ENUM('pending', 'paid', 'failed', 'refunded'), defaultValue: 'pending' },
     momoNumber: { type: DataTypes.STRING },
     momoNetwork: { type: DataTypes.STRING },
