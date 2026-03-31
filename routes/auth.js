@@ -66,6 +66,17 @@ router.get('/me', auth, async (req, res) => {
     }
 });
 
+// Logout — clears any server-side session tracking
+router.post('/logout', auth, async (req, res) => {
+    try {
+        // Log the logout event
+        console.log(`[AUTH] User ${req.user.userId} logged out at ${new Date().toISOString()}`);
+        res.json({ message: 'Logged out successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 // Forgot password — generates new password and sends via email
 router.post('/forgot-password', async (req, res) => {
     try {
