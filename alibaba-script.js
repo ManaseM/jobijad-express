@@ -832,3 +832,44 @@ async function sendGiftMessage() {
         showNotification('Could not send message', 'error');
     }
 }
+
+// ===== SCROLL REVEAL (Intersection Observer) =====
+function initScrollReveal() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                observer.unobserve(e.target);
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.product-card').forEach(c => observer.observe(c));
+}
+
+// Re-run scroll reveal after products load
+const _origRenderDB = typeof renderDBProducts === 'function' ? renderDBProducts : null;
+if (_origRenderDB) {
+    window.renderDBProducts = function(products) {
+        _origRenderDB(products);
+        setTimeout(initScrollReveal, 50);
+    };
+}
+
+// ===== CART BADGE ANIMATION =====
+const _origUpdateBadge = typeof updateCartBadge === 'function' ? updateCartBadge : null;
+if (_origUpdateBadge) {
+    window.updateCartBadge = function() {
+        _origUpdateBadge();
+        const badge = document.getElementById('cart-badge');
+        const btn = document.getElementById('cart-toggle-btn');
+        if (badge) { badge.classList.remove('pop'); void badge.offsetWidth; badge.classList.add('pop'); }
+        if (btn) { btn.classList.remove('pulse'); void btn.offsetWidth; btn.classList.add('pulse'); }
+    };
+}
+
+// Init on page load
+document.addEventListener('DOMContentLoaded', () => {
+    initScrollReveal();
+    // Page fade in
+    document.body.classList.add('page-fade');
+});

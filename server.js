@@ -5,7 +5,6 @@ const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 const sequelize = require('./config/database');
-// Import models so Sequelize registers them
 require('./models/User');
 require('./models/Product');
 require('./models/Order');
@@ -15,7 +14,20 @@ require('./models/Feedback');
 
 const app = express();
 
-app.use(helmet({ contentSecurityPolicy: false }));
+// ===== SECURITY HEADERS =====
+app.use(helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+    xssFilter: true,
+    noSniff: true,
+    frameguard: { action: 'sameorigin' },
+    hsts: { maxAge: 31536000, includeSubDomains: true }
+}));
+
+// Remove server fingerprint
+app.disable('x-powered-by');
+
+// ===== CORS =====
 app.use(cors({
     origin: function(origin, callback) {
         const allowed = [
@@ -30,14 +42,36 @@ app.use(cors({
     },
     credentials: true
 }));
-app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 1000 }));
 
-// Stricter rate limit only on login & register (not /me or other auth routes)
-const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 30, message: { message: 'Too many attempts, try again later.' } });
+// ===== RATE LIMITING =====
+// Global limit
+app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 1000, standardHeaders: true, legacyHeaders: false }));
+
+// Strict limits on auth routes
+const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20, message: { message: 'Too many attempts, try again later.' }, standardHeaders: true });
 app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
+app.use('/api/auth/forgot-password', rateLimit({ windowMs: 60 * 60 * 1000, max: 5, message: { message: 'Too many reset attempts. Try again in 1 hour.' } }));
+
+// ===== BODY PARSING =====
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// ===== XSS SANITIZATION MIDDLEWARE =====
+function sanitize(obj) {
+    if (typeof obj === 'string') return obj.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '').replace(/javascript:/gi, '').replace(/on\w+\s*=/gi, '');
+    if (typeof obj === 'object' && obj !== null) { for (const k in obj) obj[k] = sanitize(obj[k]); }
+    return obj;
+}
+app.use((req, res, next) => { if (req.body) req.body = sanitize(req.body); next(); });
+
+// ===== SUSPICIOUS REQUEST BLOCKER =====
+app.use((req, res, next) => {
+    const suspicious = /(\.\.|\/etc\/passwd|\/proc\/|<script|union.*select|drop.*table|insert.*into|exec\(|eval\()/i;
+    const url = decodeURIComponent(req.url);
+    if (suspicious.test(url)) return res.status(400).json({ message: 'Bad request' });
+    next();
+});
 
 app.get('/', (req, res) => res.sendFile(__dirname + '/alibaba-style.html'));
 app.get('/login', (req, res) => res.sendFile(__dirname + '/login.html'));
