@@ -39,6 +39,18 @@ router.put('/:id/reply', adminAuth, async (req, res) => {
     }
 });
 
+// Admin: delete inquiry / giveaway post
+router.delete('/:id', adminAuth, async (req, res) => {
+    try {
+        const inquiry = await Inquiry.findByPk(req.params.id);
+        if (!inquiry) return res.status(404).json({ message: 'Not found' });
+        await inquiry.destroy();
+        res.json({ message: 'Deleted' });
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 // Customer: get their own inquiries by email
 router.get('/my/:email', async (req, res) => {
     try {

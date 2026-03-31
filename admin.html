@@ -1185,19 +1185,15 @@ async function renderGifts() {
         <h2><i class="fas fa-gift" style="color:#f97316;margin-right:6px"></i> Gifts & Giveaways</h2>
         <button class="btn btn-primary" onclick="openCreateGift()"><i class="fas fa-plus"></i> Post Giveaway</button>
       </div>
-      <div style="padding:16px 18px;background:#fff7ed;border-bottom:1px solid #fed7aa;font-size:13px;color:#92400e;">
-        <i class="fas fa-info-circle"></i> Post a giveaway announcement — customers will see it in the Gifts panel on the store.
-      </div>
       <div class="table-wrap"><table>
-        <thead><tr><th>Customer</th><th>Message</th><th>Your Reply</th><th>Date</th><th>Action</th></tr></thead>
+        <thead><tr><th>Your Post</th><th>Customer Replies</th><th>Date</th><th>Action</th></tr></thead>
         <tbody>${giftInquiries.length ? giftInquiries.map(g => `
           <tr>
-            <td><strong>${g.name}</strong><br><span style="font-size:11px;color:#aaa">${g.email||''}</span></td>
-            <td style="font-size:13px;max-width:200px">${g.message}</td>
-            <td>${g.adminReply ? `<span style="font-size:12px;color:#15803d;background:#f0fdf4;padding:4px 8px;border-radius:4px;display:block">${g.adminReply}</span>` : '<span style="color:#aaa;font-size:12px">No reply</span>'}</td>
+            <td style="font-size:13px;max-width:260px;white-space:pre-wrap">${g.message}</td>
+            <td>${g.adminReply ? `<span style="font-size:12px;color:#15803d;background:#f0fdf4;padding:4px 8px;border-radius:4px;display:block">${g.adminReply}</span>` : '<span style="color:#aaa;font-size:12px">No replies yet</span>'}</td>
             <td style="font-size:11px">${fmtDate(g.createdAt)}</td>
-            <td><button class="btn btn-primary" onclick="openReplyModal('${g.id}','inquiry','${(g.name||'').replace(/'/g,"\'")}')"><i class="fas fa-reply"></i> Reply</button></td>
-          </tr>`).join('') : '<tr class="empty-row"><td colspan="5">No gift inquiries yet</td></tr>'}
+            <td><button class="btn btn-danger" onclick="deleteGiveaway('${g.id}')"><i class="fas fa-trash"></i></button></td>
+          </tr>`).join('') : '<tr class="empty-row"><td colspan="4">No giveaways posted yet</td></tr>'}
         </tbody>
       </table></div>
     </div>
@@ -1205,32 +1201,41 @@ async function renderGifts() {
     <!-- Create Giveaway Modal -->
     <div id="create-gift-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;">
       <div style="background:#fff;border-radius:12px;padding:24px;width:90%;max-width:480px;">
-        <h3 style="font-size:16px;font-weight:700;margin-bottom:16px;color:#1a1a2e;"><i class="fas fa-gift" style="color:#f97316;margin-right:6px"></i> Post a Giveaway</h3>
-        <div class="form-group"><label>Giveaway Title *</label><input id="gift-title" placeholder="e.g. Free Kitenge Dress Giveaway!"></div>
-        <div class="form-group"><label>Description *</label><textarea id="gift-desc" rows="4" placeholder="Describe the gift, how to win, deadline..."></textarea></div>
-        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;">
+        <h3 style="font-size:16px;font-weight:700;margin-bottom:6px;color:#1a1a2e;"><i class="fas fa-gift" style="color:#f97316;margin-right:6px"></i> Post a Giveaway</h3>
+        <p style="font-size:12px;color:#aaa;margin-bottom:14px;">Write anything you want — customers will see it exactly as you type it.</p>
+        <textarea id="gift-message" rows="6" style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;font-family:inherit;outline:none;resize:vertical;" placeholder="Type your giveaway announcement here..."></textarea>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;">
           <button class="btn btn-secondary" onclick="document.getElementById('create-gift-modal').style.display='none'">Cancel</button>
-          <button class="btn btn-primary" onclick="postGiveaway()"><i class="fas fa-paper-plane"></i> Post Giveaway</button>
+          <button class="btn btn-primary" onclick="postGiveaway()"><i class="fas fa-paper-plane"></i> Post</button>
         </div>
       </div>
     </div>`;
 }
 
 function openCreateGift() {
+  document.getElementById('gift-message').value = '';
   document.getElementById('create-gift-modal').style.display = 'flex';
+  document.getElementById('gift-message').focus();
+}
+
+async function deleteGiveaway(id) {
+  if (!confirm('Delete this giveaway post?')) return;
+  try {
+    await fetch(`${API}/inquiries/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+    renderGifts();
+  } catch(e) { showToast('Failed to delete', true); }
 }
 
 async function postGiveaway() {
-  const title = document.getElementById('gift-title').value.trim();
-  const desc = document.getElementById('gift-desc').value.trim();
-  if (!title || !desc) { showToast('Please fill in all fields', true); return; }
+  const message = document.getElementById('gift-message').value.trim();
+  if (!message) { showToast('Please write something first', true); return; }
   try {
     await fetch(API + '/inquiries', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-      body: JSON.stringify({ name: 'Admin', email: process?.env?.ADMIN_EMAIL || 'admin@jobijad.com', productName: 'Gift Inquiry', message: desc, title: title, isGiveaway: true })
+      body: JSON.stringify({ name: 'Admin', email: 'admin@jobijad.com', productName: 'Gift Inquiry', message, isGiveaway: true })
     });
-    showToast('Giveaway posted! Customers can now see it.');
+    showToast('Giveaway posted!');
     document.getElementById('create-gift-modal').style.display = 'none';
     renderGifts();
   } catch(e) { showToast('Failed to post giveaway', true); }
