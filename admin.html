@@ -162,6 +162,7 @@ tr:hover td{background:#fafafa;}
     <div class="nav-item" data-tab="products"><i class="fas fa-tshirt"></i> Products</div>
     <div class="nav-item" data-tab="inquiries"><i class="fas fa-envelope"></i> Inquiries</div>
     <div class="nav-item" data-tab="feedback"><i class="fas fa-star"></i> Feedback</div>
+    <div class="nav-item" data-tab="gifts"><i class="fas fa-gift"></i> Gifts &amp; Giveaways</div>
     <div class="nav-divider"></div>
     <div class="nav-item" onclick="window.open('alibaba-style.html?preview=1','_blank')"><i class="fas fa-store"></i> View Store</div>
   </div>
@@ -174,7 +175,8 @@ tr:hover td{background:#fafafa;}
   <div class="modal" style="max-width:560px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
       <h3 style="margin:0">Order Receipt</h3>
-      <div style="display:flex;gap:8px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-success" id="receipt-delivery-btn" onclick="openDeliveryFromReceipt()" style="display:none"><i class="fas fa-truck"></i> Set Delivery</button>
         <button class="btn btn-primary" onclick="printReceipt()"><i class="fas fa-print"></i> Print</button>
         <button class="btn btn-secondary" onclick="document.getElementById('receipt-modal').classList.remove('open')"><i class="fas fa-times"></i></button>
       </div>
@@ -290,6 +292,7 @@ document.querySelectorAll('.nav-item[data-tab]').forEach(n => {
     else if (currentTab === 'products') { productPage=1; renderProducts(); }
     else if (currentTab === 'inquiries') renderInquiries();
     else if (currentTab === 'feedback') renderFeedback();
+    else if (currentTab === 'gifts') renderGifts();
     closeSidebar();
   });
 });
@@ -610,7 +613,24 @@ function showReceipt(id) {
     'Thank you for shopping with Jobijad Express!</div>' +
     '</div>';
 
+  // Show delivery button if payment is mobile_money and not yet paid, or if order needs delivery set
+  var delivBtn = document.getElementById('receipt-delivery-btn');
+  if (delivBtn) {
+    var showDelivery = (o.paymentMethod === 'mobile_money' && o.paymentStatus !== 'paid') ||
+                       (o.orderStatus === 'pending') ||
+                       (o.orderStatus === 'confirmed' && !o.shippingDate);
+    delivBtn.style.display = showDelivery ? 'inline-flex' : 'none';
+    delivBtn.setAttribute('data-order-id', o.id);
+  }
   document.getElementById('receipt-modal').classList.add('open');
+}
+
+function openDeliveryFromReceipt() {
+  var btn = document.getElementById('receipt-delivery-btn');
+  var orderId = btn ? btn.getAttribute('data-order-id') : null;
+  if (!orderId) return;
+  document.getElementById('receipt-modal').classList.remove('open');
+  openDeliveryModal(orderId);
 }
 
 function printReceipt() {
@@ -1053,6 +1073,73 @@ function startAutoRefresh() {
       document.getElementById('users-dot').style.display = 'inline-block';
     }
   }, 15000);
+}
+
+// ===== GIFTS & GIVEAWAYS =====
+async function renderGifts() {
+  document.getElementById('main-content').innerHTML = '<div style="padding:40px;text-align:center;color:#aaa"><i class="fas fa-spinner fa-spin fa-2x"></i></div>';
+  let giftInquiries = [];
+  try {
+    const res = await fetch(API + '/inquiries', { headers: { Authorization: 'Bearer ' + token } });
+    const data = await res.json();
+    giftInquiries = (data.inquiries || []).filter(i => i.productName === 'Gift Inquiry');
+  } catch(e) {}
+
+  document.getElementById('main-content').innerHTML = `
+    <div class="section">
+      <div class="section-head">
+        <h2><i class="fas fa-gift" style="color:#f97316;margin-right:6px"></i> Gifts & Giveaways</h2>
+        <button class="btn btn-primary" onclick="openCreateGift()"><i class="fas fa-plus"></i> Post Giveaway</button>
+      </div>
+      <div style="padding:16px 18px;background:#fff7ed;border-bottom:1px solid #fed7aa;font-size:13px;color:#92400e;">
+        <i class="fas fa-info-circle"></i> Post a giveaway announcement — customers will see it in the Gifts panel on the store.
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Customer</th><th>Message</th><th>Your Reply</th><th>Date</th><th>Action</th></tr></thead>
+        <tbody>${giftInquiries.length ? giftInquiries.map(g => `
+          <tr>
+            <td><strong>${g.name}</strong><br><span style="font-size:11px;color:#aaa">${g.email||''}</span></td>
+            <td style="font-size:13px;max-width:200px">${g.message}</td>
+            <td>${g.adminReply ? `<span style="font-size:12px;color:#15803d;background:#f0fdf4;padding:4px 8px;border-radius:4px;display:block">${g.adminReply}</span>` : '<span style="color:#aaa;font-size:12px">No reply</span>'}</td>
+            <td style="font-size:11px">${fmtDate(g.createdAt)}</td>
+            <td><button class="btn btn-primary" onclick="openReplyModal('${g.id}','inquiry','${(g.name||'').replace(/'/g,"\'")}')"><i class="fas fa-reply"></i> Reply</button></td>
+          </tr>`).join('') : '<tr class="empty-row"><td colspan="5">No gift inquiries yet</td></tr>'}
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- Create Giveaway Modal -->
+    <div id="create-gift-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:12px;padding:24px;width:90%;max-width:480px;">
+        <h3 style="font-size:16px;font-weight:700;margin-bottom:16px;color:#1a1a2e;"><i class="fas fa-gift" style="color:#f97316;margin-right:6px"></i> Post a Giveaway</h3>
+        <div class="form-group"><label>Giveaway Title *</label><input id="gift-title" placeholder="e.g. Free Kitenge Dress Giveaway!"></div>
+        <div class="form-group"><label>Description *</label><textarea id="gift-desc" rows="4" placeholder="Describe the gift, how to win, deadline..."></textarea></div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;">
+          <button class="btn btn-secondary" onclick="document.getElementById('create-gift-modal').style.display='none'">Cancel</button>
+          <button class="btn btn-primary" onclick="postGiveaway()"><i class="fas fa-paper-plane"></i> Post Giveaway</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function openCreateGift() {
+  document.getElementById('create-gift-modal').style.display = 'flex';
+}
+
+async function postGiveaway() {
+  const title = document.getElementById('gift-title').value.trim();
+  const desc = document.getElementById('gift-desc').value.trim();
+  if (!title || !desc) { showToast('Please fill in all fields', true); return; }
+  try {
+    await fetch(API + '/inquiries', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ name: 'Admin', email: process?.env?.ADMIN_EMAIL || 'admin@jobijad.com', productName: 'Gift Inquiry', message: desc, title: title, isGiveaway: true })
+    });
+    showToast('Giveaway posted! Customers can now see it.');
+    document.getElementById('create-gift-modal').style.display = 'none';
+    renderGifts();
+  } catch(e) { showToast('Failed to post giveaway', true); }
 }
 
 // ===== INIT =====

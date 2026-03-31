@@ -765,3 +765,70 @@ document.addEventListener('DOMContentLoaded', () => {
     // heart buttons on static cards too
     initHeartButtons();
 });
+
+// ===== GIFTS & GIVEAWAYS =====
+function openGifts() {
+    document.getElementById('gift-panel').style.transform = 'translateX(0)';
+    document.getElementById('gift-overlay').style.opacity = '1';
+    document.getElementById('gift-overlay').style.pointerEvents = 'all';
+    loadGifts();
+}
+
+function closeGifts() {
+    document.getElementById('gift-panel').style.transform = 'translateX(100%)';
+    document.getElementById('gift-overlay').style.opacity = '0';
+    document.getElementById('gift-overlay').style.pointerEvents = 'none';
+}
+
+async function loadGifts() {
+    document.getElementById('gift-loading').style.display = 'block';
+    document.getElementById('gift-list').style.display = 'none';
+    document.getElementById('gift-empty').style.display = 'none';
+    try {
+        const res = await fetch(API_BASE + '/inquiries/gifts');
+        const data = await res.json();
+        const gifts = data.gifts || [];
+        document.getElementById('gift-loading').style.display = 'none';
+        if (!gifts.length) {
+            document.getElementById('gift-empty').style.display = 'block';
+        } else {
+            document.getElementById('gift-list').style.display = 'block';
+            document.getElementById('gift-list').innerHTML = gifts.map(g => `
+                <div style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:10px;padding:14px;margin-bottom:12px;">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                        <i class="fas fa-gift" style="color:#f97316;font-size:18px;"></i>
+                        <span style="font-weight:700;color:#1a1a2e;font-size:14px;">${g.title || 'Special Giveaway'}</span>
+                    </div>
+                    <p style="font-size:13px;color:#555;margin-bottom:8px;">${g.message || ''}</p>
+                    ${g.adminReply ? `<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:8px 10px;font-size:12px;color:#15803d;margin-top:6px;"><i class="fas fa-reply" style="margin-right:4px"></i>${g.adminReply}</div>` : ''}
+                    <div style="font-size:11px;color:#aaa;margin-top:6px;">${new Date(g.createdAt).toLocaleDateString()}</div>
+                </div>`).join('');
+        }
+    } catch(e) {
+        document.getElementById('gift-loading').style.display = 'none';
+        document.getElementById('gift-empty').style.display = 'block';
+    }
+}
+
+async function sendGiftMessage() {
+    const msg = document.getElementById('gift-msg-input').value.trim();
+    if (!msg) { showNotification('Please type a message first', 'warning'); return; }
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    try {
+        await fetch(API_BASE + '/inquiries', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: user.name || 'Customer',
+                email: user.email || '',
+                productName: 'Gift Inquiry',
+                message: msg,
+                userId: user.id || null
+            })
+        });
+        document.getElementById('gift-msg-input').value = '';
+        showNotification('Message sent to admin!', 'success');
+    } catch(e) {
+        showNotification('Could not send message', 'error');
+    }
+}

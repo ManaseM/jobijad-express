@@ -1,5 +1,5 @@
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Roboto',-apple-system,sans-serif;background:#f4f6f8;color:#222;line-height:1.5;}
+body{font-family:'Quicksand',-apple-system,sans-serif;background:#f0ede8;color:#222;line-height:1.5;}
 a{text-decoration:none;color:inherit;}
 button{cursor:pointer;font-family:inherit;}
 
@@ -56,7 +56,7 @@ button{cursor:pointer;font-family:inherit;}
 .hero-cat:hover{background:#f97316;border-color:#f97316;}
 
 /* MAIN */
-.main-content{max-width:1400px;margin:0 auto;padding:24px 20px 100px;}
+.main-content{max-width:1400px;margin:0 auto;padding:24px 20px 100px;background:#f0ede8;}
 .section-title{font-size:18px;font-weight:600;color:#1a1a2e;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
 .section-title::before{content:'';width:4px;height:20px;background:#f97316;border-radius:2px;display:inline-block;}
 
