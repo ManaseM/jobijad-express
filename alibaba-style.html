@@ -90,11 +90,22 @@
     <button class="hero-cat" onclick="filterCategory('')"><i class="fas fa-th-large"></i> All Products</button>
   </div>
 </div>
-</div>
 
 <!-- Main Content -->
 <main class="main-content">
-  <div class="section-title">Featured Products</div>
+  <div class="section-toolbar">
+    <div class="section-title" id="section-title">Featured Products</div>
+    <div id="product-count" style="font-size:13px;color:#888;"></div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <select id="sort-select" onchange="sortProducts(this.value)" style="padding:6px 10px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:12px;outline:none;cursor:pointer;font-family:inherit;background:#fff;">
+        <option value="">Sort by</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="name-asc">Name: A–Z</option>
+        <option value="featured">Featured First</option>
+      </select>
+    </div>
+  </div>
   <div class="products-grid" id="products-grid"></div>
 
   <div class="bottom-search">
@@ -243,6 +254,12 @@
     </div>
   </div>
   <div style="border-top:1px solid rgba(255,255,255,.1);margin-top:32px;padding-top:20px;text-align:center;font-size:12px;">
+    <div style="margin-bottom:10px;display:flex;justify-content:center;gap:20px;flex-wrap:wrap;">
+      <a href="#" onclick="showPolicy('privacy')" style="color:rgba(255,255,255,.5);text-decoration:none;transition:color .2s;" onmouseover="this.style.color='#f97316'" onmouseout="this.style.color='rgba(255,255,255,.5)'">Privacy Policy</a>
+      <a href="#" onclick="showPolicy('terms')" style="color:rgba(255,255,255,.5);text-decoration:none;transition:color .2s;" onmouseover="this.style.color='#f97316'" onmouseout="this.style.color='rgba(255,255,255,.5)'">Terms of Service</a>
+      <a href="#" onclick="showPolicy('returns')" style="color:rgba(255,255,255,.5);text-decoration:none;transition:color .2s;" onmouseover="this.style.color='#f97316'" onmouseout="this.style.color='rgba(255,255,255,.5)'">Returns Policy</a>
+      <a href="https://wa.me/46762593231" target="_blank" style="color:rgba(255,255,255,.5);text-decoration:none;transition:color .2s;" onmouseover="this.style.color='#f97316'" onmouseout="this.style.color='rgba(255,255,255,.5)'">Contact Us</a>
+    </div>
     © 2026 Jobijad Express. All rights reserved.
   </div>
 </footer>
@@ -354,7 +371,44 @@
 })();
 </script>
 
-<!-- Gift Panel -->
+<!-- Floating WhatsApp Button -->
+<a href="https://wa.me/46762593231" target="_blank" id="whatsapp-float" title="Chat with us on WhatsApp"
+   style="position:fixed;bottom:80px;right:20px;width:52px;height:52px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(37,211,102,.5);z-index:1500;transition:transform .2s;"
+   onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+  <i class="fab fa-whatsapp" style="color:#fff;font-size:26px;"></i>
+</a>
+
+<!-- Back to Top Button -->
+<button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top"
+  style="display:none;position:fixed;bottom:20px;right:20px;width:44px;height:44px;background:#1a1a2e;border:none;border-radius:50%;color:#fff;font-size:16px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.25);z-index:1500;transition:all .2s;align-items:center;justify-content:center;">
+  <i class="fas fa-chevron-up"></i>
+</button>
+
+<!-- Cookie Notice -->
+<div id="cookie-notice" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;color:rgba(255,255,255,.85);padding:14px 20px;z-index:3000;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px;box-shadow:0 -4px 16px rgba(0,0,0,.2);">
+  <span><i class="fas fa-cookie-bite" style="color:#f97316;margin-right:8px"></i>We use cookies to improve your experience. By continuing, you agree to our <a href="#" style="color:#f97316;text-decoration:underline;">Privacy Policy</a>.</span>
+  <button onclick="acceptCookies()" style="background:#f97316;color:#fff;border:none;padding:8px 20px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;">Got it</button>
+</div>
+
+<script>
+// Back to top visibility
+window.addEventListener('scroll', function() {
+  var btn = document.getElementById('back-to-top');
+  if (btn) btn.style.display = window.scrollY > 400 ? 'flex' : 'none';
+});
+
+// Cookie notice
+function acceptCookies() {
+  localStorage.setItem('cookiesAccepted', '1');
+  document.getElementById('cookie-notice').style.display = 'none';
+}
+if (!localStorage.getItem('cookiesAccepted')) {
+  setTimeout(function() {
+    var n = document.getElementById('cookie-notice');
+    if (n) n.style.display = 'flex';
+  }, 1500);
+}
+</script>
 <div id="gift-panel" style="position:fixed;top:0;right:0;width:340px;height:100%;background:#fff;z-index:2000;display:flex;flex-direction:column;box-shadow:-4px 0 20px rgba(0,0,0,.15);transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);">
   <div style="background:#1a1a2e;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;">
     <h2 style="color:#fff;font-size:17px;font-weight:700;margin:0;display:flex;align-items:center;gap:8px;"><i class="fas fa-gift" style="color:#f97316"></i> Gifts & Giveaways</h2>

@@ -64,4 +64,18 @@ router.get('/my/:email', async (req, res) => {
     }
 });
 
+// Public: get giveaway posts (no auth required)
+router.get('/gifts', async (req, res) => {
+    try {
+        const { Op } = require('sequelize');
+        const gifts = await Inquiry.findAll({
+            where: { productName: 'Gift Inquiry', name: 'Admin' },
+            order: [['createdAt', 'DESC']]
+        });
+        res.json({ gifts });
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 module.exports = router;

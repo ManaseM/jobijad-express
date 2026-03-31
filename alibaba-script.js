@@ -172,7 +172,7 @@ async function saveProfile() {
     btn.disabled = true;
 
     try {
-        const res = await fetch('http://localhost:3000/api/users/profile', {
+        const res = await fetch(API_BASE + '/users/profile', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() },
             body: JSON.stringify({ name, email, avatar: JSON.parse(localStorage.getItem('currentUser') || '{}').avatar || undefined })
@@ -465,33 +465,71 @@ function submitInquiry(title) {
 async function loadProductsFromDB() {
     try {
         const data = await apiCall('/products?limit=100');
-        if (data.products && data.products.length > 0) renderDBProducts(data.products);
+        if (data.products && data.products.length > 0) {
+            renderDBProducts(data.products);
+            setTimeout(initScrollReveal, 50);
+        }
     } catch (e) { /* keep static products */ }
 }
 function renderDBProducts(products) {
+    window._allProducts = products;
+    _renderProductCards(products);
+}
+
+function _renderProductCards(products) {
     const grid = document.getElementById('products-grid');
     if (!grid) return;
-    grid.innerHTML = products.map(p => `
-        <div class="product-card" data-product-id="${p.id}">
-            <div class="product-image">
-                <img src="${p.images[0]?.url || 'https://via.placeholder.com/400'}" alt="${p.name}">
-                <div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div>
-                ${p.featured ? '<span class="product-badge">⭐</span>' : ''}
-            </div>
-            <div class="product-info">
-                <h3 class="product-title">${p.name}</h3>
-                <div class="product-price">$${p.price.toFixed(2)}</div>
-                <div class="product-meta">Stock: ${p.sizes.reduce((t,s)=>t+s.stock,0)} pcs</div>
-                <span class="supplier-badge">${p.category}</span>
-            </div>
-            <div class="product-actions">
-                <button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button>
-                <button class="inquiry-btn"><i class="fas fa-envelope"></i> Send Inquiry</button>
-            </div>
-        </div>`).join('');
+    const countEl = document.getElementById('product-count');
+    if (countEl) countEl.textContent = products.length + ' product' + (products.length !== 1 ? 's' : '');
+    grid.innerHTML = products.map(p => {
+        const img = (p.images && p.images[0] && p.images[0].url) ? p.images[0].url : 'https://via.placeholder.com/400';
+        const stock = (p.sizes||[]).reduce((t,s)=>t+(s.stock||0),0);
+        const badge = p.featured ? '<span class="product-badge">Featured</span>' : '';
+        return '<div class="product-card" data-product-id="'+p.id+'" data-price="'+p.price+'" data-name="'+p.name.replace(/"/g,"&quot;")+'">'+
+            '<div class="product-image">'+
+                '<img src="'+img+'" alt="'+p.name+'" loading="lazy">'+
+                '<div class="product-overlay"><button class="overlay-btn"><i class="fas fa-search-plus"></i></button></div>'+
+                badge+
+            '</div>'+
+            '<div class="product-info">'+
+                '<h3 class="product-title">'+p.name+'</h3>'+
+                '<div class="product-price">$'+p.price.toFixed(2)+'</div>'+
+                '<div class="product-meta">Stock: '+stock+' pcs</div>'+
+                '<span class="supplier-badge">'+p.category+'</span>'+
+            '</div>'+
+            '<div class="product-actions">'+
+                '<button class="add-to-cart-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button>'+
+                '<button class="inquiry-btn"><i class="fas fa-envelope"></i> Inquire</button>'+
+            '</div>'+
+        '</div>';
+    }).join('');
     initCart();
     initInquiry();
     initHeartButtons();
+}
+
+function sortProducts(val) {
+    const products = window._allProducts || [];
+    if (!products.length) return;
+    let sorted = [...products];
+    if (val === 'price-asc') sorted.sort((a,b) => a.price - b.price);
+    else if (val === 'price-desc') sorted.sort((a,b) => b.price - a.price);
+    else if (val === 'name-asc') sorted.sort((a,b) => a.name.localeCompare(b.name));
+    else if (val === 'featured') sorted.sort((a,b) => (b.featured?1:0) - (a.featured?1:0));
+    _renderProductCards(sorted);
+    setTimeout(initScrollReveal, 50);
+}
+
+function showPolicy(type) {
+    const policies = {
+        privacy: { title: 'Privacy Policy', body: 'We collect your name, email, and order details to process your purchases. We never sell your data to third parties. Contact alitajudith2002@gmail.com to request data deletion.' },
+        terms: { title: 'Terms of Service', body: 'By using Jobijad Express, you agree to provide accurate information when ordering. Prices are in USD. We reserve the right to cancel orders in cases of fraud. For disputes, contact us within 7 days of delivery.' },
+        returns: { title: 'Returns Policy', body: 'We accept returns within 14 days of delivery for items in original condition. Contact us via WhatsApp (+46 762 593 231) or email with your order number. Return shipping costs are the customer responsibility unless the item was defective.' }
+    };
+    const p = policies[type];
+    if (!p) return;
+    const modal = createModal(p.title, '<p style="font-size:14px;color:#555;line-height:1.8;">'+p.body+'</p>');
+    document.body.appendChild(modal);
 }
 
 // ===== MODAL & NOTIFICATION =====
@@ -844,15 +882,6 @@ function initScrollReveal() {
         });
     }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
     document.querySelectorAll('.product-card').forEach(c => observer.observe(c));
-}
-
-// Re-run scroll reveal after products load
-const _origRenderDB = typeof renderDBProducts === 'function' ? renderDBProducts : null;
-if (_origRenderDB) {
-    window.renderDBProducts = function(products) {
-        _origRenderDB(products);
-        setTimeout(initScrollReveal, 50);
-    };
 }
 
 // ===== CART BADGE ANIMATION =====

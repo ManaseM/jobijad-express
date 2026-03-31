@@ -57,8 +57,9 @@ button{cursor:pointer;font-family:inherit;}
 
 /* MAIN */
 .main-content{max-width:1400px;margin:0 auto;padding:24px 20px 100px;background:#f0ede8;}
-.section-title{font-size:18px;font-weight:600;color:#1a1a2e;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.section-title{font-size:18px;font-weight:600;color:#1a1a2e;margin-bottom:0;display:flex;align-items:center;gap:8px;}
 .section-title::before{content:'';width:4px;height:20px;background:#f97316;border-radius:2px;display:inline-block;}
+.section-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
 
 /* PRODUCTS GRID */
 .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px;}
