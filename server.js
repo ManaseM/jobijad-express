@@ -63,7 +63,7 @@ function sanitize(obj) {
     if (typeof obj === 'object' && obj !== null) { for (const k in obj) obj[k] = sanitize(obj[k]); }
     return obj;
 }
-app.use((req, res, next) => { if (req.body) req.body = sanitize(req.body); next(); });
+app.use((req, res, next) => { if (req.body && !req.is('multipart/form-data')) req.body = sanitize(req.body); next(); });
 
 // ===== SUSPICIOUS REQUEST BLOCKER =====
 app.use((req, res, next) => {
@@ -77,6 +77,7 @@ app.get('/', (req, res) => res.sendFile(__dirname + '/alibaba-style.html'));
 app.get('/login', (req, res) => res.sendFile(__dirname + '/login.html'));
 app.get('/admin', (req, res) => res.sendFile(__dirname + '/admin.html'));
 app.use(express.static('.'));
+app.use('/uploads', express.static(require('path').join(__dirname, 'uploads')));
 
 // Temporary seed route - remove after first use
 app.get('/api/seed-now', async (req, res) => {
@@ -95,6 +96,37 @@ app.get('/api/seed-now', async (req, res) => {
 });
 
 app.use('/api/auth', require('./routes/auth'));
+
+// ===== PRODUCT IMAGE UPLOAD (standalone to avoid router conflicts) =====
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+const { adminAuth } = require('./middleware/auth');
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+const _imgStorage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, uploadDir),
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname).toLowerCase();
+        cb(null, Date.now() + '-' + Math.round(Math.random() * 1e6) + ext);
+    }
+});
+const _imgUpload = multer({
+    storage: _imgStorage,
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+        if (/^image\/(jpeg|png|webp|gif|jpg)$/.test(file.mimetype)) cb(null, true);
+        else cb(new Error('Only image files are allowed'));
+    }
+});
+app.post('/api/products/upload-image', adminAuth, (req, res) => {
+    _imgUpload.single('image')(req, res, (err) => {
+        if (err) return res.status(400).json({ message: err.message || 'Upload failed' });
+        if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+        const url = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+        res.json({ url });
+    });
+});
 
 // Seed products route
 app.get('/api/seed-products', async (req, res) => {

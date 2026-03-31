@@ -81,6 +81,7 @@ tr:hover td{background:#fafafa;}
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;}
 .modal-bg.open{display:flex;}
 .modal{background:#fff;border-radius:12px;padding:24px;width:90%;max-width:480px;max-height:90vh;overflow-y:auto;}
+#p-image-drop-label:hover{border-color:#f97316;color:#f97316;background:#fff7ed;}
 .modal h3{font-size:16px;font-weight:600;margin-bottom:18px;color:#1a1a2e;}
 .form-group{margin-bottom:13px;}
 .form-group label{display:block;font-size:11px;font-weight:600;color:#666;margin-bottom:4px;text-transform:uppercase;}
@@ -217,7 +218,16 @@ tr:hover td{background:#fafafa;}
       </div>
     </div>
     <div class="form-group"><label>Description</label><textarea id="p-desc" rows="2" placeholder="Short description..."></textarea></div>
-    <div class="form-group"><label>Image URL</label><input id="p-image" placeholder="https://..."></div>
+    <div class="form-group">
+      <label>Product Image</label>
+      <div id="p-image-preview" style="display:none;margin-bottom:8px;"><img id="p-image-preview-img" src="" alt="Preview" style="width:100%;max-height:180px;object-fit:cover;border-radius:8px;border:1.5px solid #e0e0e0;"></div>
+      <label for="p-image-file" style="display:flex;align-items:center;gap:8px;padding:10px 14px;border:2px dashed #e0e0e0;border-radius:8px;cursor:pointer;font-size:13px;color:#888;font-weight:400;text-transform:none;transition:border-color .2s;" id="p-image-drop-label">
+        <i class="fas fa-cloud-upload-alt" style="font-size:20px;color:#f97316;"></i>
+        <span id="p-image-label-text">Click to choose a photo from your phone or computer</span>
+      </label>
+      <input type="file" id="p-image-file" accept="image/*" style="display:none;" onchange="handleImagePick(this)">
+      <input type="hidden" id="p-image">
+    </div>
     <div class="form-row">
       <div class="form-group"><label>Stock</label><input id="p-stock" type="number" placeholder="0"></div>
       <div class="form-group"><label>Featured</label>
@@ -827,6 +837,20 @@ function openProductModal(product = null) {
   document.getElementById('p-image').value = product?.images?.[0]?.url || '';
   document.getElementById('p-stock').value = (product?.sizes||[]).reduce((t,s)=>t+(s.stock||0),0) || '';
   document.getElementById('p-featured').value = product?.featured ? 'true' : 'false';
+  // Reset file input
+  document.getElementById('p-image-file').value = '';
+  const existingUrl = product?.images?.[0]?.url || '';
+  const preview = document.getElementById('p-image-preview');
+  const previewImg = document.getElementById('p-image-preview-img');
+  const labelText = document.getElementById('p-image-label-text');
+  if (existingUrl) {
+    previewImg.src = existingUrl;
+    preview.style.display = 'block';
+    labelText.textContent = 'Click to change the photo';
+  } else {
+    preview.style.display = 'none';
+    labelText.textContent = 'Click to choose a photo from your phone or computer';
+  }
   document.getElementById('product-modal').classList.add('open');
 }
 
@@ -839,17 +863,52 @@ function closeProductModal() {
   document.getElementById('product-modal').classList.remove('open');
 }
 
+function handleImagePick(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const labelText = document.getElementById('p-image-label-text');
+  const preview = document.getElementById('p-image-preview');
+  const previewImg = document.getElementById('p-image-preview-img');
+  labelText.textContent = file.name;
+  const reader = new FileReader();
+  reader.onload = e => {
+    previewImg.src = e.target.result;
+    preview.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
 async function saveProduct() {
   const id = document.getElementById('edit-product-id').value;
   const name = document.getElementById('p-name').value.trim();
   const price = parseFloat(document.getElementById('p-price').value);
   const category = document.getElementById('p-category').value;
   const description = document.getElementById('p-desc').value.trim();
-  const imageUrl = document.getElementById('p-image').value.trim();
   const stock = parseInt(document.getElementById('p-stock').value) || 0;
   const featured = document.getElementById('p-featured').value === 'true';
 
   if (!name || !price) { showToast('Name and price are required', true); return; }
+
+  // Upload image if a new file was picked
+  let imageUrl = document.getElementById('p-image').value.trim();
+  const fileInput = document.getElementById('p-image-file');
+  if (fileInput.files && fileInput.files[0]) {
+    const formData = new FormData();
+    formData.append('image', fileInput.files[0]);
+    try {
+      const upRes = await fetch(`${API}/products/upload-image`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+      });
+      if (!upRes.ok) {
+        const errData = await upRes.json().catch(() => ({}));
+        throw new Error(errData.message || 'Upload failed');
+      }
+      const upData = await upRes.json();
+      imageUrl = upData.url;
+    } catch(e) { showToast(e.message || 'Image upload failed', true); return; }
+  }
 
   const body = {
     name, price, category, description, featured,
