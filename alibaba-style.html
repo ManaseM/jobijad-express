@@ -62,6 +62,22 @@
     </div>
     <div class="header-right">
       <div class="header-actions">
+        <!-- Help Button -->
+        <div class="help-dropdown-wrap" id="help-dropdown-wrap">
+          <button class="help-header-btn" id="help-btn" onclick="toggleHelp()" title="Help">
+            <i class="fas fa-question-circle"></i>
+            <span class="help-btn-text">Help</span>
+          </button>
+          <div class="help-dropdown" id="help-dropdown">
+            <div class="help-dropdown-item" onclick="openHelp('order')"><i class="fas fa-box-open"></i> How to Place an Order</div>
+            <div class="help-dropdown-item" onclick="openHelp('payment')"><i class="fas fa-credit-card"></i> Payment Options</div>
+            <div class="help-dropdown-item" onclick="openHelp('delivery')"><i class="fas fa-truck"></i> Delivery & Tracking</div>
+            <div class="help-dropdown-item" onclick="openHelp('returns')"><i class="fas fa-undo"></i> Returns & Refunds</div>
+            <div class="help-dropdown-item" onclick="openHelp('sizes')"><i class="fas fa-ruler"></i> Size Guide</div>
+            <div class="help-dropdown-item" onclick="openHelp('account')"><i class="fas fa-user-circle"></i> Account & Login</div>
+            <a href="https://wa.me/46762593231" target="_blank" class="help-live-btn"><i class="fas fa-comments"></i> Live Help via WhatsApp</a>
+          </div>
+        </div>
         <a href="login.html" class="login-header-btn" id="login-header-btn">
           <i class="fas fa-user-circle"></i>
           <span id="auth-link-text">Sign In</span>
@@ -134,12 +150,28 @@
     <h2><i class="fas fa-shopping-cart"></i> My Cart</h2>
     <button class="cart-close-btn" id="cart-close-btn"><i class="fas fa-times"></i></button>
   </div>
+  <!-- Free shipping progress bar -->
+  <div id="free-shipping-bar" style="padding:10px 16px;background:#fff7ed;border-bottom:1px solid #fed7aa;font-size:12px;color:#92400e;">
+    <div id="free-shipping-text">Add <strong id="free-shipping-remaining">$75.00</strong> more for FREE shipping!</div>
+    <div style="background:#fed7aa;border-radius:4px;height:5px;margin-top:6px;overflow:hidden;">
+      <div id="free-shipping-progress" style="background:#f97316;height:100%;width:0%;transition:width .4s ease;border-radius:4px;"></div>
+    </div>
+  </div>
   <div class="cart-items" id="cart-items">
     <div class="cart-empty"><i class="fas fa-shopping-cart"></i><p>Your cart is empty</p></div>
   </div>
   <div class="cart-footer" id="cart-footer" style="display:none">
+    <!-- Promo code -->
+    <div style="display:flex;gap:6px;margin-bottom:12px;">
+      <input id="promo-input" type="text" placeholder="Promo code" style="flex:1;padding:8px 12px;border:1.5px solid #e0e0e0;border-radius:6px;font-size:13px;outline:none;font-family:inherit;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'">
+      <button onclick="applyPromo()" style="background:#1a1a2e;color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">Apply</button>
+    </div>
+    <div id="promo-msg" style="display:none;font-size:12px;margin-bottom:8px;padding:6px 10px;border-radius:5px;"></div>
     <div class="cart-total">Total <span id="cart-total">$0.00</span></div>
     <button class="checkout-btn" onclick="checkout()"><i class="fas fa-lock"></i> Proceed to Checkout</button>
+    <div style="text-align:center;font-size:11px;color:#aaa;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px;">
+      <i class="fas fa-shield-alt" style="color:#22c55e;"></i> Secure checkout — your data is protected
+    </div>
   </div>
 </div>
 <div id="cart-overlay" class="cart-overlay"></div>
@@ -371,7 +403,37 @@
 })();
 </script>
 
-<!-- Floating WhatsApp Button -->
+<!-- Product Detail Modal -->
+<div id="product-detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3500;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#fff;border-radius:14px;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;position:relative;">
+    <button onclick="closeProductDetail()" style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,.08);border:none;width:34px;height:34px;border-radius:50%;font-size:16px;cursor:pointer;z-index:1;display:flex;align-items:center;justify-content:center;"><i class="fas fa-times"></i></button>
+    <div id="product-detail-body"></div>
+  </div>
+</div>
+
+<!-- Help Center Modal -->
+<div id="help-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3500;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#fff;border-radius:14px;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;">
+    <div style="background:#1a1a2e;padding:20px 24px;border-radius:14px 14px 0 0;display:flex;align-items:center;justify-content:space-between;">
+      <h2 style="color:#fff;font-size:17px;font-weight:700;margin:0;display:flex;align-items:center;gap:8px;"><i class="fas fa-question-circle" style="color:#f97316"></i> Help Center</h2>
+      <button onclick="closeHelpModal()" style="background:rgba(255,255,255,.12);border:none;color:#fff;width:30px;height:30px;border-radius:50%;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="help-modal-body" style="padding:24px;"></div>
+    <div style="padding:16px 24px;border-top:1px solid #f0f0f0;background:#fafafa;border-radius:0 0 14px 14px;">
+      <a href="https://wa.me/46762593231" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#25d366;color:#fff;padding:12px;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;transition:background .2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+        <i class="fab fa-whatsapp" style="font-size:18px;"></i> Chat with us — Live Help
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Recently Viewed Bar -->
+<div id="recently-viewed-section" style="display:none;background:#fff;border-top:1px solid #f0f0f0;padding:16px 20px;margin-top:8px;">
+  <div style="max-width:1400px;margin:0 auto;">
+    <div style="font-size:14px;font-weight:700;color:#1a1a2e;margin-bottom:12px;display:flex;align-items:center;gap:8px;"><i class="fas fa-history" style="color:#f97316;"></i> Recently Viewed</div>
+    <div id="recently-viewed-list" style="display:flex;gap:12px;overflow-x:auto;padding-bottom:4px;"></div>
+  </div>
+</div>
 <a href="https://wa.me/46762593231" target="_blank" id="whatsapp-float" title="Chat with us on WhatsApp"
    style="position:fixed;bottom:80px;right:20px;width:52px;height:52px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(37,211,102,.5);z-index:1500;transition:transform .2s;"
    onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">

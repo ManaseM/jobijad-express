@@ -902,3 +902,381 @@ document.addEventListener('DOMContentLoaded', () => {
     // Page fade in
     document.body.classList.add('page-fade');
 });
+
+
+// ===== HELP CENTER =====
+function toggleHelp() {
+    const dd = document.getElementById('help-dropdown');
+    dd.classList.toggle('open');
+    // close on outside click
+    if (dd.classList.contains('open')) {
+        setTimeout(() => document.addEventListener('click', closeHelpDropdown, { once: true }), 10);
+    }
+}
+function closeHelpDropdown(e) {
+    const wrap = document.getElementById('help-dropdown-wrap');
+    if (wrap && !wrap.contains(e.target)) {
+        document.getElementById('help-dropdown').classList.remove('open');
+    }
+}
+
+const HELP_CONTENT = {
+    order: {
+        title: 'How to Place an Order',
+        icon: 'fas fa-box-open',
+        steps: [
+            { icon: 'fas fa-search', text: 'Browse products or use the search bar to find what you want.' },
+            { icon: 'fas fa-hand-pointer', text: 'Tap a product to see details, choose your size, then tap <strong>Add to Cart</strong>.' },
+            { icon: 'fas fa-shopping-cart', text: 'Open your cart (top right), review your items, then tap <strong>Proceed to Checkout</strong>.' },
+            { icon: 'fas fa-map-marker-alt', text: 'Fill in your delivery address and choose a payment method.' },
+            { icon: 'fas fa-check-circle', text: 'Tap <strong>Place Order</strong> — you\'ll get an order number to track your delivery.' }
+        ]
+    },
+    payment: {
+        title: 'Payment Options',
+        icon: 'fas fa-credit-card',
+        steps: [
+            { icon: 'fas fa-mobile-alt', text: '<strong>Mobile Money (MTN / Airtel)</strong> — Enter your number and we\'ll confirm payment manually.' },
+            { icon: 'fab fa-paypal', text: '<strong>PayPal</strong> — Pay securely using your PayPal card details.' },
+            { icon: 'fas fa-credit-card', text: '<strong>Credit / Debit Card</strong> — Visa, Mastercard accepted.' },
+            { icon: 'fas fa-university', text: '<strong>Bank Transfer</strong> — Transfer to our Stanbic Bank account and send proof.' },
+            { icon: 'fas fa-shield-alt', text: 'All payments are reviewed by our team before your order is confirmed.' }
+        ]
+    },
+    delivery: {
+        title: 'Delivery & Tracking',
+        icon: 'fas fa-truck',
+        steps: [
+            { icon: 'fas fa-clock', text: '<strong>East Africa:</strong> 3–6 business days after payment confirmation.' },
+            { icon: 'fas fa-globe-africa', text: '<strong>Rest of Africa:</strong> 5–9 business days.' },
+            { icon: 'fas fa-plane', text: '<strong>Europe / USA:</strong> 8–16 business days.' },
+            { icon: 'fas fa-box', text: 'Once shipped, you\'ll receive a tracking number via email or WhatsApp.' },
+            { icon: 'fas fa-receipt', text: 'Check your order status anytime in <strong>My Orders</strong>.' }
+        ]
+    },
+    returns: {
+        title: 'Returns & Refunds',
+        icon: 'fas fa-undo',
+        steps: [
+            { icon: 'fas fa-calendar-check', text: 'Returns accepted within <strong>14 days</strong> of delivery.' },
+            { icon: 'fas fa-box-open', text: 'Item must be in original condition — unworn, unwashed, with tags.' },
+            { icon: 'fas fa-whatsapp', text: 'Contact us on WhatsApp (+46 762 593 231) with your order number to start a return.' },
+            { icon: 'fas fa-money-bill-wave', text: 'Refunds are processed within 5–7 business days after we receive the item.' },
+            { icon: 'fas fa-exclamation-circle', text: 'Defective or wrong items? We cover return shipping — contact us immediately.' }
+        ]
+    },
+    sizes: {
+        title: 'Size Guide',
+        icon: 'fas fa-ruler',
+        steps: [
+            { icon: 'fas fa-tshirt', text: '<strong>XS</strong> — Chest: 32–34", Waist: 24–26"' },
+            { icon: 'fas fa-tshirt', text: '<strong>S</strong> — Chest: 34–36", Waist: 26–28"' },
+            { icon: 'fas fa-tshirt', text: '<strong>M</strong> — Chest: 36–38", Waist: 28–30"' },
+            { icon: 'fas fa-tshirt', text: '<strong>L</strong> — Chest: 38–40", Waist: 30–32"' },
+            { icon: 'fas fa-tshirt', text: '<strong>XL</strong> — Chest: 40–42", Waist: 32–34"' },
+            { icon: 'fas fa-info-circle', text: 'Not sure? Message us on WhatsApp with your measurements and we\'ll help you pick the right size.' }
+        ]
+    },
+    account: {
+        title: 'Account & Login',
+        icon: 'fas fa-user-circle',
+        steps: [
+            { icon: 'fas fa-user-plus', text: 'Tap <strong>Sign In</strong> in the top right to create an account or log in.' },
+            { icon: 'fas fa-lock', text: 'Use a strong password (at least 6 characters). Never share it with anyone.' },
+            { icon: 'fas fa-key', text: 'Forgot your password? Use the <strong>Forgot Password</strong> link on the login page.' },
+            { icon: 'fas fa-user-edit', text: 'Update your name, email, or profile photo from the Account panel.' },
+            { icon: 'fas fa-sign-out-alt', text: 'Always <strong>Sign Out</strong> when using a shared or public device.' }
+        ]
+    }
+};
+
+function openHelp(topic) {
+    document.getElementById('help-dropdown').classList.remove('open');
+    const content = HELP_CONTENT[topic];
+    if (!content) return;
+    const stepsHtml = content.steps.map(s =>
+        '<div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #f8f8f8;align-items:flex-start;">' +
+        '<div style="width:32px;height:32px;background:#fff7ed;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="' + s.icon + '" style="color:#f97316;font-size:14px;"></i></div>' +
+        '<div style="font-size:14px;color:#444;line-height:1.6;padding-top:5px;">' + s.text + '</div>' +
+        '</div>'
+    ).join('');
+    document.getElementById('help-modal-body').innerHTML =
+        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">' +
+        '<div style="width:40px;height:40px;background:#fff7ed;border-radius:10px;display:flex;align-items:center;justify-content:center;"><i class="' + content.icon + '" style="color:#f97316;font-size:18px;"></i></div>' +
+        '<h3 style="font-size:17px;font-weight:700;color:#1a1a2e;margin:0;">' + content.title + '</h3>' +
+        '</div>' + stepsHtml;
+    document.getElementById('help-modal').style.display = 'flex';
+}
+function closeHelpModal() {
+    document.getElementById('help-modal').style.display = 'none';
+}
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('help-modal');
+    if (modal && e.target === modal) closeHelpModal();
+});
+
+// ===== PRODUCT DETAIL MODAL =====
+let _selectedSize = null;
+let _currentDetailProduct = null;
+
+function openProductDetail(p) {
+    _currentDetailProduct = p;
+    _selectedSize = null;
+    addToRecentlyViewed(p);
+
+    const avg = p.ratingAverage || 0;
+    const count = p.ratingCount || 0;
+    const stars = [1,2,3,4,5].map(i =>
+        '<span class="' + (i <= Math.round(avg) ? 'star' : 'star-e') + '">&#9733;</span>'
+    ).join('');
+
+    const sizes = (p.sizes || []);
+    const sizesHtml = sizes.length ? sizes.map(s =>
+        '<button class="pd-size-btn' + (s.stock === 0 ? ' out-of-stock' : '') + '" ' +
+        (s.stock === 0 ? 'disabled title="Out of stock"' : 'onclick="selectSize(this,\'' + s.size + '\')"') +
+        '>' + s.size + (s.stock === 0 ? ' (sold out)' : '') + '</button>'
+    ).join('') : '<span style="font-size:13px;color:#888;">One Size</span>';
+
+    const img = (p.images && p.images[0] && p.images[0].url) ? p.images[0].url : 'https://via.placeholder.com/400';
+    const inWishlist = wishlist.some(w => w.title === p.name);
+
+    document.getElementById('product-detail-body').innerHTML =
+        '<img class="pd-img" src="' + img + '" alt="' + p.name + '">' +
+        '<div class="pd-body">' +
+            '<div class="pd-title">' + p.name + '</div>' +
+            '<div class="pd-price">$' + p.price.toFixed(2) + '</div>' +
+            '<div class="pd-stars">' + stars +
+                '<span class="pd-rating-text">' + (count > 0 ? avg.toFixed(1) + ' (' + count + ' review' + (count !== 1 ? 's' : '') + ')' : 'No reviews yet') + '</span>' +
+            '</div>' +
+            '<div class="pd-desc">' + (p.description || '') + '</div>' +
+            (sizes.length ? '<div class="pd-section-label">Select Size</div><div class="pd-sizes" id="pd-sizes-row">' + sizesHtml + '</div>' : '') +
+            '<div class="pd-actions">' +
+                '<button class="pd-add-btn" onclick="addToCartFromDetail()"><i class="fas fa-cart-plus"></i> Add to Cart</button>' +
+                '<button class="pd-wish-btn' + (inWishlist ? ' active' : '') + '" id="pd-wish-btn" onclick="toggleWishlistFromDetail()" title="Wishlist"><i class="fas fa-heart"></i></button>' +
+            '</div>' +
+            '<div class="pd-delivery-info"><i class="fas fa-truck"></i> Free shipping on orders over $75 · Worldwide delivery</div>' +
+            (count > 0 ? '<div class="pd-reviews"><div class="pd-section-label" style="margin-bottom:12px;">Customer Reviews</div><div id="pd-reviews-list"><div style="text-align:center;padding:20px;color:#aaa;"><i class="fas fa-spinner fa-spin"></i></div></div></div>' : '') +
+        '</div>';
+
+    document.getElementById('product-detail-modal').style.display = 'flex';
+    if (count > 0) loadProductReviews(p.name);
+}
+
+function selectSize(btn, size) {
+    document.querySelectorAll('.pd-size-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    _selectedSize = size;
+}
+
+function addToCartFromDetail() {
+    if (!_currentDetailProduct) return;
+    const p = _currentDetailProduct;
+    const sizes = p.sizes || [];
+    if (sizes.length > 0 && !_selectedSize) {
+        showNotification('Please select a size first', 'warning');
+        document.getElementById('pd-sizes-row')?.classList.add('shake');
+        setTimeout(() => document.getElementById('pd-sizes-row')?.classList.remove('shake'), 500);
+        return;
+    }
+    const existing = cart.find(i => i.title === p.name && i.size === _selectedSize);
+    if (existing) existing.qty += 1;
+    else cart.push({ title: p.name, price: p.price, image: (p.images&&p.images[0]&&p.images[0].url)||'', qty: 1, productId: p.id, size: _selectedSize });
+    saveCart(); renderCart(); updateCartBadge();
+    showNotification('Added to cart' + (_selectedSize ? ' — Size ' + _selectedSize : ''), 'success');
+    closeProductDetail();
+    openCart();
+}
+
+function toggleWishlistFromDetail() {
+    if (!_currentDetailProduct) return;
+    const p = _currentDetailProduct;
+    const img = (p.images&&p.images[0]&&p.images[0].url)||'';
+    toggleWishlist(p.name, p.price, img);
+    const btn = document.getElementById('pd-wish-btn');
+    if (btn) btn.classList.toggle('active', wishlist.some(w => w.title === p.name));
+}
+
+function closeProductDetail() {
+    document.getElementById('product-detail-modal').style.display = 'none';
+    _currentDetailProduct = null;
+    _selectedSize = null;
+}
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('product-detail-modal');
+    if (modal && e.target === modal) closeProductDetail();
+});
+
+async function loadProductReviews(productName) {
+    const el = document.getElementById('pd-reviews-list');
+    if (!el) return;
+    try {
+        const data = await apiCall('/feedback');
+        const reviews = (data.feedbacks || []).slice(0, 5);
+        if (!reviews.length) { el.innerHTML = '<p style="font-size:13px;color:#aaa;">No reviews yet.</p>'; return; }
+        el.innerHTML = reviews.map(r => {
+            const stars = [1,2,3,4,5].map(i => '<span style="color:' + (i <= (r.rating||5) ? '#f97316' : '#e0e0e0') + ';font-size:13px;">&#9733;</span>').join('');
+            return '<div class="pd-review-item">' +
+                '<div class="pd-review-name"><i class="fas fa-user-circle" style="color:#f97316;margin-right:5px;"></i>' + (r.customerName||r.name||'Customer') + ' ' + stars + '</div>' +
+                '<div class="pd-review-text">' + (r.comment||r.message||'') + '</div>' +
+                '</div>';
+        }).join('');
+    } catch(e) { if (el) el.innerHTML = ''; }
+}
+
+// ===== WIRE UP PRODUCT CARD CLICK → DETAIL MODAL =====
+// Override _renderProductCards to attach click handler
+const _origRenderCards = typeof _renderProductCards === 'function' ? _renderProductCards : null;
+if (_origRenderCards) {
+    window._renderProductCards = function(products) {
+        _origRenderCards(products);
+        attachProductCardClicks(products);
+    };
+}
+function attachProductCardClicks(products) {
+    document.querySelectorAll('.product-card').forEach((card, idx) => {
+        // Add star rating to card
+        const p = products[idx];
+        if (p) {
+            const avg = p.ratingAverage || 0;
+            const count = p.ratingCount || 0;
+            const starsHtml = [1,2,3,4,5].map(i =>
+                '<i class="fas fa-star ' + (i <= Math.round(avg) ? 'star-filled' : 'star-empty') + '"></i>'
+            ).join('');
+            const ratingDiv = document.createElement('div');
+            ratingDiv.className = 'product-stars';
+            ratingDiv.innerHTML = starsHtml + '<span class="rating-count">(' + (count || 0) + ')</span>';
+            const meta = card.querySelector('.product-meta');
+            if (meta) meta.parentNode.insertBefore(ratingDiv, meta);
+        }
+        // Click opens detail modal (but not on action buttons)
+        card.addEventListener('click', function(e) {
+            if (e.target.closest('.add-to-cart-btn') || e.target.closest('.inquiry-btn') || e.target.closest('.heart-btn')) return;
+            if (p) openProductDetail(p);
+        });
+    });
+}
+
+// ===== RECENTLY VIEWED =====
+let recentlyViewed = JSON.parse(localStorage.getItem('jobiRecent') || '[]');
+
+function addToRecentlyViewed(p) {
+    recentlyViewed = recentlyViewed.filter(r => r.id !== p.id);
+    recentlyViewed.unshift({ id: p.id, name: p.name, price: p.price, image: (p.images&&p.images[0]&&p.images[0].url)||'' });
+    if (recentlyViewed.length > 8) recentlyViewed.pop();
+    localStorage.setItem('jobiRecent', JSON.stringify(recentlyViewed));
+    renderRecentlyViewed();
+}
+
+function renderRecentlyViewed() {
+    const section = document.getElementById('recently-viewed-section');
+    const list = document.getElementById('recently-viewed-list');
+    if (!section || !list || recentlyViewed.length < 2) { if (section) section.style.display = 'none'; return; }
+    section.style.display = 'block';
+    list.innerHTML = recentlyViewed.map(r =>
+        '<div class="rv-item" onclick="openRecentProduct(\'' + r.id + '\')">' +
+        '<img src="' + r.image + '" alt="' + r.name + '" loading="lazy">' +
+        '<div class="rv-item-title">' + r.name + '</div>' +
+        '<div class="rv-item-price">$' + r.price.toFixed(2) + '</div>' +
+        '</div>'
+    ).join('');
+}
+
+function openRecentProduct(id) {
+    const p = (window._allProducts || []).find(x => x.id === id);
+    if (p) openProductDetail(p);
+}
+
+// ===== FREE SHIPPING PROGRESS BAR =====
+const FREE_SHIPPING_THRESHOLD = 75;
+const PROMO_CODES = { 'JOBIJAD10': 10, 'WELCOME5': 5, 'AFRICA15': 15 };
+let appliedDiscount = 0;
+
+function updateFreeShippingBar() {
+    const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    const bar = document.getElementById('free-shipping-bar');
+    const progress = document.getElementById('free-shipping-progress');
+    const text = document.getElementById('free-shipping-text');
+    if (!bar) return;
+    const pct = Math.min((total / FREE_SHIPPING_THRESHOLD) * 100, 100);
+    if (progress) progress.style.width = pct + '%';
+    if (total >= FREE_SHIPPING_THRESHOLD) {
+        if (text) text.innerHTML = '<strong style="color:#15803d;"><i class="fas fa-check-circle"></i> You\'ve unlocked FREE shipping!</strong>';
+        if (progress) progress.style.background = '#22c55e';
+    } else {
+        const remaining = (FREE_SHIPPING_THRESHOLD - total).toFixed(2);
+        if (text) text.innerHTML = 'Add <strong>$' + remaining + '</strong> more for <strong>FREE shipping!</strong>';
+        if (progress) progress.style.background = '#f97316';
+    }
+}
+
+// ===== PROMO CODE =====
+function applyPromo() {
+    const code = (document.getElementById('promo-input')?.value || '').trim().toUpperCase();
+    const msg = document.getElementById('promo-msg');
+    if (!code) { showPromoMsg('Please enter a promo code', false); return; }
+    const discount = PROMO_CODES[code];
+    if (discount) {
+        appliedDiscount = discount;
+        showPromoMsg('Promo applied! ' + discount + '% off your order.', true);
+        renderCart();
+    } else {
+        appliedDiscount = 0;
+        showPromoMsg('Invalid promo code. Try JOBIJAD10 for 10% off!', false);
+    }
+}
+function showPromoMsg(text, success) {
+    const el = document.getElementById('promo-msg');
+    if (!el) return;
+    el.textContent = text;
+    el.style.cssText = 'display:block;font-size:12px;margin-bottom:8px;padding:6px 10px;border-radius:5px;background:' + (success ? '#dcfce7;color:#15803d;' : '#fee2e2;color:#991b1b;');
+}
+
+// ===== SECURITY: SESSION TIMEOUT WARNING =====
+let _sessionWarningTimer, _sessionLogoutTimer;
+const SESSION_WARN_MS = 25 * 60 * 1000;  // warn at 25 min
+const SESSION_LOGOUT_MS = 30 * 60 * 1000; // logout at 30 min
+
+function resetSessionTimers() {
+    clearTimeout(_sessionWarningTimer);
+    clearTimeout(_sessionLogoutTimer);
+    if (!getToken()) return;
+    _sessionWarningTimer = setTimeout(() => {
+        showNotification('Your session will expire in 5 minutes. Click anywhere to stay logged in.', 'warning');
+    }, SESSION_WARN_MS);
+    _sessionLogoutTimer = setTimeout(() => {
+        showNotification('Session expired. Please log in again.', 'error');
+        setTimeout(() => { localStorage.removeItem('jobiToken'); localStorage.removeItem('currentUser'); location.reload(); }, 2000);
+    }, SESSION_LOGOUT_MS);
+}
+['click','keypress','touchstart','scroll'].forEach(ev => document.addEventListener(ev, resetSessionTimers, { passive: true }));
+resetSessionTimers();
+
+// ===== SECURITY: HTTPS ENFORCEMENT =====
+if (location.protocol === 'http:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+    location.replace('https:' + location.href.substring(5));
+}
+
+// ===== PATCH renderCart TO INCLUDE FREE SHIPPING + DISCOUNT =====
+const _origRenderCart = typeof renderCart === 'function' ? renderCart : null;
+if (_origRenderCart) {
+    window.renderCart = function() {
+        _origRenderCart();
+        updateFreeShippingBar();
+        // Apply discount to displayed total
+        if (appliedDiscount > 0) {
+            const totalEl = document.getElementById('cart-total');
+            if (totalEl) {
+                const raw = cart.reduce((s, i) => s + i.price * i.qty, 0);
+                const discounted = raw * (1 - appliedDiscount / 100);
+                totalEl.textContent = '$' + discounted.toFixed(2);
+                totalEl.title = 'After ' + appliedDiscount + '% discount';
+            }
+        }
+    };
+}
+
+// Init recently viewed on load
+document.addEventListener('DOMContentLoaded', () => {
+    renderRecentlyViewed();
+    updateFreeShippingBar();
+});
