@@ -20,24 +20,42 @@
     <button class="sidebar-close-btn" id="sidebar-close"><i class="fas fa-times"></i></button>
   </div>
   <nav class="sidebar-nav">
-    <a href="login.html" class="sidebar-item" id="sidebar-auth-link">
-      <i class="fas fa-user-circle sidebar-item-icon"></i><span>Login / Register</span>
+    <!-- Auth section at top of sidebar -->
+    <div id="sidebar-auth-section" style="padding:16px;background:#f8f9fa;border-bottom:1px solid #f0f0f0;margin-bottom:4px;">
+      <div id="sidebar-logged-out">
+        <p style="font-size:13px;color:#555;margin-bottom:10px;font-weight:600;">Welcome to Jobijad Express!</p>
+        <a href="login.html?mode=login" style="display:block;background:#f97316;color:#fff;text-align:center;padding:10px;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;margin-bottom:8px;">Sign In</a>
+        <a href="login.html?mode=register" style="display:block;background:#fff;color:#f97316;text-align:center;padding:9px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;border:1.5px solid #f97316;">Create Account</a>
+        <p style="font-size:11px;color:#aaa;margin-top:8px;text-align:center;">Or continue with:</p>
+        <div style="display:flex;justify-content:center;gap:12px;margin-top:6px;">
+          <a href="#" onclick="showNotification('Google login coming soon','info');return false;" style="width:38px;height:38px;border-radius:50%;background:#fff;border:1.5px solid #e0e0e0;display:flex;align-items:center;justify-content:center;font-size:18px;text-decoration:none;" title="Google"><i class="fab fa-google" style="color:#ea4335;"></i></a>
+          <a href="#" onclick="showNotification('Facebook login coming soon','info');return false;" style="width:38px;height:38px;border-radius:50%;background:#1877f2;border:none;display:flex;align-items:center;justify-content:center;font-size:18px;text-decoration:none;" title="Facebook"><i class="fab fa-facebook-f" style="color:#fff;"></i></a>
+        </div>
+      </div>
+      <div id="sidebar-logged-in" style="display:none;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:40px;height:40px;border-radius:50%;background:#f97316;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;flex-shrink:0;"><i class="fas fa-user"></i></div>
+          <div><div id="sidebar-user-name" style="font-size:14px;font-weight:700;color:#1a1a2e;"></div><div style="font-size:11px;color:#888;">Tap to view account</div></div>
+        </div>
+      </div>
+    </div>
+    <a href="#" class="sidebar-item" id="sidebar-auth-link" onclick="handleAccountBtn();closeSidebar();return false;">
+      <i class="fas fa-user-circle sidebar-item-icon"></i><span id="sidebar-auth-text">My Account</span>
     </a>
     <a href="#" class="sidebar-item">
       <i class="fas fa-home sidebar-item-icon"></i><span>Home</span>
     </a>
-    
-    
-    
-    
     <a href="orders.html" class="sidebar-item">
       <i class="fas fa-box sidebar-item-icon"></i><span>My Orders</span>
     </a>
     <a href="#" class="sidebar-item" id="sidebar-wishlist-link" onclick="openWishlist();closeSidebar();return false;">
-      <i class="fas fa-heart sidebar-item-icon"></i><span>Wishlist <span id="wishlist-sidebar-count" style="background:#f97316;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:4px;display:none">0</span></span>
+      <i class="fas fa-heart sidebar-item-icon"></i><span>Favourites <span id="wishlist-sidebar-count" style="background:#f97316;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:4px;display:none">0</span></span>
     </a>
     <a href="#" class="sidebar-item" id="sidebar-messages-link" onclick="openMessages();closeSidebar();return false;">
       <i class="fas fa-envelope sidebar-item-icon"></i><span>Messages <span id="messages-sidebar-count" style="background:#f97316;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:4px;display:none">0</span></span>
+    </a>
+    <a href="#" class="sidebar-item" onclick="openRFQ();closeSidebar();return false;">
+      <i class="fas fa-file-alt sidebar-item-icon"></i><span>RFQs <span style="font-size:10px;color:#888;font-weight:400;">(Request for Quote)</span></span>
     </a>
   </nav>
   <div class="sidebar-footer">
@@ -62,6 +80,11 @@
     </div>
     <div class="header-right">
       <div class="header-actions">
+        <!-- Globe / Language & Currency -->
+        <button class="globe-btn" id="globe-btn" onclick="openLangCurrency()" title="Language & Currency">
+          <i class="fas fa-globe"></i>
+          <span id="currency-display" class="currency-display">USD</span>
+        </button>
         <!-- Help Button -->
         <div class="help-dropdown-wrap" id="help-dropdown-wrap">
           <button class="help-header-btn" id="help-btn" onclick="toggleHelp()" title="Help">
@@ -421,6 +444,7 @@
 </div>
 
 <script src="alibaba-script.js"></script>
+<script src="features-addon.js"></script>
 <script>
 // Only redirect admin if they didn't navigate here from admin panel (allow "View Store")
 (function() {
@@ -430,8 +454,100 @@
 })();
 </script>
 
+<!-- Enjoy Protection Section -->
+<section class="protection-section">
+  <div class="protection-inner">
+    <div class="protection-left">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <div style="width:32px;height:32px;background:#f97316;border-radius:50%;display:flex;align-items:center;justify-content:center;"><i class="fas fa-shield-alt" style="color:#fff;font-size:14px;"></i></div>
+        <span style="font-size:12px;font-weight:700;color:#f97316;text-transform:uppercase;letter-spacing:.5px;">Trade Assurance</span>
+      </div>
+      <h3 style="font-size:20px;font-weight:800;color:#1a1a2e;line-height:1.3;margin-bottom:16px;">Enjoy protection<br>from payment to<br>delivery</h3>
+      <button onclick="openHelp('payment')" style="background:#f97316;color:#fff;border:none;padding:10px 24px;border-radius:24px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">Learn more</button>
+    </div>
+    <div class="protection-grid">
+      <div class="protection-card" onclick="openHelp('payment')"><div class="protection-icon"><i class="fas fa-check-circle"></i></div><div class="protection-title">Safe &amp; easy payments</div><i class="fas fa-arrow-right protection-arrow"></i></div>
+      <div class="protection-card" onclick="showPolicy('returns')"><div class="protection-icon"><i class="fas fa-undo-alt"></i></div><div class="protection-title">Money-back policy</div><i class="fas fa-arrow-right protection-arrow"></i></div>
+      <div class="protection-card" onclick="openHelp('delivery')"><div class="protection-icon"><i class="fas fa-shipping-fast"></i></div><div class="protection-title">Shipping &amp; logistics</div><i class="fas fa-arrow-right protection-arrow"></i></div>
+      <div class="protection-card" onclick="openHelp('returns')"><div class="protection-icon"><i class="fas fa-tools"></i></div><div class="protection-title">After-sales protections</div><i class="fas fa-arrow-right protection-arrow"></i></div>
+    </div>
+  </div>
+</section>
+
+<!-- Language & Currency Modal -->
+<div id="lang-currency-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:4000;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#fff;border-radius:14px;width:100%;max-width:420px;overflow:hidden;">
+    <div style="padding:20px 24px 0;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <h3 style="font-size:17px;font-weight:700;color:#1a1a2e;">Set language and currency</h3>
+        <button onclick="closeLangCurrency()" style="background:none;border:none;font-size:20px;color:#aaa;cursor:pointer;"><i class="fas fa-times"></i></button>
+      </div>
+      <p style="font-size:13px;color:#888;margin-bottom:20px;">Select your preferred language and currency. You can update the settings at any time.</p>
+      <div style="margin-bottom:16px;"><label style="display:block;font-size:14px;font-weight:600;color:#333;margin-bottom:8px;">Language</label>
+        <select id="lang-select" style="width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;font-family:inherit;">
+          <option value="en">English</option><option value="fr">Français</option><option value="sw">Kiswahili</option><option value="ar">العربية</option><option value="zh">中文</option>
+        </select>
+      </div>
+      <div style="margin-bottom:20px;"><label style="display:block;font-size:14px;font-weight:600;color:#333;margin-bottom:8px;">Currency</label>
+        <select id="currency-select" style="width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;font-family:inherit;">
+          <option value="USD">USD - US Dollar</option><option value="UGX">UGX - Uganda Shilling</option><option value="KES">KES - Kenya Shilling</option>
+          <option value="TZS">TZS - Tanzania Shilling</option><option value="NGN">NGN - Nigerian Naira</option><option value="GHS">GHS - Ghana Cedi</option>
+          <option value="ZAR">ZAR - South African Rand</option><option value="EUR">EUR - Euro</option><option value="GBP">GBP - British Pound</option>
+          <option value="SEK">SEK - Swedish Krona</option><option value="AED">AED - UAE Dirham</option><option value="CNY">CNY - Chinese Yuan</option>
+        </select>
+      </div>
+    </div>
+    <div style="padding:0 24px 24px;"><button onclick="saveLangCurrency()" style="width:100%;background:#f97316;color:#fff;border:none;padding:14px;border-radius:28px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">Save</button></div>
+  </div>
+</div>
+
+<!-- RFQ Modal -->
+<div id="rfq-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:4000;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#fff;border-radius:14px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;">
+    <div style="background:#1a1a2e;padding:18px 20px;border-radius:14px 14px 0 0;display:flex;align-items:center;justify-content:space-between;">
+      <h3 style="color:#fff;font-size:16px;font-weight:700;margin:0;"><i class="fas fa-file-alt" style="color:#f97316;margin-right:8px;"></i>Request for Quote (RFQ)</h3>
+      <button onclick="closeRFQ()" style="background:rgba(255,255,255,.12);border:none;color:#fff;width:28px;height:28px;border-radius:50%;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;"><i class="fas fa-times"></i></button>
+    </div>
+    <div style="padding:20px;">
+      <p style="font-size:13px;color:#888;margin-bottom:16px;">Tell us what you need and we'll get back to you with a custom quote.</p>
+      <div style="margin-bottom:12px;"><label style="display:block;font-size:12px;font-weight:700;color:#666;margin-bottom:4px;text-transform:uppercase;">Product / Item *</label><input id="rfq-product" type="text" placeholder="e.g. Kitenge Dress, 50 pieces" style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:14px;outline:none;font-family:inherit;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'"></div>
+      <div style="margin-bottom:12px;"><label style="display:block;font-size:12px;font-weight:700;color:#666;margin-bottom:4px;text-transform:uppercase;">Quantity *</label><input id="rfq-qty" type="number" placeholder="e.g. 10" min="1" style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:14px;outline:none;font-family:inherit;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'"></div>
+      <div style="margin-bottom:12px;"><label style="display:block;font-size:12px;font-weight:700;color:#666;margin-bottom:4px;text-transform:uppercase;">Your Name *</label><input id="rfq-name" type="text" placeholder="Full name" style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:14px;outline:none;font-family:inherit;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'"></div>
+      <div style="margin-bottom:12px;"><label style="display:block;font-size:12px;font-weight:700;color:#666;margin-bottom:4px;text-transform:uppercase;">Email *</label><input id="rfq-email" type="email" placeholder="your@email.com" style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:14px;outline:none;font-family:inherit;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'"></div>
+      <div style="margin-bottom:16px;"><label style="display:block;font-size:12px;font-weight:700;color:#666;margin-bottom:4px;text-transform:uppercase;">Additional Details</label><textarea id="rfq-details" rows="3" placeholder="Size, color, customization, deadline..." style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:14px;outline:none;font-family:inherit;resize:vertical;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'"></textarea></div>
+      <div id="rfq-msg" style="display:none;padding:10px;border-radius:7px;font-size:13px;margin-bottom:12px;"></div>
+      <button onclick="submitRFQ()" style="width:100%;background:#f97316;color:#fff;border:none;padding:13px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;"><i class="fas fa-paper-plane"></i> Submit RFQ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Specify Location Modal -->
+<div id="location-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:4000;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#fff;border-radius:14px;width:100%;max-width:420px;overflow:hidden;">
+    <div style="padding:20px 24px 0;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <h3 style="font-size:17px;font-weight:700;color:#1a1a2e;">Specify your location</h3>
+        <button onclick="closeLocationModal()" style="background:none;border:none;font-size:20px;color:#aaa;cursor:pointer;"><i class="fas fa-times"></i></button>
+      </div>
+      <p style="font-size:13px;color:#888;margin-bottom:16px;">Shipping options and fees vary based on your location.</p>
+      <a href="login.html" id="location-signin-btn" style="display:block;background:#f97316;color:#fff;text-align:center;padding:13px;border-radius:28px;font-size:14px;font-weight:700;text-decoration:none;margin-bottom:14px;">Sign in to add address</a>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;"><div style="flex:1;height:1px;background:#e0e0e0;"></div><span style="font-size:12px;color:#aaa;">Or</span><div style="flex:1;height:1px;background:#e0e0e0;"></div></div>
+      <div style="margin-bottom:10px;">
+        <select id="loc-country" onchange="updateLocationCountry(this.value)" style="width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;font-family:inherit;">
+          <option value="">Select country</option>
+          <option value="UG">🇺🇬 Uganda</option><option value="KE">🇰🇪 Kenya</option><option value="TZ">🇹🇿 Tanzania</option>
+          <option value="RW">🇷🇼 Rwanda</option><option value="NG">🇳🇬 Nigeria</option><option value="GH">🇬🇭 Ghana</option>
+          <option value="ZA">🇿🇦 South Africa</option><option value="SE">🇸🇪 Sweden</option><option value="GB">🇬🇧 United Kingdom</option>
+          <option value="US">🇺🇸 United States</option><option value="AE">🇦🇪 UAE</option><option value="CN">🇨🇳 China</option>
+        </select>
+      </div>
+      <div style="margin-bottom:20px;"><input id="loc-zip" type="text" placeholder="Enter ZIP or postal code" style="width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;font-family:inherit;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'"></div>
+    </div>
+    <div style="padding:0 24px 24px;"><button onclick="saveLocation()" style="width:100%;background:#f97316;color:#fff;border:none;padding:14px;border-radius:28px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">Save</button></div>
+  </div>
+</div>
+
 <!-- Product Detail Modal -->
-<div id="product-detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3500;align-items:center;justify-content:center;padding:16px;">
   <div style="background:#fff;border-radius:14px;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;position:relative;">
     <button onclick="closeProductDetail()" style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,.08);border:none;width:34px;height:34px;border-radius:50%;font-size:16px;cursor:pointer;z-index:1;display:flex;align-items:center;justify-content:center;"><i class="fas fa-times"></i></button>
     <div id="product-detail-body"></div>

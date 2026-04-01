@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Checkout � Jobijad Express</title>
+<title>Checkout � Jobijad Express</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -90,18 +90,55 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;}
     <div>
       <div class="card">
         <h2><i class="fas fa-map-marker-alt" style="color:#f97316"></i> Shipping Address</h2>
-        <div class="form-row">
-          <div class="form-group"><label>Full Name *</label><input id="s-name" placeholder="John Doe"></div>
-          <div class="form-group"><label>Phone *</label><input id="s-phone" placeholder="+256 700 000000" type="tel"></div>
+        <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:7px;padding:8px 12px;margin-bottom:14px;font-size:12px;color:#15803d;display:flex;align-items:center;gap:6px;"><i class="fas fa-lock"></i> Your information is encrypted and secure</div>
+        <div class="form-group">
+          <label>Country / Region *</label>
+          <select id="s-country-select" onchange="onCountryChange(this.value)" style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:14px;outline:none;font-family:inherit;">
+            <option value="">Select country</option>
+            <option value="Uganda">🇺🇬 Uganda (+256)</option>
+            <option value="Kenya">🇰🇪 Kenya (+254)</option>
+            <option value="Tanzania">🇹🇿 Tanzania (+255)</option>
+            <option value="Rwanda">🇷🇼 Rwanda (+250)</option>
+            <option value="Nigeria">🇳🇬 Nigeria (+234)</option>
+            <option value="Ghana">🇬🇭 Ghana (+233)</option>
+            <option value="South Africa">🇿🇦 South Africa (+27)</option>
+            <option value="Sweden">🇸🇪 Sweden (+46)</option>
+            <option value="United Kingdom">🇬🇧 United Kingdom (+44)</option>
+            <option value="United States">🇺🇸 United States (+1)</option>
+            <option value="UAE">🇦🇪 UAE (+971)</option>
+            <option value="China">🇨🇳 China (+86)</option>
+            <option value="Other">🌍 Other</option>
+          </select>
+          <input type="hidden" id="s-country" value="">
         </div>
-        <div class="form-group"><label>Street Address *</label><input id="s-street" placeholder="Plot 12, Kampala Road"></div>
         <div class="form-row">
-          <div class="form-group"><label>City *</label><input id="s-city" placeholder="Kampala"></div>
-          <div class="form-group"><label>District *</label><input id="s-state" placeholder="Central"></div>
+          <div class="form-group"><label>Full Name *</label><input id="s-name" placeholder="First and Last name"></div>
+          <div class="form-group">
+            <label>Phone *</label>
+            <div style="display:flex;gap:6px;">
+              <div id="s-phone-code" style="padding:10px 10px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:14px;background:#f8f9fa;color:#555;white-space:nowrap;min-width:60px;text-align:center;">+</div>
+              <input id="s-phone" placeholder="Phone number" type="tel" style="flex:1;">
+            </div>
+            <small style="color:#888;font-size:11px;margin-top:3px;display:block;">Only used to contact you for delivery updates</small>
+          </div>
+        </div>
+        <div class="form-group" style="position:relative;">
+          <label>Street Address *</label>
+          <input id="s-street" placeholder="Address Line 1">
+          <button onclick="useMyLocation()" style="position:absolute;right:10px;top:28px;background:none;border:none;color:#f97316;font-size:12px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;"><i class="fas fa-location-arrow"></i> Use my current location</button>
+        </div>
+        <div class="form-group"><input id="s-street2" placeholder="Apartment, suite, unit, building, floor (optional)"></div>
+        <div class="form-row">
+          <div class="form-group"><label>State / Province *</label><input id="s-state" placeholder="State / Province"></div>
+          <div class="form-group"><label>City *</label><input id="s-city" placeholder="City"></div>
         </div>
         <div class="form-row">
-          <div class="form-group"><label>ZIP Code</label><input id="s-zip" placeholder="(optional)"></div>
-          <div class="form-group"><label>Country *</label><input id="s-country" placeholder="Uganda"></div>
+          <div class="form-group"><label>Postal Code</label><input id="s-zip" placeholder="Postal code"></div>
+          <div class="form-group" style="display:flex;align-items:flex-end;padding-bottom:14px;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:400;text-transform:none;letter-spacing:0;color:#555;">
+              <input type="checkbox" id="s-default" style="accent-color:#f97316;width:16px;height:16px;"> Set as default shipping address
+            </label>
+          </div>
         </div>
       </div>
 
@@ -112,7 +149,7 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;}
           <i class="fas fa-university" style="color:#1a1a2e"></i>
           <span>Bank Transfer</span>
         </label>
-        <!-- Bank Transfer details � shown by default -->
+        <!-- Bank Transfer details � shown by default -->
         <div id="bank-fields" style="margin-top:4px;padding:14px;background:#f0f4ff;border:1.5px solid #1a1a2e;border-radius:8px;">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(26,26,46,.15);">
             <i class="fas fa-university" style="color:#1a1a2e;font-size:18px"></i>
@@ -138,7 +175,7 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;}
             <img src="pics/airmtn.jpg" style="height:28px;border-radius:4px;object-fit:contain;" alt="MTN & Airtel">
           </small>
         </label>
-        <!-- Mobile Money number input � shown only when mobile_money selected -->
+        <!-- Mobile Money number input � shown only when mobile_money selected -->
         <div id="momo-fields" style="display:none;margin-top:4px;padding:14px;background:#fff7ed;border:1.5px solid #f97316;border-radius:8px;">
           <div class="form-group" style="margin-bottom:10px">
             <label>Mobile Network</label>
@@ -184,12 +221,12 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;}
             <div class="form-group" style="margin-bottom:0">
               <label>CVV *</label>
               <div style="position:relative">
-                <input type="password" id="pp-cvv" placeholder="���" maxlength="4">
+                <input type="password" id="pp-cvv" placeholder="���" maxlength="4">
                 <i class="fas fa-question-circle" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:#aaa;cursor:pointer;font-size:14px" title="3-digit security code on back of card"></i>
               </div>
             </div>
           </div>
-          <small style="color:#003087;font-size:11px;margin-top:8px;display:block"><i class="fas fa-lock"></i> Secured by PayPal � your card details are protected</small>
+          <small style="color:#003087;font-size:11px;margin-top:8px;display:block"><i class="fas fa-lock"></i> Secured by PayPal � your card details are protected</small>
         </div>
         <label class="pay-option">
           <input type="radio" name="pay" value="credit_card" onchange="togglePayFields()">
@@ -221,7 +258,7 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;}
             <div class="form-group" style="margin-bottom:0">
               <label>CVV *</label>
               <div style="position:relative">
-                <input type="password" id="card-cvv" placeholder="���" maxlength="4">
+                <input type="password" id="card-cvv" placeholder="���" maxlength="4">
                 <i class="fas fa-question-circle" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:#aaa;cursor:pointer;font-size:14px" title="3-digit code on back of card (4 digits for Amex)"></i>
               </div>
             </div>
@@ -272,6 +309,39 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;}
 const cart = JSON.parse(localStorage.getItem('jobiCart') || '[]');
 const API_URL = (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?'http://localhost:3000/api':window.location.origin+'/api');
 
+const COUNTRY_PHONE_CODES = {
+  'Uganda':'+256','Kenya':'+254','Tanzania':'+255','Rwanda':'+250','Nigeria':'+234',
+  'Ghana':'+233','South Africa':'+27','Sweden':'+46','United Kingdom':'+44',
+  'United States':'+1','UAE':'+971','China':'+86'
+};
+
+function onCountryChange(val) {
+  const countryInput = document.getElementById('s-country');
+  const codeEl = document.getElementById('s-phone-code');
+  if (countryInput) countryInput.value = val;
+  if (codeEl) codeEl.textContent = COUNTRY_PHONE_CODES[val] || '+';
+}
+
+function useMyLocation() {
+  if (!navigator.geolocation) { alert('Geolocation not supported by your browser.'); return; }
+  navigator.geolocation.getCurrentPosition(function(pos) {
+    const lat = pos.coords.latitude, lon = pos.coords.longitude;
+    fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lon)
+      .then(r => r.json())
+      .then(data => {
+        const addr = data.address || {};
+        const street = document.getElementById('s-street');
+        const city = document.getElementById('s-city');
+        const state = document.getElementById('s-state');
+        const zip = document.getElementById('s-zip');
+        if (street) street.value = (addr.road || addr.suburb || '') + (addr.house_number ? ' ' + addr.house_number : '');
+        if (city) city.value = addr.city || addr.town || addr.village || '';
+        if (state) state.value = addr.state || addr.county || '';
+        if (zip) zip.value = addr.postcode || '';
+      }).catch(() => alert('Could not fetch address. Please enter manually.'));
+  }, function() { alert('Location access denied. Please enter your address manually.'); });
+}
+
 function showPaymentAuth(msg) {
   document.getElementById('pay-auth-screen').style.display = 'flex';
   document.getElementById('pay-auth-msg').textContent = msg || 'Validating your authentication...';
@@ -294,7 +364,7 @@ function init() {
     <div class="s-item">
       <img src="${i.image}" alt="${i.title}">
       <div><div class="s-item-title">${i.title.substring(0,40)}</div>
-      <div class="s-item-price">$${(i.price*i.qty).toFixed(2)} � ${i.qty}</div></div>
+      <div class="s-item-price">$${(i.price*i.qty).toFixed(2)} � ${i.qty}</div></div>
     </div>`).join('');
 
   const sub = cart.reduce((s,i) => s + i.price*i.qty, 0);
@@ -345,7 +415,7 @@ async function placeOrder() {
   const city = document.getElementById('s-city').value.trim();
   const state = document.getElementById('s-state').value.trim();
   const zip = document.getElementById('s-zip').value.trim();
-  const country = document.getElementById('s-country').value.trim();
+  const country = document.getElementById('s-country')?.value.trim() || document.getElementById('s-country-select')?.options[document.getElementById('s-country-select').selectedIndex]?.text.replace(/[🇦-🇿\s\(\+\d\)]+/g,'').trim() || '';
   const payment = document.querySelector('input[name="pay"]:checked').value;
 
   if (!name || !street || !city || !state || !country) {
