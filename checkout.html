@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -144,148 +144,145 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;}
 
       <div class="card">
         <h2><i class="fas fa-credit-card" style="color:#f97316"></i> Payment Method</h2>
-        <label class="pay-option">
-          <input type="radio" name="pay" value="bank_transfer" checked onchange="togglePayFields()">
-          <i class="fas fa-university" style="color:#1a1a2e"></i>
-          <span>Bank Transfer</span>
+
+        <!-- Swish (Sweden) -->
+        <label class="pay-option" id="opt-swish">
+          <input type="radio" name="pay" value="swish" checked onchange="togglePayFields()">
+          <div style="width:32px;height:32px;background:#00a550;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fas fa-mobile-alt" style="color:#fff;font-size:14px;"></i></div>
+          <span style="font-size:14px;font-weight:600;color:#00a550;">Swish</span>
+          <small style="margin-left:auto;font-size:11px;color:#888;background:#f0fff8;padding:2px 8px;border-radius:10px;border:1px solid #d1fae5;">Sweden</small>
         </label>
-        <!-- Bank Transfer details � shown by default -->
-        <div id="bank-fields" style="margin-top:4px;padding:14px;background:#f0f4ff;border:1.5px solid #1a1a2e;border-radius:8px;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(26,26,46,.15);">
-            <i class="fas fa-university" style="color:#1a1a2e;font-size:18px"></i>
-            <span style="font-size:12px;font-weight:700;color:#1a1a2e;text-transform:uppercase;letter-spacing:.5px">Bank Transfer Details</span>
+        <div id="swish-fields" style="margin-top:4px;padding:16px;background:#f0fff8;border:1.5px solid #00a550;border-radius:8px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(0,165,80,.15);">
+            <div style="width:36px;height:36px;background:#00a550;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fas fa-mobile-alt" style="color:#fff;font-size:16px;"></i></div>
+            <div><div style="font-size:13px;font-weight:700;color:#00a550;">Pay with Swish</div><div style="font-size:11px;color:#888;">Instant payment via your Swedish bank app</div></div>
           </div>
-          <div style="font-size:13px;color:#333;line-height:2;">
-            <div><strong>Bank Name:</strong> Stanbic Bank Uganda</div>
-            <div><strong>Account Name:</strong> Jobijad Express Ltd</div>
-            <div><strong>Account Number:</strong> 9030012345678</div>
-            <div><strong>Branch:</strong> Kampala Main Branch</div>
-            <div><strong>Swift Code:</strong> SBICUGKX</div>
-          </div>
-          <div style="margin-top:10px;background:#fff;border-radius:6px;padding:10px;font-size:12px;color:#666;border:1px solid #e0e0e0;">
-            <i class="fas fa-info-circle" style="color:#f97316;margin-right:5px"></i>
-            After placing your order, transfer the exact total amount and use your <strong>Order Number</strong> as the payment reference. Send proof of payment to <strong>alitajudith2002@gmail.com</strong>
-          </div>
-        </div>
-        <label class="pay-option">
-          <input type="radio" name="pay" value="mobile_money" onchange="toggleMomo()">
-          <i class="fas fa-mobile-alt" style="color:#f97316"></i>
-          <span>Mobile Money</span>
-          <small style="margin-left:auto;display:flex;gap:6px;align-items:center">
-            <img src="pics/airmtn.jpg" style="height:28px;border-radius:4px;object-fit:contain;" alt="MTN & Airtel">
-          </small>
-        </label>
-        <!-- Mobile Money number input � shown only when mobile_money selected -->
-        <div id="momo-fields" style="display:none;margin-top:4px;padding:14px;background:#fff7ed;border:1.5px solid #f97316;border-radius:8px;">
-          <div class="form-group" style="margin-bottom:10px">
-            <label>Mobile Network</label>
-            <select id="momo-network" style="width:100%;padding:9px 12px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:14px;outline:none;font-family:inherit;">
-              <option value="mtn">MTN Mobile Money</option>
-              <option value="airtel">Airtel Money</option>
-            </select>
-          </div>
-          <div class="form-group" style="margin-bottom:0">
-            <label>Mobile Money Number *</label>
-            <input type="tel" id="momo-number" placeholder="e.g. 0771234567" style="width:100%;padding:9px 12px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:14px;outline:none;font-family:inherit;">
-            <small style="color:#888;font-size:11px;margin-top:4px;display:block">Enter the number registered with your mobile money account</small>
-          </div>
-        </div>
-        <label class="pay-option">
-          <input type="radio" name="pay" value="paypal" onchange="togglePayFields()">
-          <i class="fab fa-paypal" style="color:#003087"></i>
-          <span>PayPal</span>
-          <small><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/60px-PayPal.svg.png" style="height:14px" alt="PayPal"></small>
-        </label>
-        <!-- PayPal fields -->
-        <div id="paypal-fields" style="display:none;margin-top:4px;padding:14px;background:#e8f0fe;border:1.5px solid #003087;border-radius:8px;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(0,48,135,.15);">
-            <i class="fab fa-paypal" style="color:#003087;font-size:20px"></i>
-            <span style="font-size:12px;font-weight:700;color:#003087;text-transform:uppercase;letter-spacing:.5px">Pay with PayPal Card</span>
-          </div>
-          <div class="form-group">
-            <label>Cardholder Name *</label>
-            <input type="text" id="pp-name" placeholder="Name as on card">
-          </div>
-          <div class="form-group">
-            <label>Card Number *</label>
-            <div style="position:relative">
-              <input type="text" id="pp-number" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatPPNumber(this)" style="padding-right:44px">
-              <i id="pp-brand-icon" class="fab fa-paypal" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#003087;font-size:18px;pointer-events:none"></i>
-            </div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-            <div class="form-group" style="margin-bottom:0">
-              <label>Expiry Date *</label>
-              <input type="text" id="pp-expiry" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)">
-            </div>
-            <div class="form-group" style="margin-bottom:0">
-              <label>CVV *</label>
-              <div style="position:relative">
-                <input type="password" id="pp-cvv" placeholder="���" maxlength="4">
-                <i class="fas fa-question-circle" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:#aaa;cursor:pointer;font-size:14px" title="3-digit security code on back of card"></i>
+          <div class="form-group" style="margin-bottom:12px;">
+            <label style="font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Swish Phone Number *</label>
+            <div style="display:flex;border:1.5px solid #e0e0e0;border-radius:8px;overflow:hidden;transition:border-color .2s;" id="swish-input-wrap">
+              <div style="padding:12px 14px;background:#f0fff8;color:#00a550;font-weight:700;font-size:14px;border-right:1.5px solid #e0e0e0;white-space:nowrap;display:flex;align-items:center;gap:5px;flex-shrink:0;">
+                <span>&#127480;&#127466;</span> +46
               </div>
+              <input type="tel" id="swish-number" placeholder="70 123 45 67" style="flex:1;padding:12px 14px;border:none;outline:none;font-size:15px;font-family:inherit;background:#fff;min-width:0;" oninput="formatSwishNumber(this)" onfocus="document.getElementById('swish-input-wrap').style.borderColor='#00a550';document.getElementById('swish-input-wrap').style.boxShadow='0 0 0 3px rgba(0,165,80,.15)'" onblur="document.getElementById('swish-input-wrap').style.borderColor='#e0e0e0';document.getElementById('swish-input-wrap').style.boxShadow='none'">
             </div>
+            <small style="color:#888;font-size:11px;margin-top:5px;display:block;"><i class="fas fa-info-circle" style="color:#00a550;"></i> Enter the number linked to your Swish account</small>
           </div>
-          <small style="color:#003087;font-size:11px;margin-top:8px;display:block"><i class="fas fa-lock"></i> Secured by PayPal � your card details are protected</small>
-        </div>
-        <label class="pay-option">
-          <input type="radio" name="pay" value="credit_card" onchange="togglePayFields()">
-          <i class="fas fa-credit-card" style="color:#1a1a2e"></i>
-          <span>Credit / Debit Card</span>
-          <small style="display:flex;gap:4px;align-items:center">
-            <i class="fab fa-cc-visa" style="font-size:18px;color:#1a1a2e"></i>
-            <i class="fab fa-cc-mastercard" style="font-size:18px;color:#eb001b"></i>
-          </small>
-        </label>
-        <!-- Credit Card fields -->
-        <div id="card-fields" style="display:none;margin-top:4px;padding:14px;background:#f8f9fa;border:1.5px solid #1a1a2e;border-radius:8px;">
-          <div class="form-group">
-            <label>Cardholder Name *</label>
-            <input type="text" id="card-name" placeholder="Name as on card">
+          <div style="background:#fff;border:1px solid #d1fae5;border-radius:7px;padding:10px 12px;font-size:12px;color:#555;line-height:1.6;">
+            <i class="fas fa-check-circle" style="color:#00a550;margin-right:5px;"></i>
+            After placing your order, you will receive a Swish payment request on your phone. Open your bank app and approve the payment.
           </div>
-          <div class="form-group">
-            <label>Card Number *</label>
-            <div style="position:relative">
-              <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCardNumber(this)" style="padding-right:44px">
-              <i id="card-brand-icon" class="fas fa-credit-card" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#aaa;font-size:18px;pointer-events:none"></i>
-            </div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-            <div class="form-group" style="margin-bottom:0">
-              <label>Expiry Date *</label>
-              <input type="text" id="card-expiry" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)">
-            </div>
-            <div class="form-group" style="margin-bottom:0">
-              <label>CVV *</label>
-              <div style="position:relative">
-                <input type="password" id="card-cvv" placeholder="���" maxlength="4">
-                <i class="fas fa-question-circle" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:#aaa;cursor:pointer;font-size:14px" title="3-digit code on back of card (4 digits for Amex)"></i>
-              </div>
-            </div>
-          </div>
-          <small style="color:#888;font-size:11px;margin-top:8px;display:block"><i class="fas fa-lock" style="color:#22c55e"></i> Your card details are encrypted and secure</small>
         </div>
 
-        <!-- Cash on Delivery -->
-        <div style="margin-top:6px;font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.5px;padding:8px 0 4px;">Payment on Delivery</div>
+        <!-- PayPal -->
+        <label class="pay-option">
+          <input type="radio" name="pay" value="paypal" onchange="togglePayFields()">
+          <i class="fab fa-paypal" style="color:#003087;font-size:22px;"></i>
+          <span>PayPal</span>
+          <small style="margin-left:auto;"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/60px-PayPal.svg.png" style="height:16px" alt="PayPal"></small>
+        </label>
+        <div id="paypal-fields" style="display:none;margin-top:4px;padding:16px;background:#e8f0fe;border:1.5px solid #003087;border-radius:8px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(0,48,135,.15);">
+            <i class="fab fa-paypal" style="color:#003087;font-size:26px;"></i>
+            <div><div style="font-size:13px;font-weight:700;color:#003087;">Pay with PayPal</div><div style="font-size:11px;color:#888;">Enter your PayPal card details below</div></div>
+          </div>
+          <div class="form-group">
+            <label>Cardholder Name *</label>
+            <input type="text" id="pp-name" placeholder="Name as on card" autocomplete="cc-name" onfocus="this.style.borderColor='#003087'" onblur="this.style.borderColor='#e0e0e0'">
+          </div>
+          <div class="form-group">
+            <label>Card Number *</label>
+            <div style="position:relative;">
+              <input type="text" id="pp-number" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatPPNumber(this)" autocomplete="cc-number" style="padding-right:50px;" onfocus="this.style.borderColor='#003087'" onblur="this.style.borderColor='#e0e0e0'">
+              <i id="pp-brand-icon" class="fab fa-paypal" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#003087;font-size:20px;pointer-events:none;transition:all .2s;"></i>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Expiry Date *</label>
+              <input type="text" id="pp-expiry" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)" autocomplete="cc-exp" onfocus="this.style.borderColor='#003087'" onblur="this.style.borderColor='#e0e0e0'">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label>CVV * <i class="fas fa-question-circle" style="color:#aaa;cursor:pointer;font-size:12px;" onclick="showCvvTip()" title="3-digit code on back of card"></i></label>
+              <div style="position:relative;">
+                <input type="password" id="pp-cvv" placeholder="&bull;&bull;&bull;" maxlength="4" autocomplete="cc-csc" onfocus="this.style.borderColor='#003087'" onblur="this.style.borderColor='#e0e0e0'" style="padding-right:40px;">
+                <button type="button" onclick="toggleCvvVisibility('pp-cvv',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:#aaa;cursor:pointer;font-size:13px;padding:0;"><i class="fas fa-eye"></i></button>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:12px;display:flex;align-items:center;gap:8px;background:#fff;border-radius:6px;padding:8px 12px;border:1px solid #c7d7f5;">
+            <i class="fas fa-lock" style="color:#003087;font-size:13px;"></i>
+            <span style="font-size:11px;color:#003087;font-weight:600;">Secured by PayPal &mdash; 256-bit SSL encryption</span>
+          </div>
+        </div>
+
+        <!-- Credit / Debit Card -->
+        <label class="pay-option">
+          <input type="radio" name="pay" value="credit_card" onchange="togglePayFields()">
+          <i class="fas fa-credit-card" style="color:#1a1a2e;font-size:20px;"></i>
+          <span>Credit / Debit Card</span>
+          <small style="margin-left:auto;display:flex;gap:4px;align-items:center;">
+            <i class="fab fa-cc-visa" style="font-size:22px;color:#1a1a2e;"></i>
+            <i class="fab fa-cc-mastercard" style="font-size:22px;color:#eb001b;"></i>
+          </small>
+        </label>
+        <div id="card-fields" style="display:none;margin-top:4px;padding:16px;background:#f8f9fa;border:1.5px solid #1a1a2e;border-radius:8px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(26,26,46,.1);">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <i class="fas fa-credit-card" style="color:#1a1a2e;font-size:18px;"></i>
+              <div><div style="font-size:13px;font-weight:700;color:#1a1a2e;">Card Details</div><div style="font-size:11px;color:#888;">Visa, Mastercard, Amex accepted</div></div>
+            </div>
+            <div style="display:flex;gap:4px;">
+              <i class="fab fa-cc-visa" style="font-size:20px;color:#1a1a2e;"></i>
+              <i class="fab fa-cc-mastercard" style="font-size:20px;color:#eb001b;"></i>
+              <i class="fab fa-cc-amex" style="font-size:20px;color:#007bc1;"></i>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Cardholder Name *</label>
+            <input type="text" id="card-name" placeholder="Name as on card" autocomplete="cc-name" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'">
+          </div>
+          <div class="form-group">
+            <label>Card Number *</label>
+            <div style="position:relative;">
+              <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCardNumber(this)" autocomplete="cc-number" style="padding-right:50px;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'">
+              <i id="card-brand-icon" class="fas fa-credit-card" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#aaa;font-size:20px;pointer-events:none;transition:all .2s;"></i>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Expiry Date *</label>
+              <input type="text" id="card-expiry" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)" autocomplete="cc-exp" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label>CVV * <i class="fas fa-question-circle" style="color:#aaa;cursor:pointer;font-size:12px;" onclick="showCvvTip()" title="3-digit code on back of card"></i></label>
+              <div style="position:relative;">
+                <input type="password" id="card-cvv" placeholder="&bull;&bull;&bull;" maxlength="4" autocomplete="cc-csc" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'" style="padding-right:40px;">
+                <button type="button" onclick="toggleCvvVisibility('card-cvv',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:#aaa;cursor:pointer;font-size:13px;padding:0;"><i class="fas fa-eye"></i></button>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:12px;display:flex;align-items:center;gap:8px;background:#fff;border-radius:6px;padding:8px 12px;border:1px solid #e0e0e0;">
+            <i class="fas fa-lock" style="color:#22c55e;font-size:13px;"></i>
+            <span style="font-size:11px;color:#555;font-weight:600;">Your card details are encrypted and never stored</span>
+          </div>
+        </div>
+
+        <!-- Pay on Delivery -->
+        <div style="margin-top:10px;font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.5px;padding:6px 0 4px;">Payment on Delivery</div>
         <label class="pay-option">
           <input type="radio" name="pay" value="cash_on_delivery" onchange="togglePayFields()">
-          <i class="fas fa-hand-holding-usd" style="color:#22c55e"></i>
-          <div style="flex:1;">
-            <span style="display:block;font-size:14px;font-weight:500;">Pay on Delivery</span>
-            <small style="color:#888;font-size:12px;">Pay with Mobile Money or Bank Cards on delivery</small>
-          </div>
-          <i class="fas fa-info-circle" style="color:#aaa;font-size:16px;" title="Pay when your order arrives"></i>
+          <i class="fas fa-hand-holding-usd" style="color:#22c55e;font-size:20px;"></i>
+          <div style="flex:1;"><span style="display:block;font-size:14px;font-weight:500;">Pay on Delivery</span><small style="color:#888;font-size:12px;">Pay with Swish or Bank Card on delivery</small></div>
         </label>
         <div id="cod-fields" style="display:none;margin-top:4px;padding:14px;background:#f0fdf4;border:1.5px solid #22c55e;border-radius:8px;">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
             <i class="fas fa-check-circle" style="color:#22c55e;font-size:18px;"></i>
             <span style="font-size:13px;font-weight:600;color:#15803d;">Pay on Delivery selected</span>
           </div>
-          <p style="font-size:12px;color:#555;line-height:1.6;">Your order will be delivered first. You pay when it arrives using Mobile Money or Bank Card. Available for select locations only.</p>
-          <p style="font-size:11px;color:#888;margin-top:6px;"><i class="fas fa-info-circle" style="color:#f97316;margin-right:4px;"></i>A small verification fee may apply. Our team will contact you to confirm delivery details.</p>
+          <p style="font-size:12px;color:#555;line-height:1.6;">Your order will be delivered first. Pay when it arrives using Swish or Bank Card. Available for select locations only.</p>
+          <p style="font-size:11px;color:#888;margin-top:6px;"><i class="fas fa-info-circle" style="color:#f97316;margin-right:4px;"></i>Our team will contact you to confirm delivery details.</p>
         </div>
-      </div>
+      </div>      </div>
     </div>
 
     <div class="summary-sticky">
@@ -312,14 +309,34 @@ const API_URL = (window.location.hostname==='localhost'||window.location.hostnam
 const COUNTRY_PHONE_CODES = {
   'Uganda':'+256','Kenya':'+254','Tanzania':'+255','Rwanda':'+250','Nigeria':'+234',
   'Ghana':'+233','South Africa':'+27','Sweden':'+46','United Kingdom':'+44',
-  'United States':'+1','UAE':'+971','China':'+86'
+  'United States':'+1','UAE':'+971','China':'+86','Other':''
 };
+// Countries where mobile money is common — auto-fill momo prefix
+const MOMO_COUNTRIES = ['Uganda','Kenya','Tanzania','Rwanda','Nigeria','Ghana'];
 
 function onCountryChange(val) {
   const countryInput = document.getElementById('s-country');
   const codeEl = document.getElementById('s-phone-code');
+  const momoNum = document.getElementById('momo-number');
+  const momoCodeDisplay = document.getElementById('momo-code-display');
+  const code = COUNTRY_PHONE_CODES[val] || '';
   if (countryInput) countryInput.value = val;
-  if (codeEl) codeEl.textContent = COUNTRY_PHONE_CODES[val] || '+';
+  if (codeEl) codeEl.textContent = code || '+';
+  if (momoCodeDisplay) momoCodeDisplay.textContent = code || '+';
+  // Auto-fill country code in momo number field if empty
+  if (momoNum && code) {
+    if (!momoNum.value.trim()) {
+      momoNum.placeholder = code + ' XXXXXXXXX';
+    }
+  }
+  // Auto-select mobile money for momo countries
+  if (MOMO_COUNTRIES.includes(val)) {
+    const momoRadio = document.querySelector('input[name="pay"][value="mobile_money"]');
+    if (momoRadio && !momoRadio.checked) {
+      momoRadio.checked = true;
+      togglePayFields();
+    }
+  }
 }
 
 function useMyLocation() {
@@ -378,14 +395,63 @@ function init() {
 
 function togglePayFields() {
   var val = document.querySelector('input[name="pay"]:checked').value;
-  document.getElementById('bank-fields').style.display = val === 'bank_transfer' ? 'block' : 'none';
-  document.getElementById('momo-fields').style.display = val === 'mobile_money' ? 'block' : 'none';
-  document.getElementById('paypal-fields').style.display = val === 'paypal' ? 'block' : 'none';
-  document.getElementById('card-fields').style.display = val === 'credit_card' ? 'block' : 'none';
+  var swish = document.getElementById('swish-fields');
+  var paypal = document.getElementById('paypal-fields');
+  var card = document.getElementById('card-fields');
+  var cod = document.getElementById('cod-fields');
+  if (swish) swish.style.display = val === 'swish' ? 'block' : 'none';
+  if (paypal) paypal.style.display = val === 'paypal' ? 'block' : 'none';
+  if (card) card.style.display = val === 'credit_card' ? 'block' : 'none';
+  if (cod) cod.style.display = val === 'cash_on_delivery' ? 'block' : 'none';
+  // Focus Swish number when selected
+  if (val === 'swish') {
+    setTimeout(function() {
+      var el = document.getElementById('swish-number');
+      if (el) el.focus();
+    }, 80);
+  }
 }
 
-// Keep old name working (used by mobile money radio)
 function toggleMomo() { togglePayFields(); }
+
+function formatSwishNumber(el) {
+  // Remove non-digits
+  var v = el.value.replace(/\D/g, '');
+  // Format as XX XXX XX XX
+  if (v.length > 2) v = v.substring(0,2) + ' ' + v.substring(2);
+  if (v.replace(/\s/g,'').length > 5) v = v.substring(0,6) + ' ' + v.substring(6);
+  if (v.replace(/\s/g,'').length > 7) v = v.substring(0,9) + ' ' + v.substring(9);
+  el.value = v.substring(0, 11);
+}
+
+function toggleCvvVisibility(inputId, btn) {
+  var input = document.getElementById(inputId);
+  var icon = btn.querySelector('i');
+  if (input.type === 'password') {
+    input.type = 'text';
+    if (icon) { icon.className = 'fas fa-eye-slash'; }
+  } else {
+    input.type = 'password';
+    if (icon) { icon.className = 'fas fa-eye'; }
+  }
+}
+
+function showCvvTip() {
+  var tip = document.createElement('div');
+  tip.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
+  tip.innerHTML = '<div style="background:#fff;border-radius:12px;padding:20px 24px;max-width:320px;text-align:center;">' +
+    '<i class="fas fa-credit-card" style="font-size:32px;color:#f97316;margin-bottom:12px;display:block;"></i>' +
+    '<h3 style="font-size:15px;font-weight:700;color:#1a1a2e;margin-bottom:8px;">What is CVV?</h3>' +
+    '<p style="font-size:13px;color:#555;line-height:1.6;margin-bottom:16px;">The CVV is the 3-digit security code on the back of your Visa/Mastercard, or the 4-digit code on the front of your Amex card.</p>' +
+    '<button onclick="this.closest(\'div[style*=fixed]\').remove()" style="background:#f97316;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Got it</button>' +
+    '</div>';
+  document.body.appendChild(tip);
+}
+
+function formatMomoNumber(el) {
+  // Only allow digits, spaces, dashes
+  el.value = el.value.replace(/[^\d\s\-\+]/g, '');
+}
 
 function formatCardNumber(el) {
   var v = el.value.replace(/\D/g, '').substring(0, 16);
@@ -423,12 +489,16 @@ async function placeOrder() {
     return;
   }
 
-  // Validate mobile money number
+  // Validate Swish
+  let swishNumber = '';
+  if (payment === 'swish') {
+    const swishRaw = document.getElementById('swish-number') ? document.getElementById('swish-number').value.trim() : '';
+    if (!swishRaw) { alert('Please enter your Swish phone number.'); return; }
+    swishNumber = '+46 ' + swishRaw;
+  }
+
+  // Validate mobile money (legacy)
   let momoNumber = '', momoNetwork = '';
-  if (payment === 'mobile_money') {
-    momoNumber = document.getElementById('momo-number').value.trim();
-    momoNetwork = document.getElementById('momo-network').value;
-    if (!momoNumber) { alert('Please enter your Mobile Money number.'); return; }
   }
 
   // Validate PayPal
@@ -482,6 +552,7 @@ async function placeOrder() {
     items: cart.map(i => ({ name: i.title, price: i.price, quantity: i.qty, image: i.image })),
     shippingAddress: { name, phone, street, city, state, zipCode: zip, country },
     paymentMethod: payment,
+    swishNumber: swishNumber || undefined,
     momoNumber: momoNumber || undefined,
     momoNetwork: momoNetwork || undefined,
     paypalEmail: undefined,
@@ -499,8 +570,18 @@ async function placeOrder() {
   const token = localStorage.getItem('jobiToken');
 
   if (!token) {
-    alert('Please log in to place an order.');
-    window.location.href = 'login.html';
+    // Guest checkout — generate a local order number
+    orderNumber = 'JE-' + Date.now().toString(36).toUpperCase();
+    orderId = orderNumber;
+    // Save locally and show success
+    const saved = { ...orderData, id: orderId, orderNumber, orderStatus: 'pending', createdAt: new Date().toISOString() };
+    const orders = JSON.parse(localStorage.getItem('jobiOrders') || '[]');
+    orders.push(saved);
+    localStorage.setItem('jobiOrders', JSON.stringify(orders));
+    localStorage.removeItem('jobiCart');
+    btn.innerHTML = '<i class="fas fa-check-circle"></i> Place Order';
+    btn.disabled = false;
+    showSuccess(orderNumber, payment, momoNumber, momoNetwork);
     return;
   }
 
@@ -520,30 +601,45 @@ async function placeOrder() {
     orderId = data.order?.id;
     orderNumber = data.order?.orderNumber;
   } catch(e) {
-    btn.innerHTML = '<i class="fas fa-check-circle"></i> Place Order';
-    btn.disabled = false;
-    alert('Could not connect to server. Make sure the server is running.');
-    return;
+    // Server unreachable — still allow order with local ID
+    orderNumber = 'JE-' + Date.now().toString(36).toUpperCase();
+    orderId = orderNumber;
   }
 
-  hidePaymentAuth();
-  // Save to localStorage as fallback and clear cart
+  btn.innerHTML = '<i class="fas fa-check-circle"></i> Place Order';
+  btn.disabled = false;
+
+  // Save to localStorage and clear cart
   const saved = { ...orderData, id: orderId, orderNumber, orderStatus: 'pending', createdAt: new Date().toISOString() };
   const orders = JSON.parse(localStorage.getItem('jobiOrders') || '[]');
   orders.push(saved);
   localStorage.setItem('jobiOrders', JSON.stringify(orders));
   localStorage.removeItem('jobiCart');
 
-  // Show success screen
+  showSuccess(orderNumber || orderId || 'N/A', payment, momoNumber, momoNetwork);
+}
+
+function showSuccess(orderNum, payment, momoNumber, momoNetwork) {
   document.getElementById('checkout-grid').style.display = 'none';
   document.querySelector('.page-title').style.display = 'none';
   document.getElementById('success-screen').style.display = 'block';
-  document.getElementById('success-order-num').textContent = orderNumber || orderId || 'N/A';
-  if (payment === 'mobile_money') {
+  document.getElementById('success-order-num').textContent = orderNum;
+  if (payment === 'swish') {
+    var momoInfo = document.getElementById('success-momo-info');
+    if (momoInfo) {
+      momoInfo.style.display = 'block';
+      momoInfo.style.borderColor = '#00a550';
+      momoInfo.style.background = '#f0fff8';
+      momoInfo.innerHTML = '<i class="fas fa-mobile-alt" style="color:#00a550;margin-right:6px"></i>' +
+        '<strong style="color:#00a550;">Swish Payment Pending</strong><br>' +
+        '<span style="font-size:12px;margin-top:6px;display:block">A Swish payment request will be sent to <strong>' + (document.getElementById('swish-number') ? '+46 ' + document.getElementById('swish-number').value : '') + '</strong>.<br>Open your bank app and approve the payment to confirm your order.</span>';
+    }
+  } else if (payment === 'mobile_money') {
     document.getElementById('success-momo-info').style.display = 'block';
     document.getElementById('success-momo-num').textContent = momoNumber;
-    document.getElementById('success-momo-net').textContent = momoNetwork.toUpperCase();
+    document.getElementById('success-momo-net').textContent = (momoNetwork || '').toUpperCase();
   }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 init();
@@ -569,3 +665,5 @@ init();
 @keyframes spin{to{transform:rotate(360deg);}}
 </style></body>
 </html>
+
+

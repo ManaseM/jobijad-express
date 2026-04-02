@@ -468,6 +468,7 @@ async function loadProductsFromDB() {
         if (data.products && data.products.length > 0) {
             renderDBProducts(data.products);
             setTimeout(initScrollReveal, 50);
+            document.dispatchEvent(new Event('productsLoaded'));
         }
     } catch (e) { /* keep static products */ }
 }

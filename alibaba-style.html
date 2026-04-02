@@ -502,24 +502,70 @@
 </div>
 
 <!-- RFQ Modal -->
-<div id="rfq-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:4000;align-items:center;justify-content:center;padding:16px;">
-  <div style="background:#fff;border-radius:14px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;">
-    <div style="background:#1a1a2e;padding:18px 20px;border-radius:14px 14px 0 0;display:flex;align-items:center;justify-content:space-between;">
-      <h3 style="color:#fff;font-size:16px;font-weight:700;margin:0;"><i class="fas fa-file-alt" style="color:#f97316;margin-right:8px;"></i>Request for Quote (RFQ)</h3>
-      <button onclick="closeRFQ()" style="background:rgba(255,255,255,.12);border:none;color:#fff;width:28px;height:28px;border-radius:50%;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;"><i class="fas fa-times"></i></button>
+<div id="rfq-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:4000;align-items:center;justify-content:center;padding:16px;" onclick="if(event.target===this)closeRFQ()">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.3);">
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,#1a1a2e,#0f3460);padding:20px 22px;border-radius:16px 16px 0 0;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:36px;height:36px;background:rgba(249,115,22,.25);border-radius:8px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-file-invoice" style="color:#f97316;font-size:16px;"></i></div>
+        <div><div style="color:#fff;font-size:15px;font-weight:700;">Request a Quote</div><div style="color:rgba(255,255,255,.5);font-size:11px;">We reply within 24 hours</div></div>
+      </div>
+      <button onclick="closeRFQ()" style="background:rgba(255,255,255,.1);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;" onmouseover="this.style.background='rgba(255,255,255,.2)'" onmouseout="this.style.background='rgba(255,255,255,.1)'"><i class="fas fa-times"></i></button>
     </div>
-    <div style="padding:20px;">
-      <p style="font-size:13px;color:#888;margin-bottom:16px;">Tell us what you need and we'll get back to you with a custom quote.</p>
-      <div style="margin-bottom:12px;"><label style="display:block;font-size:12px;font-weight:700;color:#666;margin-bottom:4px;text-transform:uppercase;">Product / Item *</label><input id="rfq-product" type="text" placeholder="e.g. Kitenge Dress, 50 pieces" style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:14px;outline:none;font-family:inherit;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'"></div>
-      <div style="margin-bottom:12px;"><label style="display:block;font-size:12px;font-weight:700;color:#666;margin-bottom:4px;text-transform:uppercase;">Quantity *</label><input id="rfq-qty" type="number" placeholder="e.g. 10" min="1" style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:14px;outline:none;font-family:inherit;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'"></div>
-      <div style="margin-bottom:12px;"><label style="display:block;font-size:12px;font-weight:700;color:#666;margin-bottom:4px;text-transform:uppercase;">Your Name *</label><input id="rfq-name" type="text" placeholder="Full name" style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:14px;outline:none;font-family:inherit;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'"></div>
-      <div style="margin-bottom:12px;"><label style="display:block;font-size:12px;font-weight:700;color:#666;margin-bottom:4px;text-transform:uppercase;">Email *</label><input id="rfq-email" type="email" placeholder="your@email.com" style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:14px;outline:none;font-family:inherit;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'"></div>
-      <div style="margin-bottom:16px;"><label style="display:block;font-size:12px;font-weight:700;color:#666;margin-bottom:4px;text-transform:uppercase;">Additional Details</label><textarea id="rfq-details" rows="3" placeholder="Size, color, customization, deadline..." style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:14px;outline:none;font-family:inherit;resize:vertical;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'"></textarea></div>
-      <div id="rfq-msg" style="display:none;padding:10px;border-radius:7px;font-size:13px;margin-bottom:12px;"></div>
-      <button onclick="submitRFQ()" style="width:100%;background:#f97316;color:#fff;border:none;padding:13px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;"><i class="fas fa-paper-plane"></i> Submit RFQ</button>
+    <!-- Quick product chips -->
+    <div style="padding:14px 20px 0;">
+      <div style="font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Quick Select</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
+        <button onclick="rfqQuickSelect('Kitenge Dress')" class="rfq-chip">Kitenge Dress</button>
+        <button onclick="rfqQuickSelect('Ankara Suit')" class="rfq-chip">Ankara Suit</button>
+        <button onclick="rfqQuickSelect('Dashiki Shirt')" class="rfq-chip">Dashiki Shirt</button>
+        <button onclick="rfqQuickSelect('Accessories')" class="rfq-chip">Accessories</button>
+        <button onclick="rfqQuickSelect('Custom Order')" class="rfq-chip">Custom Order</button>
+      </div>
+    </div>
+    <div style="padding:0 20px 20px;">
+      <!-- Product -->
+      <div style="margin-bottom:12px;">
+        <label style="display:block;font-size:12px;font-weight:700;color:#555;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;">What do you need? *</label>
+        <input id="rfq-product" type="text" placeholder="e.g. Kitenge Dress, 50 pieces" style="width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;font-family:inherit;transition:border .2s,box-shadow .2s;" onfocus="this.style.borderColor='#f97316';this.style.boxShadow='0 0 0 3px rgba(249,115,22,.12)'" onblur="this.style.borderColor='#e0e0e0';this.style.boxShadow='none'">
+      </div>
+      <!-- Qty + Budget row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:#555;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;">Quantity *</label>
+          <input id="rfq-qty" type="number" placeholder="e.g. 10" min="1" style="width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;font-family:inherit;transition:border .2s;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'">
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:#555;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;">Budget (USD)</label>
+          <input id="rfq-budget" type="text" placeholder="e.g. $200" style="width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;font-family:inherit;transition:border .2s;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'">
+        </div>
+      </div>
+      <!-- Name + Email row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:#555;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;">Your Name *</label>
+          <input id="rfq-name" type="text" placeholder="Full name" style="width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;font-family:inherit;transition:border .2s;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'">
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:#555;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;">Email *</label>
+          <input id="rfq-email" type="email" placeholder="your@email.com" style="width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;font-family:inherit;transition:border .2s;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'">
+        </div>
+      </div>
+      <!-- Details -->
+      <div style="margin-bottom:14px;">
+        <label style="display:block;font-size:12px;font-weight:700;color:#555;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;">Extra Details</label>
+        <textarea id="rfq-details" rows="3" placeholder="Size, color, customization, deadline, shipping country..." style="width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;font-family:inherit;resize:vertical;transition:border .2s;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'"></textarea>
+      </div>
+      <div id="rfq-msg" style="display:none;padding:10px 12px;border-radius:7px;font-size:13px;margin-bottom:12px;"></div>
+      <button onclick="submitRFQ()" id="rfq-submit-btn" style="width:100%;background:linear-gradient(135deg,#f97316,#ea6c0a);color:#fff;border:none;padding:14px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 16px rgba(249,115,22,.35);transition:all .2s;" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px rgba(249,115,22,.45)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(249,115,22,.35)'"><i class="fas fa-paper-plane"></i> Send Quote Request</button>
+      <p style="text-align:center;font-size:11px;color:#aaa;margin-top:10px;"><i class="fas fa-clock" style="color:#f97316;margin-right:4px;"></i>We typically respond within 24 hours via email</p>
     </div>
   </div>
 </div>
+<style>
+.rfq-chip{background:#fff7ed;color:#f97316;border:1.5px solid #fed7aa;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;}
+.rfq-chip:hover,.rfq-chip.selected{background:#f97316;color:#fff;border-color:#f97316;}
+</style>
 
 <!-- Specify Location Modal -->
 <div id="location-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:4000;align-items:center;justify-content:center;padding:16px;">
@@ -548,6 +594,7 @@
 </div>
 
 <!-- Product Detail Modal -->
+<div id="product-detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3500;align-items:center;justify-content:center;padding:16px;">
   <div style="background:#fff;border-radius:14px;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;position:relative;">
     <button onclick="closeProductDetail()" style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,.08);border:none;width:34px;height:34px;border-radius:50%;font-size:16px;cursor:pointer;z-index:1;display:flex;align-items:center;justify-content:center;"><i class="fas fa-times"></i></button>
     <div id="product-detail-body"></div>
