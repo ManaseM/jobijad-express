@@ -234,12 +234,37 @@ tr:hover td{background:#fafafa;}
         <select id="p-featured"><option value="false">No</option><option value="true">Yes</option></select>
       </div>
     </div>
+    <!-- Clothing Sizes -->
+    <div class="form-group">
+      <label>Clothing Sizes & Stock</label>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;" id="size-chips">
+        <button type="button" class="size-chip" onclick="toggleSize('XS')">XS</button>
+        <button type="button" class="size-chip" onclick="toggleSize('S')">S</button>
+        <button type="button" class="size-chip" onclick="toggleSize('M')">M</button>
+        <button type="button" class="size-chip" onclick="toggleSize('L')">L</button>
+        <button type="button" class="size-chip" onclick="toggleSize('XL')">XL</button>
+        <button type="button" class="size-chip" onclick="toggleSize('XXL')">XXL</button>
+        <button type="button" class="size-chip" onclick="toggleSize('3XL')">3XL</button>
+        <button type="button" class="size-chip" onclick="toggleSize('One Size')">One Size</button>
+      </div>
+      <div id="size-stock-inputs" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+      <small style="color:#aaa;font-size:11px;margin-top:4px;display:block;">Click a size to add it, then enter stock quantity for each</small>
+    </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeProductModal()">Cancel</button>
       <button class="btn btn-primary" onclick="saveProduct()"><i class="fas fa-save"></i> Save</button>
     </div>
   </div>
 </div>
+<style>
+.size-chip{padding:6px 14px;border:1.5px solid #e0e0e0;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#555;transition:all .2s;font-family:inherit;}
+.size-chip.active{background:#f97316;color:#fff;border-color:#f97316;}
+.size-stock-row{display:flex;align-items:center;gap:6px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:5px 10px;}
+.size-stock-row span{font-size:12px;font-weight:700;color:#f97316;min-width:32px;}
+.size-stock-row input{width:60px;padding:4px 8px;border:1px solid #e0e0e0;border-radius:5px;font-size:12px;outline:none;font-family:inherit;}
+.size-stock-row button{background:none;border:none;color:#aaa;cursor:pointer;font-size:14px;padding:0 2px;}
+.size-stock-row button:hover{color:#ef4444;}
+</style>
 
 <script>
 const API = (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?(window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?'http://localhost:3000/api':window.location.origin+'/api'):window.location.origin+'/api');
@@ -851,7 +876,50 @@ function openProductModal(product = null) {
     preview.style.display = 'none';
     labelText.textContent = 'Click to choose a photo from your phone or computer';
   }
+  // Init sizes
+  window._selectedSizes = {};
+  document.querySelectorAll('.size-chip').forEach(c => c.classList.remove('active'));
+  document.getElementById('size-stock-inputs').innerHTML = '';
+  if (product?.sizes && product.sizes.length > 0) {
+    product.sizes.forEach(function(s) {
+      if (s.size && s.size !== 'One Size' || product.sizes.length > 1) {
+        window._selectedSizes[s.size] = s.stock || 0;
+        var chip = Array.from(document.querySelectorAll('.size-chip')).find(c => c.textContent.trim() === s.size);
+        if (chip) chip.classList.add('active');
+        else { /* custom size */ }
+        addSizeStockRow(s.size, s.stock || 0);
+      }
+    });
+  }
   document.getElementById('product-modal').classList.add('open');
+}
+
+function toggleSize(size) {
+  if (!window._selectedSizes) window._selectedSizes = {};
+  var chip = Array.from(document.querySelectorAll('.size-chip')).find(c => c.textContent.trim() === size);
+  if (window._selectedSizes.hasOwnProperty(size)) {
+    delete window._selectedSizes[size];
+    if (chip) chip.classList.remove('active');
+    var row = document.getElementById('size-row-' + size.replace(/\s/g,'_'));
+    if (row) row.remove();
+  } else {
+    window._selectedSizes[size] = 0;
+    if (chip) chip.classList.add('active');
+    addSizeStockRow(size, 0);
+  }
+}
+
+function addSizeStockRow(size, stock) {
+  var container = document.getElementById('size-stock-inputs');
+  var id = 'size-row-' + size.replace(/\s/g,'_');
+  if (document.getElementById(id)) return;
+  var row = document.createElement('div');
+  row.className = 'size-stock-row';
+  row.id = id;
+  row.innerHTML = '<span>' + size + '</span>' +
+    '<input type="number" min="0" value="' + stock + '" placeholder="qty" oninput="window._selectedSizes[\'' + size + '\']=parseInt(this.value)||0">' +
+    '<button type="button" onclick="toggleSize(\'' + size + '\')"><i class="fas fa-times"></i></button>';
+  container.appendChild(row);
 }
 
 function openEditProduct(id) {
@@ -913,7 +981,9 @@ async function saveProduct() {
   const body = {
     name, price, category, description, featured,
     images: imageUrl ? [{ url: imageUrl, alt: name }] : [],
-    sizes: [{ size: 'One Size', stock }]
+    sizes: Object.keys(window._selectedSizes || {}).length > 0
+      ? Object.entries(window._selectedSizes).map(([size, stock]) => ({ size, stock }))
+      : [{ size: 'One Size', stock }]
   };
 
   try {

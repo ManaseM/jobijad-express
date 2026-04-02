@@ -138,22 +138,22 @@
 <div class="trust-bar">
   <a href="https://wa.me/46762593231" target="_blank" class="trust-item">
     <i class="fas fa-headset"></i>
-    <div><span class="trust-label">Need Help?</span><span class="trust-sub">Contact us</span></div>
+    <div><span class="trust-label" data-i18n="needHelp">Need Help?</span><span class="trust-sub" data-i18n="contactUs">Contact us</span></div>
   </a>
   <div class="trust-divider"></div>
   <div class="trust-item" onclick="showPolicy('returns')">
     <i class="fas fa-undo-alt"></i>
-    <div><span class="trust-label">Easy Returns</span><span class="trust-sub">14-day policy</span></div>
+    <div><span class="trust-label" data-i18n="easyReturns">Easy Returns</span><span class="trust-sub" data-i18n="returnPolicy">14-day policy</span></div>
   </div>
   <div class="trust-divider"></div>
-  <div class="trust-item">
+  <div class="trust-item" onclick="showSecurePaymentsInfo()" style="cursor:pointer;">
     <i class="fas fa-shield-alt"></i>
-    <div><span class="trust-label">Secure Payments</span><span class="trust-sub">256-bit SSL</span></div>
+    <div><span class="trust-label" data-i18n="securePayments">Secure Payments</span><span class="trust-sub">256-bit SSL</span></div>
   </div>
   <div class="trust-divider"></div>
-  <div class="trust-item">
+  <div class="trust-item" onclick="showFreeShippingInfo()" style="cursor:pointer;">
     <i class="fas fa-truck"></i>
-    <div><span class="trust-label">Free Shipping</span><span class="trust-sub">Orders over $75</span></div>
+    <div><span class="trust-label" data-i18n="freeShipping">Free Shipping</span><span class="trust-sub" id="trust-shipping-sub">Orders over $75</span></div>
   </div>
 </div>
 
@@ -177,22 +177,40 @@
   <div class="bottom-search">
     <div class="bottom-search-inner">
       <div class="search-input-container" id="search-container">
-        <!-- Image preview chip (shown after attaching) -->
-        <div id="attach-preview" style="display:none;align-items:center;gap:4px;background:#fff7ed;border:1px solid #f97316;border-radius:14px;padding:2px 8px 2px 4px;font-size:11px;color:#f97316;flex-shrink:0;max-width:100px;">
-          <img id="attach-thumb" src="" style="width:18px;height:18px;object-fit:cover;border-radius:3px;">
-          <span id="attach-name" style="max-width:50px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+        <!-- Attachment preview chip -->
+        <div id="attach-preview" style="display:none;align-items:center;gap:4px;background:#fff7ed;border:1px solid #f97316;border-radius:14px;padding:2px 8px 2px 4px;font-size:11px;color:#f97316;flex-shrink:0;max-width:110px;">
+          <i id="attach-type-icon" class="fas fa-image" style="font-size:13px;"></i>
+          <span id="attach-name" style="max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
           <button onclick="clearAttachment()" style="background:none;border:none;color:#f97316;cursor:pointer;font-size:12px;padding:0;line-height:1;">&times;</button>
         </div>
         <input type="text" placeholder="Describe what you're looking for..." class="search-input" id="bottom-search-input">
-        <!-- Hidden file input -->
-        <input type="file" id="attach-file-input" accept="image/*" style="display:none" onchange="handleAttachment(this)">
-        <button class="attach-btn" title="Attach image" onclick="document.getElementById('attach-file-input').click()"><i class="fas fa-paperclip"></i></button>
+        <!-- Hidden file input — accepts all types -->
+        <input type="file" id="attach-file-input" accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv" style="display:none" onchange="handleAttachment(this)">
+        <button class="attach-btn" title="Attach file" onclick="showAttachMenu(event)"><i class="fas fa-paperclip"></i></button>
         <button class="fast-btn" onclick="filterCategory('')"><i class="fas fa-bolt"></i> Quick</button>
       </div>
       <button class="send-btn" onclick="doBottomSearch()" title="Search"><i class="fas fa-paper-plane"></i></button>
-    </div></div>
+    </div>
   </div>
 </main>
+
+<!-- Attach type menu -->
+<div id="attach-menu" style="display:none;position:fixed;bottom:70px;right:70px;background:#fff;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.18);z-index:2000;overflow:hidden;min-width:180px;border:1px solid #f0f0f0;">
+  <div style="padding:10px 14px;font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #f5f5f5;">Attach</div>
+  <div class="attach-menu-item" onclick="triggerAttach('image/*')"><i class="fas fa-image" style="color:#f97316;"></i> Photo / Image</div>
+  <div class="attach-menu-item" onclick="triggerAttach('video/*')"><i class="fas fa-video" style="color:#8b5cf6;"></i> Video</div>
+  <div class="attach-menu-item" onclick="triggerAttach('.pdf')"><i class="fas fa-file-pdf" style="color:#ef4444;"></i> PDF Document</div>
+  <div class="attach-menu-item" onclick="triggerAttach('.doc,.docx')"><i class="fas fa-file-word" style="color:#2563eb;"></i> Word Document</div>
+  <div class="attach-menu-item" onclick="triggerAttach('.xls,.xlsx,.csv')"><i class="fas fa-file-excel" style="color:#16a34a;"></i> Spreadsheet</div>
+  <div class="attach-menu-item" onclick="triggerAttach('.ppt,.pptx')"><i class="fas fa-file-powerpoint" style="color:#ea580c;"></i> Presentation</div>
+  <div class="attach-menu-item" onclick="triggerAttach('.txt')"><i class="fas fa-file-alt" style="color:#64748b;"></i> Text File</div>
+  <div class="attach-menu-item" onclick="triggerAttach('*')"><i class="fas fa-folder-open" style="color:#f59e0b;"></i> Any File</div>
+</div>
+<style>
+.attach-menu-item{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:13px;color:#333;cursor:pointer;transition:background .15s;}
+.attach-menu-item:hover{background:#fff7ed;color:#f97316;}
+.attach-menu-item i{width:18px;text-align:center;font-size:15px;}
+</style>
 
 <!-- Cart Panel -->
 <div id="cart-panel" class="cart-panel">
@@ -485,15 +503,33 @@
       <p style="font-size:13px;color:#888;margin-bottom:20px;">Select your preferred language and currency. You can update the settings at any time.</p>
       <div style="margin-bottom:16px;"><label style="display:block;font-size:14px;font-weight:600;color:#333;margin-bottom:8px;">Language</label>
         <select id="lang-select" style="width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;font-family:inherit;">
-          <option value="en">English</option><option value="fr">Français</option><option value="sw">Kiswahili</option><option value="ar">العربية</option><option value="zh">中文</option>
+          <option value="en">🇬🇧 English</option>
+          <option value="sv">🇸🇪 Svenska (Swedish)</option>
+          <option value="fr">🇫🇷 Français (French)</option>
+          <option value="sw">🇹🇿 Kiswahili</option>
+          <option value="ar">🇸🇦 العربية (Arabic)</option>
+          <option value="zh">🇨🇳 中文 (Chinese)</option>
         </select>
       </div>
       <div style="margin-bottom:20px;"><label style="display:block;font-size:14px;font-weight:600;color:#333;margin-bottom:8px;">Currency</label>
         <select id="currency-select" style="width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;font-family:inherit;">
-          <option value="USD">USD - US Dollar</option><option value="UGX">UGX - Uganda Shilling</option><option value="KES">KES - Kenya Shilling</option>
-          <option value="TZS">TZS - Tanzania Shilling</option><option value="NGN">NGN - Nigerian Naira</option><option value="GHS">GHS - Ghana Cedi</option>
-          <option value="ZAR">ZAR - South African Rand</option><option value="EUR">EUR - Euro</option><option value="GBP">GBP - British Pound</option>
-          <option value="SEK">SEK - Swedish Krona</option><option value="AED">AED - UAE Dirham</option><option value="CNY">CNY - Chinese Yuan</option>
+          <option value="USD">🇺🇸 USD — US Dollar</option>
+          <option value="SEK">🇸🇪 SEK — Swedish Krona</option>
+          <option value="EUR">🇪🇺 EUR — Euro</option>
+          <option value="GBP">🇬🇧 GBP — British Pound</option>
+          <option value="UGX">🇺🇬 UGX — Uganda Shilling</option>
+          <option value="KES">🇰🇪 KES — Kenya Shilling</option>
+          <option value="TZS">🇹🇿 TZS — Tanzania Shilling</option>
+          <option value="NGN">🇳🇬 NGN — Nigerian Naira</option>
+          <option value="GHS">🇬🇭 GHS — Ghana Cedi</option>
+          <option value="ZAR">🇿🇦 ZAR — South African Rand</option>
+          <option value="AED">🇦🇪 AED — UAE Dirham</option>
+          <option value="CNY">🇨🇳 CNY — Chinese Yuan</option>
+          <option value="JPY">🇯🇵 JPY — Japanese Yen</option>
+          <option value="CAD">🇨🇦 CAD — Canadian Dollar</option>
+          <option value="AUD">🇦🇺 AUD — Australian Dollar</option>
+          <option value="CHF">🇨🇭 CHF — Swiss Franc</option>
+          <option value="INR">🇮🇳 INR — Indian Rupee</option>
         </select>
       </div>
     </div>

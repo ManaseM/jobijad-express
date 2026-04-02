@@ -323,36 +323,93 @@ function doHeaderSearch() {
 }
 
 let attachedImageKeywords = '';
+let attachedFileData = null;
+
+function showAttachMenu(e) {
+    e.stopPropagation();
+    var menu = document.getElementById('attach-menu');
+    if (!menu) return;
+    // Position near the button
+    var btn = e.currentTarget;
+    var rect = btn.getBoundingClientRect();
+    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    menu.style.bottom = (window.innerHeight - rect.top + 8) + 'px';
+    menu.style.right = (window.innerWidth - rect.right + 0) + 'px';
+    // Close on outside click
+    setTimeout(function() {
+        document.addEventListener('click', function closeMenu() {
+            menu.style.display = 'none';
+            document.removeEventListener('click', closeMenu);
+        }, { once: true });
+    }, 10);
+}
+
+function triggerAttach(accept) {
+    var input = document.getElementById('attach-file-input');
+    if (input) {
+        input.accept = accept;
+        input.click();
+    }
+    var menu = document.getElementById('attach-menu');
+    if (menu) menu.style.display = 'none';
+}
 
 function handleAttachment(input) {
     const file = input.files[0];
     if (!file) return;
-    if (!file.type.startsWith('image/')) {
-        showNotification('Please attach an image file', 'warning'); return;
+
+    const name = file.name;
+    const type = file.type;
+    const preview = document.getElementById('attach-preview');
+    const nameEl = document.getElementById('attach-name');
+    const iconEl = document.getElementById('attach-type-icon');
+
+    // Determine icon and label by type
+    let icon = 'fas fa-file';
+    let color = '#f97316';
+    let keywords = name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ').replace(/\d+/g, '').trim();
+
+    if (type.startsWith('image/')) {
+        icon = 'fas fa-image'; color = '#f97316';
+    } else if (type.startsWith('video/')) {
+        icon = 'fas fa-video'; color = '#8b5cf6';
+        keywords = 'video ' + keywords;
+    } else if (type === 'application/pdf') {
+        icon = 'fas fa-file-pdf'; color = '#ef4444';
+        keywords = 'document ' + keywords;
+    } else if (type.includes('word') || name.endsWith('.doc') || name.endsWith('.docx')) {
+        icon = 'fas fa-file-word'; color = '#2563eb';
+        keywords = 'document ' + keywords;
+    } else if (type.includes('excel') || type.includes('spreadsheet') || name.endsWith('.csv')) {
+        icon = 'fas fa-file-excel'; color = '#16a34a';
+    } else if (type.includes('powerpoint') || type.includes('presentation')) {
+        icon = 'fas fa-file-powerpoint'; color = '#ea580c';
+    } else if (type === 'text/plain') {
+        icon = 'fas fa-file-alt'; color = '#64748b';
     }
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        // Show preview chip
-        document.getElementById('attach-thumb').src = e.target.result;
-        document.getElementById('attach-name').textContent = file.name.length > 14 ? file.name.substring(0,12) + '…' : file.name;
-        document.getElementById('attach-preview').style.display = 'flex';
-        // Extract keywords from filename (e.g. "kitenge_dress.jpg" → "kitenge dress")
-        attachedImageKeywords = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ').replace(/\d+/g, '').trim();
-        // Pre-fill search box if empty
-        const searchInput = document.getElementById('bottom-search-input');
-        if (searchInput && !searchInput.value.trim() && attachedImageKeywords) {
-            searchInput.value = attachedImageKeywords;
-        }
-        showNotification('Image attached — tap Search to find similar products', 'info');
-    };
-    reader.readAsDataURL(file);
-    input.value = ''; // reset so same file can be re-attached
+
+    if (iconEl) { iconEl.className = icon; iconEl.style.color = color; }
+    if (nameEl) nameEl.textContent = name.length > 16 ? name.substring(0, 14) + '…' : name;
+    if (preview) preview.style.display = 'flex';
+
+    attachedImageKeywords = keywords;
+    attachedFileData = { name, type, size: file.size };
+
+    // Pre-fill search box if empty
+    const searchInput = document.getElementById('bottom-search-input');
+    if (searchInput && !searchInput.value.trim() && keywords) {
+        searchInput.value = keywords;
+    }
+
+    const typeLabel = type.startsWith('image/') ? 'Image' : type.startsWith('video/') ? 'Video' : 'File';
+    showNotification(typeLabel + ' attached — tap Search to find similar products', 'info');
+    input.value = '';
 }
 
 function clearAttachment() {
     attachedImageKeywords = '';
+    attachedFileData = null;
     document.getElementById('attach-preview').style.display = 'none';
-    document.getElementById('attach-thumb').src = '';
     document.getElementById('attach-name').textContent = '';
 }
 

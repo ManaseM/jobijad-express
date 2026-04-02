@@ -47,6 +47,34 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;}
 .empty-msg i{font-size:52px;margin-bottom:12px;display:block;}
 .empty-msg a{color:#f97316;}
 @media(max-width:768px){.grid{grid-template-columns:1fr;}.form-row{grid-template-columns:1fr;}}
+
+/* Card preview widget */
+.card-preview{
+  perspective:1000px;
+  width:100%;max-width:300px;height:170px;margin:0 auto 16px;
+  cursor:pointer;
+}
+.card-preview-inner{
+  position:relative;width:100%;height:100%;
+  transform-style:preserve-3d;transition:transform .6s cubic-bezier(.4,0,.2,1);
+}
+.card-preview.flipped .card-preview-inner{transform:rotateY(180deg);}
+.card-face{
+  position:absolute;inset:0;border-radius:14px;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  padding:18px 20px;display:flex;flex-direction:column;justify-content:space-between;
+  box-shadow:0 8px 32px rgba(0,0,0,.25);
+}
+.card-front{background:linear-gradient(135deg,#1a1a2e 0%,#0f3460 60%,#16213e 100%);}
+.card-back{background:linear-gradient(135deg,#0f3460,#1a1a2e);transform:rotateY(180deg);}
+.card-chip{width:36px;height:28px;background:linear-gradient(135deg,#d4af37,#f5d060);border-radius:5px;margin-bottom:8px;}
+.card-number-display{font-family:monospace;font-size:16px;color:#fff;letter-spacing:3px;font-weight:600;}
+.card-name-display{font-size:11px;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:1px;}
+.card-expiry-display{font-size:12px;color:rgba(255,255,255,.8);font-family:monospace;}
+.card-brand-display{font-size:28px;color:#fff;opacity:.9;}
+.card-back-stripe{background:#333;height:36px;margin:-18px -20px 12px;border-radius:0;}
+.card-cvv-strip{background:#fff;border-radius:4px;padding:6px 10px;font-family:monospace;font-size:14px;color:#333;text-align:right;letter-spacing:3px;}
+.card-flip-hint{font-size:10px;color:rgba(255,255,255,.4);text-align:center;margin-top:4px;}
 </style>
 </head>
 <body>
@@ -187,24 +215,24 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;}
           </div>
           <div class="form-group">
             <label>Cardholder Name *</label>
-            <input type="text" id="pp-name" placeholder="Name as on card" autocomplete="cc-name" onfocus="this.style.borderColor='#003087'" onblur="this.style.borderColor='#e0e0e0'">
+            <input type="text" id="pp-name" placeholder="Name as on card" autocomplete="cc-name" onfocus="this.style.borderColor='#003087'" onblur="this.style.borderColor='#e0e0e0'" oninput="updateCardPreview('pp')">
           </div>
           <div class="form-group">
             <label>Card Number *</label>
             <div style="position:relative;">
-              <input type="text" id="pp-number" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatPPNumber(this)" autocomplete="cc-number" style="padding-right:50px;" onfocus="this.style.borderColor='#003087'" onblur="this.style.borderColor='#e0e0e0'">
+              <input type="text" id="pp-number" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatPPNumber(this);updateCardPreview('pp')" autocomplete="cc-number" style="padding-right:50px;" onfocus="this.style.borderColor='#003087'" onblur="this.style.borderColor='#e0e0e0'">
               <i id="pp-brand-icon" class="fab fa-paypal" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#003087;font-size:20px;pointer-events:none;transition:all .2s;"></i>
             </div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
             <div class="form-group" style="margin-bottom:0;">
               <label>Expiry Date *</label>
-              <input type="text" id="pp-expiry" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)" autocomplete="cc-exp" onfocus="this.style.borderColor='#003087'" onblur="this.style.borderColor='#e0e0e0'">
+              <input type="text" id="pp-expiry" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this);updateCardPreview('pp')" autocomplete="cc-exp" onfocus="this.style.borderColor='#003087'" onblur="this.style.borderColor='#e0e0e0'">
             </div>
             <div class="form-group" style="margin-bottom:0;">
               <label>CVV * <i class="fas fa-question-circle" style="color:#aaa;cursor:pointer;font-size:12px;" onclick="showCvvTip()" title="3-digit code on back of card"></i></label>
               <div style="position:relative;">
-                <input type="password" id="pp-cvv" placeholder="&bull;&bull;&bull;" maxlength="4" autocomplete="cc-csc" onfocus="this.style.borderColor='#003087'" onblur="this.style.borderColor='#e0e0e0'" style="padding-right:40px;">
+                <input type="password" id="pp-cvv" placeholder="&bull;&bull;&bull;" maxlength="4" autocomplete="cc-csc" onfocus="this.style.borderColor='#003087';document.getElementById('pp-card-preview')?.classList.add('flipped')" onblur="this.style.borderColor='#e0e0e0';document.getElementById('pp-card-preview')?.classList.remove('flipped')" style="padding-right:40px;" oninput="updateCardPreview('pp')">
                 <button type="button" onclick="toggleCvvVisibility('pp-cvv',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:#aaa;cursor:pointer;font-size:13px;padding:0;"><i class="fas fa-eye"></i></button>
               </div>
             </div>
@@ -239,24 +267,24 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;}
           </div>
           <div class="form-group">
             <label>Cardholder Name *</label>
-            <input type="text" id="card-name" placeholder="Name as on card" autocomplete="cc-name" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'">
+            <input type="text" id="card-name" placeholder="Name as on card" autocomplete="cc-name" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'" oninput="updateCardPreview('card')">
           </div>
           <div class="form-group">
             <label>Card Number *</label>
             <div style="position:relative;">
-              <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCardNumber(this)" autocomplete="cc-number" style="padding-right:50px;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'">
+              <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCardNumber(this);updateCardPreview('card')" autocomplete="cc-number" style="padding-right:50px;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'">
               <i id="card-brand-icon" class="fas fa-credit-card" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#aaa;font-size:20px;pointer-events:none;transition:all .2s;"></i>
             </div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
             <div class="form-group" style="margin-bottom:0;">
               <label>Expiry Date *</label>
-              <input type="text" id="card-expiry" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)" autocomplete="cc-exp" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'">
+              <input type="text" id="card-expiry" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this);updateCardPreview('card')" autocomplete="cc-exp" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'">
             </div>
             <div class="form-group" style="margin-bottom:0;">
               <label>CVV * <i class="fas fa-question-circle" style="color:#aaa;cursor:pointer;font-size:12px;" onclick="showCvvTip()" title="3-digit code on back of card"></i></label>
               <div style="position:relative;">
-                <input type="password" id="card-cvv" placeholder="&bull;&bull;&bull;" maxlength="4" autocomplete="cc-csc" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'" style="padding-right:40px;">
+                <input type="password" id="card-cvv" placeholder="&bull;&bull;&bull;" maxlength="4" autocomplete="cc-csc" onfocus="this.style.borderColor='#f97316';document.getElementById('card-card-preview')?.classList.add('flipped')" onblur="this.style.borderColor='#e0e0e0';document.getElementById('card-card-preview')?.classList.remove('flipped')" style="padding-right:40px;" oninput="updateCardPreview('card')">
                 <button type="button" onclick="toggleCvvVisibility('card-cvv',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:#aaa;cursor:pointer;font-size:13px;padding:0;"><i class="fas fa-eye"></i></button>
               </div>
             </div>
@@ -317,25 +345,40 @@ const MOMO_COUNTRIES = ['Uganda','Kenya','Tanzania','Rwanda','Nigeria','Ghana'];
 function onCountryChange(val) {
   const countryInput = document.getElementById('s-country');
   const codeEl = document.getElementById('s-phone-code');
-  const momoNum = document.getElementById('momo-number');
   const momoCodeDisplay = document.getElementById('momo-code-display');
   const code = COUNTRY_PHONE_CODES[val] || '';
   if (countryInput) countryInput.value = val;
   if (codeEl) codeEl.textContent = code || '+';
   if (momoCodeDisplay) momoCodeDisplay.textContent = code || '+';
-  // Auto-fill country code in momo number field if empty
-  if (momoNum && code) {
-    if (!momoNum.value.trim()) {
-      momoNum.placeholder = code + ' XXXXXXXXX';
-    }
+  if (document.getElementById('momo-number') && code) {
+    document.getElementById('momo-number').placeholder = code + ' XXXXXXXXX';
   }
-  // Auto-select mobile money for momo countries
-  if (MOMO_COUNTRIES.includes(val)) {
-    const momoRadio = document.querySelector('input[name="pay"][value="mobile_money"]');
-    if (momoRadio && !momoRadio.checked) {
-      momoRadio.checked = true;
-      togglePayFields();
+  // Recalculate shipping for selected country
+  const sub = cart.reduce((s,i) => s + i.price*i.qty, 0);
+  const ship = calcShipping(sub, val);
+  const shipEl = document.getElementById('s-shipping');
+  if (shipEl) shipEl.textContent = ship === 0 ? 'FREE' : fmtMoney(ship);
+  const tax = sub * 0.08;
+  const totalEl = document.getElementById('s-total');
+  if (totalEl) totalEl.textContent = fmtMoney(sub + ship + tax);
+  // Show Sweden special rate notice
+  const swishNote = document.getElementById('sweden-ship-note');
+  if (val === 'Sweden') {
+    if (!swishNote) {
+      var note = document.createElement('div');
+      note.id = 'sweden-ship-note';
+      note.style.cssText = 'background:#f0fff8;border:1px solid #d1fae5;border-radius:6px;padding:8px 12px;font-size:12px;color:#15803d;margin-top:6px;display:flex;align-items:center;gap:6px;';
+      note.innerHTML = '<span>🇸🇪</span> Sweden special rate: Free shipping on orders over $30, otherwise only $0.99!';
+      var shippingRow = document.querySelector('.s-row');
+      if (shippingRow) shippingRow.parentNode.insertBefore(note, shippingRow);
     }
+  } else if (swishNote) {
+    swishNote.remove();
+  }
+  // Auto-select Swish for Sweden
+  if (val === 'Sweden') {
+    const swishRadio = document.querySelector('input[name="pay"][value="swish"]');
+    if (swishRadio && !swishRadio.checked) { swishRadio.checked = true; togglePayFields(); }
   }
 }
 
@@ -385,12 +428,100 @@ function init() {
     </div>`).join('');
 
   const sub = cart.reduce((s,i) => s + i.price*i.qty, 0);
-  const ship = sub > 75 ? 0 : 10;
+  const country = document.getElementById('s-country-select')?.value || '';
+  const ship = calcShipping(sub, country);
   const tax = sub * 0.08;
-  document.getElementById('s-subtotal').textContent = `$${sub.toFixed(2)}`;
-  document.getElementById('s-shipping').textContent = ship === 0 ? 'FREE' : `$${ship.toFixed(2)}`;
-  document.getElementById('s-tax').textContent = `$${tax.toFixed(2)}`;
-  document.getElementById('s-total').textContent = `$${(sub+ship+tax).toFixed(2)}`;
+  document.getElementById('s-subtotal').textContent = fmtMoney(sub);
+  document.getElementById('s-shipping').textContent = ship === 0 ? 'FREE' : fmtMoney(ship);
+  document.getElementById('s-tax').textContent = fmtMoney(tax);
+  document.getElementById('s-total').textContent = fmtMoney(sub+ship+tax);
+}
+
+function injectCardPreview(containerId, prefix) {
+  var container = document.getElementById(containerId);
+  if (!container || container.querySelector('.card-preview')) return;
+  var div = document.createElement('div');
+  div.innerHTML =
+    '<div class="card-preview" id="' + prefix + '-card-preview" onclick="this.classList.toggle(\'flipped\')">' +
+      '<div class="card-preview-inner">' +
+        '<div class="card-face card-front">' +
+          '<div style="display:flex;justify-content:space-between;align-items:flex-start;">' +
+            '<div class="card-chip"></div>' +
+            '<i id="' + prefix + '-brand-icon-preview" class="' + (prefix==='pp'?'fab fa-paypal':'fas fa-credit-card') + '" style="font-size:28px;color:rgba(255,255,255,.8);"></i>' +
+          '</div>' +
+          '<div class="card-number-display" id="' + prefix + '-num-display">&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;</div>' +
+          '<div style="display:flex;justify-content:space-between;align-items:flex-end;">' +
+            '<div><div style="font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Card Holder</div>' +
+            '<div class="card-name-display" id="' + prefix + '-name-display">YOUR NAME</div></div>' +
+            '<div><div style="font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Expires</div>' +
+            '<div class="card-expiry-display" id="' + prefix + '-exp-display">MM/YY</div></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="card-face card-back">' +
+          '<div class="card-back-stripe"></div>' +
+          '<div style="padding:0 4px;">' +
+            '<div style="font-size:10px;color:rgba(255,255,255,.5);margin-bottom:4px;">CVV</div>' +
+            '<div class="card-cvv-strip" id="' + prefix + '-cvv-display">&bull;&bull;&bull;</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div style="text-align:center;font-size:11px;color:#888;margin-bottom:12px;">Tap card to flip and see CVV</div>';
+  container.insertBefore(div, container.firstChild);
+}
+
+function updateCardPreview(prefix) {
+  var nameInput = document.getElementById(prefix==='pp'?'pp-name':'card-name');
+  var numInput = document.getElementById(prefix==='pp'?'pp-number':'card-number');
+  var expInput = document.getElementById(prefix==='pp'?'pp-expiry':'card-expiry');
+  var cvvInput = document.getElementById(prefix==='pp'?'pp-cvv':'card-cvv');
+  var nameDisplay = document.getElementById(prefix+'-name-display');
+  var numDisplay = document.getElementById(prefix+'-num-display');
+  var expDisplay = document.getElementById(prefix+'-exp-display');
+  var cvvDisplay = document.getElementById(prefix+'-cvv-display');
+  var brandIcon = document.getElementById(prefix+'-brand-icon-preview');
+  if (nameDisplay && nameInput) nameDisplay.textContent = nameInput.value.toUpperCase() || 'YOUR NAME';
+  if (numDisplay && numInput) {
+    var raw = numInput.value.replace(/\s/g,'');
+    var padded = raw.padEnd(16,'\u2022');
+    numDisplay.textContent = padded.replace(/(.{4})/g,'$1 ').trim();
+    if (brandIcon) {
+      if (/^4/.test(raw)) { brandIcon.className='fab fa-cc-visa'; }
+      else if (/^5[1-5]|^2[2-7]/.test(raw)) { brandIcon.className='fab fa-cc-mastercard'; brandIcon.style.color='#eb001b'; }
+      else if (/^3[47]/.test(raw)) { brandIcon.className='fab fa-cc-amex'; brandIcon.style.color='#007bc1'; }
+      else if (prefix==='pp') { brandIcon.className='fab fa-paypal'; brandIcon.style.color='rgba(255,255,255,.8)'; }
+      else { brandIcon.className='fas fa-credit-card'; brandIcon.style.color='rgba(255,255,255,.6)'; }
+    }
+  }
+  if (expDisplay && expInput) expDisplay.textContent = expInput.value || 'MM/YY';
+  if (cvvDisplay && cvvInput) {
+    var v = cvvInput.value;
+    cvvDisplay.textContent = v ? '\u2022'.repeat(v.length) : '\u2022\u2022\u2022';
+    // Flip card to show CVV when typing
+    var preview = document.getElementById(prefix+'-card-preview');
+    if (preview && document.activeElement === cvvInput) preview.classList.add('flipped');
+    else if (preview && document.activeElement !== cvvInput) preview.classList.remove('flipped');
+  }
+}
+
+function fmtMoney(v) { return '$' + v.toFixed(2); }
+
+function calcShipping(sub, country) {
+  const rates = {
+    'Sweden': { cost: 0.99, free: 30 },
+    'Norway': { cost: 4.99, free: 75 }, 'Denmark': { cost: 4.99, free: 75 },
+    'Finland': { cost: 4.99, free: 75 }, 'United Kingdom': { cost: 6.99, free: 75 },
+    'Germany': { cost: 5.99, free: 75 }, 'France': { cost: 5.99, free: 75 },
+    'Netherlands': { cost: 5.99, free: 75 }, 'United States': { cost: 9.99, free: 75 },
+    'Canada': { cost: 9.99, free: 75 }, 'Australia': { cost: 12.99, free: 100 },
+    'UAE': { cost: 8.99, free: 75 }, 'Uganda': { cost: 4.99, free: 50 },
+    'Kenya': { cost: 4.99, free: 50 }, 'Tanzania': { cost: 4.99, free: 50 },
+    'Rwanda': { cost: 4.99, free: 50 }, 'Nigeria': { cost: 7.99, free: 75 },
+    'Ghana': { cost: 7.99, free: 75 }, 'South Africa': { cost: 8.99, free: 75 },
+    'China': { cost: 6.99, free: 75 }
+  };
+  const r = rates[country] || { cost: 14.99, free: 100 };
+  return sub >= r.free ? 0 : r.cost;
 }
 
 function togglePayFields() {
@@ -403,12 +534,14 @@ function togglePayFields() {
   if (paypal) paypal.style.display = val === 'paypal' ? 'block' : 'none';
   if (card) card.style.display = val === 'credit_card' ? 'block' : 'none';
   if (cod) cod.style.display = val === 'cash_on_delivery' ? 'block' : 'none';
-  // Focus Swish number when selected
   if (val === 'swish') {
-    setTimeout(function() {
-      var el = document.getElementById('swish-number');
-      if (el) el.focus();
-    }, 80);
+    setTimeout(function() { var el = document.getElementById('swish-number'); if (el) el.focus(); }, 80);
+  }
+  if (val === 'paypal') {
+    setTimeout(function() { injectCardPreview('paypal-fields','pp'); }, 50);
+  }
+  if (val === 'credit_card') {
+    setTimeout(function() { injectCardPreview('card-fields','card'); }, 50);
   }
 }
 
@@ -665,5 +798,6 @@ init();
 @keyframes spin{to{transform:rotate(360deg);}}
 </style></body>
 </html>
+
 
 
