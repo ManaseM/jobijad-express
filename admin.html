@@ -744,121 +744,6 @@ function buildAdminReceiptHTML(o) {
   return html;
 }
   const itemRows = (o.items||[]).map(function(i) {
-    return '<tr style="border-bottom:1px solid #f0f0f0">' +
-      '<td style="padding:8px 10px">' + (i.name||'Item') + '</td>' +
-      '<td style="padding:8px 10px;text-align:center">' + (i.quantity||1) + '</td>' +
-      '<td style="padding:8px 10px;text-align:right">$' + (parseFloat(i.price)||0).toFixed(2) + '</td>' +
-      '<td style="padding:8px 10px;text-align:right;font-weight:600">$' + ((parseFloat(i.price)||0)*(i.quantity||1)).toFixed(2) + '</td>' +
-      '</tr>';
-  }).join('');
-
-  // FRAUD DETECTION
-  const fraudFlags = [];
-  const tot = parseFloat(o.total) || 0;
-  if (tot > 500) fraudFlags.push('High order value ($' + tot.toFixed(2) + ') — verify customer identity');
-  if (o.paymentMethod === 'mobile_money' && !o.momoNumber) fraudFlags.push('Mobile money order but no phone number recorded');
-  if (o.paymentMethod === 'credit_card' && !o.cardLast4) fraudFlags.push('Card payment but no card details recorded');
-  if (o.paymentMethod === 'paypal' && !o.paypalCardLast4) fraudFlags.push('PayPal payment but no card details recorded');
-  if ((o.items||[]).length > 10) fraudFlags.push('Unusually large number of items (' + (o.items||[]).length + ')');
-  if (o.paymentStatus === 'paid' && o.orderStatus === 'pending') fraudFlags.push('Payment marked paid but order still pending — review carefully');
-
-  let fraudHtml = '';
-  if (fraudFlags.length) {
-    fraudHtml = '<div style="background:#fef2f2;border:2px solid #ef4444;border-radius:8px;padding:12px 14px;margin-bottom:16px">' +
-      '<div style="font-weight:700;color:#dc2626;font-size:13px;margin-bottom:6px"><i class="fas fa-exclamation-triangle"></i> Fraud Risk Flags (' + fraudFlags.length + ')</div>' +
-      fraudFlags.map(function(f){ return '<div style="font-size:12px;color:#7f1d1d;padding:3px 0;border-bottom:1px solid #fecaca"><i class="fas fa-flag" style="color:#ef4444;margin-right:5px"></i>' + f + '</div>'; }).join('') +
-      '<div style="font-size:11px;color:#aaa;margin-top:6px">Review these flags carefully before approving payment.</div></div>';
-  } else {
-    fraudHtml = '<div style="background:#f0fdf4;border:1.5px solid #22c55e;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:#15803d">' +
-      '<i class="fas fa-shield-alt"></i> No fraud flags detected — order appears genuine.</div>';
-  }
-
-  // PAYMENT DETAILS
-  let paymentDetails = '';
-  if (o.paymentMethod === 'mobile_money') {
-    paymentDetails = '<div style="background:#fff7ed;border:1.5px solid #f97316;border-radius:7px;padding:10px 14px;font-size:12px;margin-top:10px">' +
-      '<div style="font-weight:700;color:#f97316;margin-bottom:5px"><i class="fas fa-mobile-alt"></i> Mobile Money Details</div>' +
-      '<div><strong>Network:</strong> ' + (o.momoNetwork||'—').toUpperCase() + '</div>' +
-      '<div><strong>Number:</strong> ' + (o.momoNumber||'—') + '</div>' +
-      '<div style="margin-top:6px;color:#888;font-size:11px">Contact customer on this number to verify payment before approving.</div></div>';
-  } else if (o.paymentMethod === 'credit_card') {
-    paymentDetails = '<div style="background:#f8f9fa;border:1.5px solid #1a1a2e;border-radius:7px;padding:10px 14px;font-size:12px;margin-top:10px">' +
-      '<div style="font-weight:700;color:#1a1a2e;margin-bottom:5px"><i class="fas fa-credit-card"></i> Card Payment Details</div>' +
-      '<div><strong>Cardholder:</strong> ' + (o.cardName||'—') + '</div>' +
-      '<div><strong>Card Number:</strong> &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; ' + (o.cardLast4||'????') + '</div>' +
-      '<div><strong>Expiry:</strong> ' + (o.cardExpiry||'—') + '</div></div>';
-  } else if (o.paymentMethod === 'paypal') {
-    paymentDetails = '<div style="background:#e8f0fe;border:1.5px solid #003087;border-radius:7px;padding:10px 14px;font-size:12px;margin-top:10px">' +
-      '<div style="font-weight:700;color:#003087;margin-bottom:5px"><i class="fab fa-paypal"></i> PayPal Card Details</div>' +
-      '<div><strong>Cardholder:</strong> ' + (o.paypalCardName||'—') + '</div>' +
-      '<div><strong>Card Number:</strong> &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; ' + (o.paypalCardLast4||'????') + '</div>' +
-      '<div><strong>Expiry:</strong> ' + (o.paypalCardExpiry||'—') + '</div></div>';
-  } else {
-    paymentDetails = '<div style="background:#f8f9fa;border:1.5px solid #e0e0e0;border-radius:7px;padding:10px 14px;font-size:12px;margin-top:10px">' +
-      '<div style="font-weight:700;color:#555;margin-bottom:5px"><i class="fas fa-university"></i> Bank Transfer</div>' +
-      '<div style="color:#888">Customer will transfer via bank. Verify receipt before confirming.</div></div>';
-  }
-
-  const statusColor = o.orderStatus === 'delivered' ? '#22c55e' : o.orderStatus === 'cancelled' ? '#ef4444' : '#f97316';
-  const payStatusColor = o.paymentStatus === 'paid' ? '#22c55e' : '#f97316';
-  const qrData = encodeURIComponent('JOBIJAD-ORDER-' + receiptNum + '-' + (o.orderStatus||'pending'));
-  const addr = o.shippingAddress || {};
-
-  document.getElementById('receipt-body').innerHTML =
-    fraudHtml +
-    '<div id="receipt-print">' +
-    '<div style="text-align:center;margin-bottom:20px;border-bottom:2px solid #1a1a2e;padding-bottom:16px">' +
-    '<img src="pics/logo_white.png" alt="Jobijad Express" style="height:80px;width:auto;object-fit:contain;margin-bottom:8px;display:block;margin-left:auto;margin-right:auto;filter:brightness(1.4) drop-shadow(0 0 6px #fff) drop-shadow(0 0 16px #fff) drop-shadow(0 0 35px rgba(255,255,255,.8)) drop-shadow(0 0 60px rgba(255,255,255,.5));">' +
-    '<div style="font-size:22px;font-weight:700;color:#1a1a2e">Jobijad <span style="color:#f97316">Express</span></div>' +
-    '<div style="font-size:12px;color:#888;margin-top:4px">Premium African Fashion Marketplace</div>' +
-    '<div style="font-size:11px;color:#aaa">alitajudith2002@gmail.com | +46 762 593 231</div>' +
-    '</div>' +
-    '<div style="display:flex;justify-content:space-between;margin-bottom:16px;font-size:13px;flex-wrap:wrap;gap:10px">' +
-    '<div><div style="font-weight:700;font-size:15px;letter-spacing:1px">RECEIPT</div>' +
-    '<div style="color:#888">#' + receiptNum + '</div>' +
-    '<div style="color:#888;margin-top:4px">' + fmtDate(o.createdAt) + '</div></div>' +
-    '<div style="text-align:right">' +
-    '<div style="font-weight:600">' + (addr.name||'—') + '</div>' +
-    '<div style="color:#888;font-size:12px">' + (addr.street||'') + '</div>' +
-    '<div style="color:#888;font-size:12px">' + (addr.city||'') + ', ' + (addr.country||'') + '</div>' +
-    '<div style="color:#888;font-size:12px">' + (addr.phone||'') + '</div>' +
-    '</div></div>' +
-    '<table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px">' +
-    '<thead><tr style="background:#1a1a2e;color:#fff">' +
-    '<th style="padding:8px 10px;text-align:left">Item</th>' +
-    '<th style="padding:8px 10px;text-align:center">Qty</th>' +
-    '<th style="padding:8px 10px;text-align:right">Unit Price</th>' +
-    '<th style="padding:8px 10px;text-align:right">Subtotal</th>' +
-    '</tr></thead><tbody>' + itemRows + '</tbody></table>' +
-    '<div style="border-top:2px solid #eee;padding-top:12px;font-size:13px;max-width:260px;margin-left:auto">' +
-    '<div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="color:#666">Subtotal</span><span>$' + (parseFloat(o.subtotal)||0).toFixed(2) + '</span></div>' +
-    '<div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="color:#666">Shipping</span><span>$' + (parseFloat(o.shippingCost)||0).toFixed(2) + '</span></div>' +
-    '<div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="color:#666">Tax (8%)</span><span>$' + (parseFloat(o.tax)||0).toFixed(2) + '</span></div>' +
-    '<div style="display:flex;justify-content:space-between;font-size:17px;font-weight:700;border-top:2px solid #1a1a2e;padding-top:10px">' +
-    '<span>TOTAL</span><span style="color:#f97316">$' + (parseFloat(o.total)||0).toFixed(2) + '</span></div></div>' +
-    '<div style="margin-top:16px;padding:10px 14px;background:#f8f9fa;border-radius:6px;font-size:12px;color:#555;display:flex;gap:20px;flex-wrap:wrap">' +
-    '<span><strong>Payment:</strong> ' + (o.paymentMethod||'').replace(/_/g,' ').toUpperCase() + '</span>' +
-    '<span><strong>Payment Status:</strong> <span style="color:' + payStatusColor + ';font-weight:700;text-transform:uppercase">' + (o.paymentStatus||'pending') + '</span></span>' +
-    '<span><strong>Order Status:</strong> <span style="color:' + statusColor + ';font-weight:700;text-transform:uppercase">' + o.orderStatus + '</span></span>' +
-    '</div>' +
-    paymentDetails +
-    '<div style="text-align:center;margin-top:20px;font-size:11px;color:#aaa;border-top:1px solid #eee;padding-top:12px">' +
-    '<img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=' + qrData + '" style="margin-bottom:6px;border:2px solid #eee;border-radius:4px;width:100px;height:100px;" alt="QR Code"><br>' +
-    '<div style="font-size:10px;color:#bbb;margin-bottom:6px">Scan to verify order authenticity</div>' +
-    'Thank you for shopping with Jobijad Express!</div>' +
-    '</div>';
-
-  // Show delivery button if payment is mobile_money and not yet paid, or if order needs delivery set
-  var delivBtn = document.getElementById('receipt-delivery-btn');
-  if (delivBtn) {
-    var showDelivery = (o.paymentMethod === 'mobile_money' && o.paymentStatus !== 'paid') ||
-                       (o.orderStatus === 'pending') ||
-                       (o.orderStatus === 'confirmed' && !o.shippingDate);
-    delivBtn.style.display = showDelivery ? 'inline-flex' : 'none';
-    delivBtn.setAttribute('data-order-id', o.id);
-  }
-  document.getElementById('receipt-modal').classList.add('open');
-}
 
 function openDeliveryFromReceipt() {
   var btn = document.getElementById('receipt-delivery-btn');
@@ -869,17 +754,22 @@ function openDeliveryFromReceipt() {
 }
 
 function printReceipt() {
-  const content = document.getElementById('receipt-print').innerHTML;
-  const w = window.open('', '_blank', 'width=640,height=820');
-  w.document.write(`<!DOCTYPE html><html><head><title>Receipt — Jobijad Express</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>*{box-sizing:border-box;}body{font-family:Roboto,sans-serif;padding:32px;color:#222;max-width:580px;margin:0 auto;}table{width:100%;border-collapse:collapse;}@media print{.no-print{display:none!important;}}</style>
-    </head><body>
-    ${content}
-    <div class="no-print" style="margin-top:20px;display:flex;gap:10px">
-      <button onclick="window.print()" style="background:#f97316;color:#fff;border:none;padding:10px 24px;border-radius:6px;font-size:14px;cursor:pointer;font-weight:600">🖨 Print Receipt</button>
-      <button onclick="window.close()" style="background:#f4f6f8;color:#555;border:1px solid #ddd;padding:10px 20px;border-radius:6px;font-size:14px;cursor:pointer">Close</button>
-    </div>
+  const content = document.getElementById('receipt-print');
+  if (!content) return;
+  const w = window.open('', '_blank', 'width=680,height=900');
+  w.document.write('<!DOCTYPE html><html><head><title>Receipt — Jobijad Express</title>');
+  w.document.write('<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">');
+  w.document.write('<style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Arial,Helvetica,sans-serif;background:#f4f6f8;padding:20px;}.rc-wrap{max-width:600px;margin:0 auto;box-shadow:0 4px 24px rgba(0,0,0,.12);border-radius:10px;overflow:hidden;}table{width:100%;border-collapse:collapse;}@media print{body{background:#fff;padding:0;}.no-print{display:none!important;}.rc-wrap{box-shadow:none;}}</style>');
+  w.document.write('</head><body>');
+  w.document.write('<div class="rc-wrap">' + content.innerHTML + '</div>');
+  w.document.write('<div class="no-print" style="max-width:600px;margin:16px auto;display:flex;gap:10px;">');
+  w.document.write('<button onclick="window.print()" style="flex:1;padding:12px;background:#f97316;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">&#128438; Print Receipt</button>');
+  w.document.write('<button onclick="window.close()" style="padding:12px 20px;background:#f4f6f8;color:#555;border:1px solid #e0e0e0;border-radius:8px;font-size:14px;cursor:pointer;">Close</button>');
+  w.document.write('</div></body></html>');
+  w.document.close();
+  w.focus();
+  setTimeout(function() { w.print(); }, 600);
+}
     <!-- Delivery Schedule Modal -->
 <div class="modal-bg" id="delivery-modal">
   <div class="modal" style="max-width:500px">
@@ -1774,3 +1664,4 @@ init();
 
 </body>
 </html>
+
