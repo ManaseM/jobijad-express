@@ -66,9 +66,15 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;min-height:10
 .delivery-box{margin-top:10px;padding:10px 12px;background:#f0fdf4;border:1.5px solid #22c55e;border-radius:8px;font-size:12px;}
 .delivery-box-title{font-weight:700;color:#15803d;margin-bottom:6px;}
 /* Receipt modal */
-.receipt-modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;align-items:center;justify-content:center;padding:16px;}
+.receipt-modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;align-items:center;justify-content:center;padding:12px;}
 .receipt-modal-wrap.open{display:flex;}
-.receipt-modal-inner{background:#fff;border-radius:12px;padding:24px;width:100%;max-width:580px;max-height:92vh;overflow-y:auto;}
+.receipt-modal-inner{background:#fff;border-radius:12px;width:100%;max-width:600px;max-height:94vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.3);}
+.rc-td{padding:9px 10px;border-bottom:1px solid #f0f0f0;font-size:13px;color:#333;}
+.rc-center{text-align:center;}.rc-right{text-align:right;}.rc-bold{font-weight:700;color:#f97316;}
+@media(max-width:480px){
+  .receipt-modal-inner{border-radius:10px 10px 0 0;position:fixed;bottom:0;left:0;right:0;max-height:88vh;}
+  .receipt-modal-wrap{align-items:flex-end;padding:0;}
+}
 </style>
 </head>
 <body>
@@ -261,67 +267,103 @@ function buildReceiptHTML(o) {
   var items = o.items || [];
   var addr = o.shippingAddress || {};
   var status = o.orderStatus || 'pending';
-  var sc = status === 'delivered' ? '#22c55e' : status === 'cancelled' ? '#ef4444' : '#f97316';
+  var statusColors = { delivered:'#22c55e', cancelled:'#ef4444', shipped:'#3b82f6', confirmed:'#8b5cf6', processing:'#f59e0b' };
+  var sc = statusColors[status] || '#f97316';
 
   var rows = '';
   items.forEach(function(it) {
     var lineTotal = (parseFloat(it.price)||0) * (it.quantity||1);
-    rows += '<tr style="border-bottom:1px solid #f0f0f0">';
-    rows += '<td style="padding:8px 10px">' + (it.name||'Item') + '</td>';
-    rows += '<td style="padding:8px 10px;text-align:center">' + (it.quantity||1) + '</td>';
-    rows += '<td style="padding:8px 10px;text-align:right">' + fmtMoney(it.price) + '</td>';
-    rows += '<td style="padding:8px 10px;text-align:right;font-weight:600">' + fmtMoney(lineTotal) + '</td>';
+    rows += '<tr>';
+    rows += '<td class="rc-td">' + (it.name||'Item') + '</td>';
+    rows += '<td class="rc-td rc-center">' + (it.quantity||1) + '</td>';
+    rows += '<td class="rc-td rc-right">$' + (parseFloat(it.price)||0).toFixed(2) + '</td>';
+    rows += '<td class="rc-td rc-right rc-bold">$' + lineTotal.toFixed(2) + '</td>';
     rows += '</tr>';
   });
 
-  var html = '<div id="receipt-print" style="font-family:Arial,sans-serif;">';
-  // Header
-  html += '<div style="text-align:center;margin-bottom:20px;border-bottom:2px solid #1a1a2e;padding-bottom:16px;">';
-  html += '<div style="font-size:22px;font-weight:700;color:#1a1a2e;">Jobijad <span style="color:#f97316;">Express</span></div>';
-  html += '<div style="font-size:12px;color:#888;margin-top:4px;">Premium African Fashion Marketplace</div>';
-  html += '<div style="font-size:11px;color:#aaa;margin-top:3px;">alitajudith2002@gmail.com &nbsp;|&nbsp; +46 762 593 231</div>';
-  html += '</div>';
-  // Order info
-  html += '<div style="display:flex;justify-content:space-between;margin-bottom:16px;font-size:13px;flex-wrap:wrap;gap:10px;">';
+  var payMethod = (o.paymentMethod||'').replace(/_/g,' ');
+  var payIcon = o.paymentMethod==='swish'?'fas fa-mobile-alt':o.paymentMethod==='paypal'?'fab fa-paypal':o.paymentMethod==='credit_card'?'fas fa-credit-card':'fas fa-hand-holding-usd';
+
+  var html = '<div id="receipt-print">';
+
+  // ── HEADER BAND ──
+  html += '<div style="background:linear-gradient(135deg,#1a1a2e 0%,#0f3460 100%);border-radius:10px 10px 0 0;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">';
+  html += '<div style="display:flex;align-items:center;gap:14px;">';
+  html += '<img src="pics/logo_white.png" alt="Jobijad Express" style="height:56px;width:auto;object-fit:contain;filter:brightness(1.3) drop-shadow(0 0 8px rgba(255,255,255,.6));">';
   html += '<div>';
-  html += '<div style="font-weight:700;font-size:15px;color:#1a1a2e;">RECEIPT</div>';
-  html += '<div style="color:#888;margin-top:3px;">Order #' + rNum + '</div>';
-  html += '<div style="color:#888;">' + fmtDate(o.createdAt) + '</div>';
-  html += '<div style="margin-top:6px;"><span style="background:' + sc + ';color:#fff;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700;text-transform:uppercase;">' + status + '</span></div>';
-  html += '</div>';
-  html += '<div style="text-align:right;">';
-  html += '<div style="font-weight:600;color:#1a1a2e;">' + (addr.name||'') + '</div>';
-  if (addr.phone) html += '<div style="color:#888;font-size:12px;">' + addr.phone + '</div>';
-  html += '<div style="color:#888;font-size:12px;">' + (addr.street||'') + '</div>';
-  html += '<div style="color:#888;font-size:12px;">' + [addr.city, addr.state, addr.country].filter(Boolean).join(', ') + '</div>';
+  html += '<div style="font-size:18px;font-weight:800;color:#fff;letter-spacing:.5px;">Jobijad <span style="color:#f97316;">Express</span></div>';
+  html += '<div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:2px;">Premium African Fashion</div>';
   html += '</div></div>';
+  html += '<div style="text-align:right;">';
+  html += '<div style="font-size:11px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px;">Receipt</div>';
+  html += '<div style="font-size:20px;font-weight:800;color:#f97316;font-family:monospace;">#' + rNum + '</div>';
+  html += '<div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:2px;">' + fmtDate(o.createdAt) + '</div>';
+  html += '</div></div>';
+
+  // ── STATUS RIBBON ──
+  html += '<div style="background:' + sc + ';padding:6px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">';
+  html += '<span style="font-size:11px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:1px;"><i class="fas fa-circle" style="font-size:7px;margin-right:5px;"></i>Order Status: ' + status.toUpperCase() + '</span>';
+  html += '<span style="font-size:11px;color:rgba(255,255,255,.85);">' + fmtDate(o.createdAt) + '</span>';
+  html += '</div>';
+
+  // ── BODY ──
+  html += '<div style="background:#fff;border-radius:0 0 10px 10px;padding:24px 28px;">';
+
+  // Billing + Shipping info
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:22px;padding-bottom:18px;border-bottom:1.5px dashed #e0e0e0;">';
+  html += '<div>';
+  html += '<div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Ship To</div>';
+  html += '<div style="font-size:14px;font-weight:700;color:#1a1a2e;">' + (addr.name||'—') + '</div>';
+  if (addr.phone) html += '<div style="font-size:12px;color:#666;margin-top:3px;"><i class="fas fa-phone" style="color:#f97316;margin-right:4px;font-size:10px;"></i>' + addr.phone + '</div>';
+  if (addr.street) html += '<div style="font-size:12px;color:#666;margin-top:3px;">' + addr.street + '</div>';
+  html += '<div style="font-size:12px;color:#666;">' + [addr.city, addr.state, addr.country].filter(Boolean).join(', ') + '</div>';
+  html += '</div>';
+  html += '<div>';
+  html += '<div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Payment</div>';
+  html += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">';
+  html += '<i class="' + payIcon + '" style="color:#f97316;font-size:16px;"></i>';
+  html += '<span style="font-size:13px;font-weight:600;color:#1a1a2e;text-transform:capitalize;">' + payMethod + '</span>';
+  html += '</div>';
+  if (o.swishNumber) html += '<div style="font-size:12px;color:#666;">Swish: ' + o.swishNumber + '</div>';
+  if (o.codPhone) html += '<div style="font-size:12px;color:#666;">Delivery phone: ' + o.codPhone + '</div>';
+  html += '<div style="margin-top:8px;display:inline-block;background:' + sc + '22;border:1px solid ' + sc + ';color:' + sc + ';font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px;text-transform:uppercase;">' + status + '</div>';
+  html += '</div></div>';
+
   // Items table
-  html += '<table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px;">';
-  html += '<thead><tr style="background:#1a1a2e;color:#fff;">';
-  html += '<th style="padding:8px 10px;text-align:left;">Item</th>';
-  html += '<th style="padding:8px 10px;text-align:center;">Qty</th>';
-  html += '<th style="padding:8px 10px;text-align:right;">Price</th>';
-  html += '<th style="padding:8px 10px;text-align:right;">Subtotal</th>';
-  html += '</tr></thead><tbody>' + rows + '</tbody></table>';
+  html += '<div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Order Items</div>';
+  html += '<table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px;">';
+  html += '<thead><tr style="background:#f8f9fa;">';
+  html += '<th style="padding:9px 10px;text-align:left;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #e0e0e0;">Item</th>';
+  html += '<th style="padding:9px 10px;text-align:center;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #e0e0e0;">Qty</th>';
+  html += '<th style="padding:9px 10px;text-align:right;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #e0e0e0;">Price</th>';
+  html += '<th style="padding:9px 10px;text-align:right;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #e0e0e0;">Total</th>';
+  html += '</tr></thead>';
+  html += '<tbody>' + rows + '</tbody></table>';
+
   // Totals
-  html += '<div style="border-top:2px solid #eee;padding-top:12px;font-size:13px;max-width:260px;margin-left:auto;">';
-  html += '<div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="color:#666;">Subtotal</span><span>' + fmtMoney(o.subtotal) + '</span></div>';
-  html += '<div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="color:#666;">Shipping</span><span>' + (parseFloat(o.shippingCost)===0 ? 'FREE' : fmtMoney(o.shippingCost)) + '</span></div>';
-  html += '<div style="display:flex;justify-content:space-between;margin-bottom:10px;"><span style="color:#666;">Tax (8%)</span><span>' + fmtMoney(o.tax) + '</span></div>';
-  html += '<div style="display:flex;justify-content:space-between;font-size:17px;font-weight:700;border-top:2px solid #1a1a2e;padding-top:10px;">';
-  html += '<span>TOTAL</span><span style="color:#f97316;">' + fmtMoney(o.total) + '</span></div></div>';
-  // Payment info
-  html += '<div style="margin-top:16px;padding:10px 14px;background:#f8f9fa;border-radius:6px;font-size:12px;color:#555;">';
-  html += '<strong>Payment Method:</strong> ' + (o.paymentMethod||'').replace(/_/g,' ').toUpperCase();
-  if (o.swishNumber) html += ' &nbsp; <strong>Swish:</strong> ' + o.swishNumber;
-  if (o.codPhone) html += ' &nbsp; <strong>Delivery Phone:</strong> ' + o.codPhone;
+  html += '<div style="margin-left:auto;max-width:240px;">';
+  html += '<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:#666;border-bottom:1px solid #f5f5f5;"><span>Subtotal</span><span>$' + (parseFloat(o.subtotal)||0).toFixed(2) + '</span></div>';
+  html += '<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:#666;border-bottom:1px solid #f5f5f5;"><span>Shipping</span><span>' + (parseFloat(o.shippingCost)===0?'<span style="color:#22c55e;font-weight:600;">FREE</span>':'$'+(parseFloat(o.shippingCost)||0).toFixed(2)) + '</span></div>';
+  html += '<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:#666;border-bottom:1px solid #f5f5f5;"><span>Tax (8%)</span><span>$' + (parseFloat(o.tax)||0).toFixed(2) + '</span></div>';
+  html += '<div style="display:flex;justify-content:space-between;padding:10px 0 0;font-size:18px;font-weight:800;color:#1a1a2e;"><span>Total</span><span style="color:#f97316;">$' + (parseFloat(o.total)||0).toFixed(2) + '</span></div>';
   html += '</div>';
+
   // Footer
-  html += '<div style="text-align:center;margin-top:20px;border-top:1px solid #eee;padding-top:14px;">';
-  html += '<div style="font-size:13px;color:#555;font-weight:600;">Thank you for shopping with Jobijad Express!</div>';
-  html += '<div style="font-size:11px;color:#aaa;margin-top:4px;">Keep this receipt for your records.</div>';
+  html += '<div style="margin-top:24px;padding-top:18px;border-top:1.5px dashed #e0e0e0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">';
+  html += '<div>';
+  html += '<div style="font-size:11px;color:#aaa;margin-bottom:3px;">Questions? Contact us:</div>';
+  html += '<div style="font-size:12px;color:#555;"><i class="fas fa-envelope" style="color:#f97316;margin-right:4px;"></i>alitajudith2002@gmail.com</div>';
+  html += '<div style="font-size:12px;color:#555;"><i class="fas fa-phone" style="color:#f97316;margin-right:4px;"></i>+46 762 593 231</div>';
   html += '</div>';
-  html += '</div>';
+  html += '<div style="text-align:center;">';
+  html += '<img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=JOBIJAD-' + rNum + '" style="width:72px;height:72px;border:2px solid #e0e0e0;border-radius:6px;display:block;" alt="QR">';
+  html += '<div style="font-size:9px;color:#bbb;margin-top:3px;">Scan to verify</div>';
+  html += '</div></div>';
+
+  html += '<div style="text-align:center;margin-top:16px;font-size:12px;color:#aaa;font-style:italic;">Thank you for shopping with Jobijad Express! &#10084;</div>';
+  html += '</div>'; // end body
+  html += '</div>'; // end receipt-print
+
   return html;
 }
 
@@ -350,18 +392,26 @@ function closeReceipt() {
 function printOrderReceipt() {
   var content = document.getElementById('receipt-print');
   if (!content) return;
-  var w = window.open('', '_blank', 'width=640,height=820');
+  var w = window.open('', '_blank', 'width=680,height=900');
   w.document.write('<!DOCTYPE html><html><head><title>Receipt - Jobijad Express</title>');
-  w.document.write('<style>*{box-sizing:border-box;}body{font-family:Arial,sans-serif;padding:32px;color:#222;max-width:580px;margin:0 auto;}table{width:100%;border-collapse:collapse;}@media print{.no-print{display:none!important;}}</style>');
-  w.document.write('</head><body>');
-  w.document.write(content.innerHTML);
-  w.document.write('<div class="no-print" style="margin-top:20px;display:flex;gap:10px;">');
-  w.document.write('<button onclick="window.print()" style="padding:10px 20px;background:#f97316;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;">Print</button>');
-  w.document.write('<button onclick="window.close()" style="padding:10px 20px;background:#f4f6f8;color:#555;border:1px solid #e0e0e0;border-radius:6px;cursor:pointer;font-size:14px;">Close</button>');
+  w.document.write('<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">');
+  w.document.write('<style>');
+  w.document.write('*{box-sizing:border-box;margin:0;padding:0;}');
+  w.document.write('body{font-family:Arial,Helvetica,sans-serif;background:#f4f6f8;padding:20px;}');
+  w.document.write('.rc-wrap{max-width:600px;margin:0 auto;box-shadow:0 4px 24px rgba(0,0,0,.12);border-radius:10px;overflow:hidden;}');
+  w.document.write('table{width:100%;border-collapse:collapse;}');
+  w.document.write('.rc-td{padding:9px 10px;border-bottom:1px solid #f0f0f0;font-size:13px;color:#333;}');
+  w.document.write('.rc-center{text-align:center;}.rc-right{text-align:right;}.rc-bold{font-weight:700;}');
+  w.document.write('@media print{body{background:#fff;padding:0;}.no-print{display:none!important;}.rc-wrap{box-shadow:none;}}');
+  w.document.write('</style></head><body>');
+  w.document.write('<div class="rc-wrap">' + content.innerHTML + '</div>');
+  w.document.write('<div class="no-print" style="max-width:600px;margin:16px auto;display:flex;gap:10px;">');
+  w.document.write('<button onclick="window.print()" style="flex:1;padding:12px;background:#f97316;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">&#128438; Print Receipt</button>');
+  w.document.write('<button onclick="window.close()" style="padding:12px 20px;background:#f4f6f8;color:#555;border:1px solid #e0e0e0;border-radius:8px;font-size:14px;cursor:pointer;">Close</button>');
   w.document.write('</div></body></html>');
   w.document.close();
   w.focus();
-  setTimeout(function() { w.print(); }, 500);
+  setTimeout(function() { w.print(); }, 600);
 }
 
 // ===== FEEDBACK =====

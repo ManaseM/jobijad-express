@@ -610,7 +610,139 @@ async function approvePayment(id) {
 function showReceipt(id) {
   const o = allOrders.find(x => x.id === id);
   if (!o) return;
-  const receiptNum = o.orderNumber || String(o.id).substring(0,8).toUpperCase();
+
+  // Build fraud flags
+  const fraudFlags = [];
+  const tot = parseFloat(o.total) || 0;
+  if (tot > 500) fraudFlags.push('High order value ($' + tot.toFixed(2) + ') — verify customer identity');
+  if (o.paymentMethod === 'mobile_money' && !o.momoNumber) fraudFlags.push('Mobile money order but no phone number recorded');
+  if (o.paymentMethod === 'credit_card' && !o.cardLast4) fraudFlags.push('Card payment but no card details recorded');
+  if (o.paymentMethod === 'paypal' && !o.paypalCardLast4) fraudFlags.push('PayPal payment but no card details recorded');
+  if ((o.items||[]).length > 10) fraudFlags.push('Unusually large number of items (' + (o.items||[]).length + ')');
+  if (o.paymentStatus === 'paid' && o.orderStatus === 'pending') fraudFlags.push('Payment marked paid but order still pending');
+
+  let fraudHtml = '';
+  if (fraudFlags.length) {
+    fraudHtml = '<div style="background:#fef2f2;border:2px solid #ef4444;border-radius:8px;padding:12px 14px;margin-bottom:16px">' +
+      '<div style="font-weight:700;color:#dc2626;font-size:13px;margin-bottom:6px"><i class="fas fa-exclamation-triangle"></i> Fraud Risk Flags (' + fraudFlags.length + ')</div>' +
+      fraudFlags.map(f => '<div style="font-size:12px;color:#7f1d1d;padding:3px 0;border-bottom:1px solid #fecaca"><i class="fas fa-flag" style="color:#ef4444;margin-right:5px"></i>' + f + '</div>').join('') +
+      '<div style="font-size:11px;color:#aaa;margin-top:6px">Review carefully before approving.</div></div>';
+  } else {
+    fraudHtml = '<div style="background:#f0fdf4;border:1.5px solid #22c55e;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:#15803d">' +
+      '<i class="fas fa-shield-alt"></i> No fraud flags detected — order appears genuine.</div>';
+  }
+
+  // Payment details block
+  let paymentDetails = '';
+  if (o.paymentMethod === 'swish') {
+    paymentDetails = '<div style="background:#f0fff8;border:1.5px solid #00a550;border-radius:7px;padding:10px 14px;font-size:12px;margin-top:10px">' +
+      '<div style="font-weight:700;color:#00a550;margin-bottom:5px"><i class="fas fa-mobile-alt"></i> Swish Details</div>' +
+      '<div><strong>Number:</strong> ' + (o.swishNumber||'—') + '</div></div>';
+  } else if (o.paymentMethod === 'credit_card') {
+    paymentDetails = '<div style="background:#f8f9fa;border:1.5px solid #1a1a2e;border-radius:7px;padding:10px 14px;font-size:12px;margin-top:10px">' +
+      '<div style="font-weight:700;color:#1a1a2e;margin-bottom:5px"><i class="fas fa-credit-card"></i> Card Details</div>' +
+      '<div><strong>Cardholder:</strong> ' + (o.cardName||'—') + '</div>' +
+      '<div><strong>Card:</strong> •••• •••• •••• ' + (o.cardLast4||'????') + '</div>' +
+      '<div><strong>Expiry:</strong> ' + (o.cardExpiry||'—') + '</div></div>';
+  } else if (o.paymentMethod === 'paypal') {
+    paymentDetails = '<div style="background:#e8f0fe;border:1.5px solid #003087;border-radius:7px;padding:10px 14px;font-size:12px;margin-top:10px">' +
+      '<div style="font-weight:700;color:#003087;margin-bottom:5px"><i class="fab fa-paypal"></i> PayPal Details</div>' +
+      '<div><strong>Cardholder:</strong> ' + (o.paypalCardName||'—') + '</div>' +
+      '<div><strong>Card:</strong> •••• •••• •••• ' + (o.paypalCardLast4||'????') + '</div>' +
+      '<div><strong>Expiry:</strong> ' + (o.paypalCardExpiry||'—') + '</div></div>';
+  } else if (o.paymentMethod === 'cash_on_delivery') {
+    paymentDetails = '<div style="background:#f0fdf4;border:1.5px solid #22c55e;border-radius:7px;padding:10px 14px;font-size:12px;margin-top:10px">' +
+      '<div style="font-weight:700;color:#15803d;margin-bottom:5px"><i class="fas fa-truck"></i> Pay on Delivery</div>' +
+      '<div><strong>Phone:</strong> ' + (o.codPhone||'—') + '</div>' +
+      '<div><strong>Method:</strong> ' + (o.codMethod||'—').replace(/_/g,' ') + '</div></div>';
+  }
+
+  document.getElementById('receipt-body').innerHTML = fraudHtml + buildAdminReceiptHTML(o) + paymentDetails;
+
+  var delivBtn = document.getElementById('receipt-delivery-btn');
+  if (delivBtn) {
+    var showDelivery = (o.paymentMethod === 'mobile_money' && o.paymentStatus !== 'paid') ||
+                       o.orderStatus === 'pending' || (o.orderStatus === 'confirmed' && !o.shippingDate);
+    delivBtn.style.display = showDelivery ? 'inline-flex' : 'none';
+    delivBtn.setAttribute('data-order-id', o.id);
+  }
+  document.getElementById('receipt-modal').classList.add('open');
+}
+
+function buildAdminReceiptHTML(o) {
+  var rNum = o.orderNumber || String(o.id).substring(0,8).toUpperCase();
+  var items = o.items || [];
+  var addr = o.shippingAddress || {};
+  var status = o.orderStatus || 'pending';
+  var statusColors = { delivered:'#22c55e', cancelled:'#ef4444', shipped:'#3b82f6', confirmed:'#8b5cf6', processing:'#f59e0b' };
+  var sc = statusColors[status] || '#f97316';
+  var payMethod = (o.paymentMethod||'').replace(/_/g,' ');
+  var payIcon = o.paymentMethod==='swish'?'fas fa-mobile-alt':o.paymentMethod==='paypal'?'fab fa-paypal':o.paymentMethod==='credit_card'?'fas fa-credit-card':'fas fa-hand-holding-usd';
+  var payStatusColor = o.paymentStatus === 'paid' ? '#22c55e' : '#f97316';
+
+  var rows = (items).map(function(it) {
+    var lineTotal = (parseFloat(it.price)||0) * (it.quantity||1);
+    return '<tr>' +
+      '<td style="padding:9px 10px;border-bottom:1px solid #f0f0f0;font-size:13px;">' + (it.name||'Item') + '</td>' +
+      '<td style="padding:9px 10px;border-bottom:1px solid #f0f0f0;font-size:13px;text-align:center;">' + (it.quantity||1) + '</td>' +
+      '<td style="padding:9px 10px;border-bottom:1px solid #f0f0f0;font-size:13px;text-align:right;">$' + (parseFloat(it.price)||0).toFixed(2) + '</td>' +
+      '<td style="padding:9px 10px;border-bottom:1px solid #f0f0f0;font-size:13px;text-align:right;font-weight:700;color:#f97316;">$' + lineTotal.toFixed(2) + '</td>' +
+      '</tr>';
+  }).join('');
+
+  var html = '<div id="receipt-print">';
+  // Header band
+  html += '<div style="background:linear-gradient(135deg,#1a1a2e,#0f3460);border-radius:8px 8px 0 0;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">';
+  html += '<div style="display:flex;align-items:center;gap:12px;">';
+  html += '<img src="pics/logo_white.png" alt="Jobijad Express" style="height:50px;width:auto;object-fit:contain;filter:brightness(1.3) drop-shadow(0 0 6px rgba(255,255,255,.5));">';
+  html += '<div><div style="font-size:17px;font-weight:800;color:#fff;">Jobijad <span style="color:#f97316;">Express</span></div>';
+  html += '<div style="font-size:10px;color:rgba(255,255,255,.5);">Premium African Fashion</div></div></div>';
+  html += '<div style="text-align:right;">';
+  html += '<div style="font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;">Admin Receipt</div>';
+  html += '<div style="font-size:18px;font-weight:800;color:#f97316;font-family:monospace;">#' + rNum + '</div>';
+  html += '<div style="font-size:10px;color:rgba(255,255,255,.4);">' + fmtDate(o.createdAt) + '</div>';
+  html += '</div></div>';
+  // Status ribbon
+  html += '<div style="background:' + sc + ';padding:5px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px;">';
+  html += '<span style="font-size:11px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:1px;">Order: ' + status + '</span>';
+  html += '<span style="font-size:11px;color:rgba(255,255,255,.85);">Payment: <strong style="color:#fff;">' + (o.paymentStatus||'pending').toUpperCase() + '</strong></span>';
+  html += '</div>';
+  // Body
+  html += '<div style="background:#fff;border-radius:0 0 8px 8px;padding:20px 24px;">';
+  // Info grid
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px;padding-bottom:16px;border-bottom:1.5px dashed #e0e0e0;">';
+  html += '<div><div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Customer</div>';
+  html += '<div style="font-size:14px;font-weight:700;color:#1a1a2e;">' + (addr.name||'—') + '</div>';
+  if (addr.phone) html += '<div style="font-size:12px;color:#666;margin-top:2px;"><i class="fas fa-phone" style="color:#f97316;margin-right:3px;font-size:10px;"></i>' + addr.phone + '</div>';
+  html += '<div style="font-size:12px;color:#666;">' + (addr.street||'') + '</div>';
+  html += '<div style="font-size:12px;color:#666;">' + [addr.city, addr.state, addr.country].filter(Boolean).join(', ') + '</div></div>';
+  html += '<div><div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Payment</div>';
+  html += '<div style="display:flex;align-items:center;gap:5px;margin-bottom:4px;"><i class="' + payIcon + '" style="color:#f97316;font-size:14px;"></i>';
+  html += '<span style="font-size:13px;font-weight:600;color:#1a1a2e;text-transform:capitalize;">' + payMethod + '</span></div>';
+  html += '<div style="font-size:11px;color:' + payStatusColor + ';font-weight:700;text-transform:uppercase;">' + (o.paymentStatus||'pending') + '</div></div></div>';
+  // Items
+  html += '<table style="width:100%;border-collapse:collapse;margin-bottom:16px;">';
+  html += '<thead><tr style="background:#f8f9fa;">';
+  html += '<th style="padding:8px 10px;text-align:left;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e0e0e0;">Item</th>';
+  html += '<th style="padding:8px 10px;text-align:center;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e0e0e0;">Qty</th>';
+  html += '<th style="padding:8px 10px;text-align:right;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e0e0e0;">Price</th>';
+  html += '<th style="padding:8px 10px;text-align:right;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e0e0e0;">Total</th>';
+  html += '</tr></thead><tbody>' + rows + '</tbody></table>';
+  // Totals
+  html += '<div style="margin-left:auto;max-width:220px;font-size:13px;">';
+  html += '<div style="display:flex;justify-content:space-between;padding:4px 0;color:#666;border-bottom:1px solid #f5f5f5;"><span>Subtotal</span><span>$' + (parseFloat(o.subtotal)||0).toFixed(2) + '</span></div>';
+  html += '<div style="display:flex;justify-content:space-between;padding:4px 0;color:#666;border-bottom:1px solid #f5f5f5;"><span>Shipping</span><span>' + (parseFloat(o.shippingCost)===0?'FREE':'$'+(parseFloat(o.shippingCost)||0).toFixed(2)) + '</span></div>';
+  html += '<div style="display:flex;justify-content:space-between;padding:4px 0;color:#666;border-bottom:1px solid #f5f5f5;"><span>Tax (8%)</span><span>$' + (parseFloat(o.tax)||0).toFixed(2) + '</span></div>';
+  html += '<div style="display:flex;justify-content:space-between;padding:8px 0 0;font-size:17px;font-weight:800;color:#1a1a2e;"><span>TOTAL</span><span style="color:#f97316;">$' + (parseFloat(o.total)||0).toFixed(2) + '</span></div></div>';
+  // Footer
+  html += '<div style="margin-top:18px;padding-top:14px;border-top:1.5px dashed #e0e0e0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">';
+  html += '<div style="font-size:11px;color:#aaa;">alitajudith2002@gmail.com &nbsp;|&nbsp; +46 762 593 231</div>';
+  html += '<img src="https://api.qrserver.com/v1/create-qr-code/?size=70x70&data=JOBIJAD-' + rNum + '" style="width:60px;height:60px;border:1.5px solid #e0e0e0;border-radius:4px;" alt="QR">';
+  html += '</div>';
+  html += '<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;font-style:italic;">Thank you for shopping with Jobijad Express!</div>';
+  html += '</div></div>';
+  return html;
+}
   const itemRows = (o.items||[]).map(function(i) {
     return '<tr style="border-bottom:1px solid #f0f0f0">' +
       '<td style="padding:8px 10px">' + (i.name||'Item') + '</td>' +
