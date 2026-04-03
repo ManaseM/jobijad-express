@@ -346,7 +346,48 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;}
 const cart = JSON.parse(localStorage.getItem('jobiCart') || '[]');
 const API_URL = (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?'http://localhost:3000/api':window.location.origin+'/api');
 
+// ===== CURRENCY SYSTEM (mirrors features-addon.js) =====
+const CX_RATES = {
+  USD:1, UGX:3700, KES:130, TZS:2600, NGN:1600, GHS:15, ZAR:18.5,
+  EUR:0.92, GBP:0.79, SEK:10.4, AED:3.67, CNY:7.25,
+  JPY:149, CAD:1.36, AUD:1.53, CHF:0.89, INR:83
+};
+const CX_SYMBOLS = {
+  USD:'$', UGX:'USh ', KES:'KSh ', TZS:'TSh ', NGN:'₦', GHS:'GH₵',
+  ZAR:'R', EUR:'€', GBP:'£', SEK:'kr ', AED:'AED ', CNY:'¥',
+  JPY:'¥', CAD:'CA$', AUD:'A$', CHF:'CHF ', INR:'₹'
+};
+// Sweden shipping rates in SEK (very cheap / often free)
+const SWEDEN_SHIP_SEK = { cost: 9, freeThreshold: 299 }; // ~$0.99 / free over ~$30
+
+function getActiveCurrency() {
+  return localStorage.getItem('jobiCurrency') || 'USD';
+}
+function getCurrencySymbol(cur) {
+  return CX_SYMBOLS[cur || getActiveCurrency()] || '$';
+}
+function convertFromUSD(usdAmount, cur) {
+  cur = cur || getActiveCurrency();
+  var rate = CX_RATES[cur] || 1;
+  return usdAmount * rate;
+}
+function fmtMoney(usdAmount, cur) {
+  cur = cur || getActiveCurrency();
+  var converted = convertFromUSD(usdAmount, cur);
+  var sym = getCurrencySymbol(cur);
+  if (['UGX','TZS','NGN','JPY','INR'].includes(cur)) {
+    return sym + Math.round(converted).toLocaleString();
+  }
+  return sym + converted.toFixed(2);
+}
+function fmtMoneyRaw(usdAmount) { return fmtMoney(usdAmount); }
+
 const COUNTRY_PHONE_CODES = {
+  'Uganda':'+256','Kenya':'+254','Tanzania':'+255','Rwanda':'+250','Nigeria':'+234',
+  'Ghana':'+233','South Africa':'+27','Sweden':'+46','United Kingdom':'+44',
+  'United States':'+1','UAE':'+971','China':'+86','Other':''
+};
+const MOMO_COUNTRIES = ['Uganda','Kenya','Tanzania','Rwanda','Nigeria','Ghana'];
   'Uganda':'+256','Kenya':'+254','Tanzania':'+255','Rwanda':'+250','Nigeria':'+234',
   'Ghana':'+233','South Africa':'+27','Sweden':'+46','United Kingdom':'+44',
   'United States':'+1','UAE':'+971','China':'+86','Other':''
