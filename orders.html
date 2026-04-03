@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -162,8 +162,22 @@ function fmtDate(d) {
   return new Date(d).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
 }
 
-function fmtMoney(v) {
-  return '$' + (parseFloat(v) || 0).toFixed(2);
+// Currency rates (mirrors features-addon.js)
+var ORD_RATES = {USD:1,UGX:3700,KES:130,TZS:2600,NGN:1600,GHS:15,ZAR:18.5,EUR:0.92,GBP:0.79,SEK:10.4,AED:3.67,CNY:7.25,JPY:149,CAD:1.36,AUD:1.53,CHF:0.89,INR:83};
+var ORD_SYMS = {USD:'$',UGX:'USh ',KES:'KSh ',TZS:'TSh ',NGN:'\u20a6',GHS:'GH\u20b5',ZAR:'R',EUR:'\u20ac',GBP:'\u00a3',SEK:'kr ',AED:'AED ',CNY:'\u00a5',JPY:'\u00a5',CAD:'CA$',AUD:'A$',CHF:'CHF ',INR:'\u20b9'};
+
+function getOrderCurrency(order) {
+  // Use the currency stored with the order, or fall back to user's active currency
+  return (order && order.currency) || localStorage.getItem('jobiCurrency') || 'USD';
+}
+
+function fmtMoney(v, cur) {
+  cur = cur || localStorage.getItem('jobiCurrency') || 'USD';
+  var rate = ORD_RATES[cur] || 1;
+  var sym = ORD_SYMS[cur] || '$';
+  var converted = (parseFloat(v) || 0) * rate;
+  if (['UGX','TZS','NGN','JPY','INR'].indexOf(cur) >= 0) return sym + Math.round(converted).toLocaleString();
+  return sym + converted.toFixed(2);
 }
 
 function setRating(val) {
@@ -500,3 +514,4 @@ loadOrders();
 </script>
 </body>
 </html>
+

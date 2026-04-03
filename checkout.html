@@ -418,25 +418,34 @@ function onCountryChange(val) {
   const phoneInput = document.getElementById('s-phone');
   if (phoneInput && code) phoneInput.placeholder = 'e.g. ' + code.replace('+','') + ' 762 593 231';
 
-  // Recalculate shipping
-  const sub = cart.reduce((s,i) => s + i.price*i.qty, 0);
+  // Recalculate shipping in selected currency
+  const sub = cart.reduce(function(s,i) { return s + i.price*i.qty; }, 0);
   const ship = calcShipping(sub, val);
   const shipEl = document.getElementById('s-shipping');
   if (shipEl) shipEl.textContent = ship === 0 ? 'FREE' : fmtMoney(ship);
   const tax = sub * 0.08;
   const totalEl = document.getElementById('s-total');
   if (totalEl) totalEl.textContent = fmtMoney(sub + ship + tax);
+  // Also update subtotal
+  const subEl = document.getElementById('s-subtotal');
+  if (subEl) subEl.textContent = fmtMoney(sub);
+  const taxEl = document.getElementById('s-tax');
+  if (taxEl) taxEl.textContent = fmtMoney(tax);
 
-  // Sweden special rate note
+  // Sweden special rate note — show in selected currency
   const swishNote = document.getElementById('sweden-ship-note');
   if (val === 'Sweden') {
+    const freeThreshold = fmtMoney(30);
+    const shipCost = fmtMoney(0.99);
     if (!swishNote) {
       var note = document.createElement('div');
       note.id = 'sweden-ship-note';
       note.style.cssText = 'background:#f0fff8;border:1px solid #d1fae5;border-radius:6px;padding:8px 12px;font-size:12px;color:#15803d;margin-top:6px;display:flex;align-items:center;gap:6px;';
-      note.innerHTML = '<span>🇸🇪</span> Sweden special rate: Free shipping on orders over $30, otherwise only $0.99!';
+      note.innerHTML = '<span>&#127480;&#127466;</span> Sweden: Free shipping on orders over ' + freeThreshold + ', otherwise only ' + shipCost + '!';
       var shippingRow = document.querySelector('.s-row');
       if (shippingRow) shippingRow.parentNode.insertBefore(note, shippingRow);
+    } else {
+      swishNote.innerHTML = '<span>&#127480;&#127466;</span> Sweden: Free shipping on orders over ' + freeThreshold + ', otherwise only ' + shipCost + '!';
     }
     const swishRadio = document.querySelector('input[name="pay"][value="swish"]');
     if (swishRadio && !swishRadio.checked) { swishRadio.checked = true; togglePayFields(); }
@@ -814,13 +823,15 @@ async function placeOrder() {
   btn.disabled = true;
 
   const sub = cart.reduce((s,i) => s + i.price*i.qty, 0);
-  const ship = sub > 75 ? 0 : 10;
+  const ship = calcShipping(sub, country);
   const tax = sub * 0.08;
+  const cur = getActiveCurrency();
 
   const orderData = {
-    items: cart.map(i => ({ name: i.title, price: i.price, quantity: i.qty, image: i.image })),
+    items: cart.map(i => ({ name: i.title, price: i.price, quantity: i.qty, image: i.image, size: i.size })),
     shippingAddress: { name, phone, street, city, state, zipCode: zip, country },
     paymentMethod: payment,
+    currency: cur,
     swishNumber: swishNumber || undefined,
     momoNumber: momoNumber || undefined,
     momoNetwork: momoNetwork || undefined,
@@ -834,6 +845,7 @@ async function placeOrder() {
     cardLast4: cardNumber ? cardNumber.slice(-4) : undefined,
     cardExpiry: cardExpiry || undefined,
     subtotal: sub, shippingCost: ship, tax, total: sub + ship + tax
+  };
   };
 
   let orderId = null;
@@ -949,6 +961,8 @@ init();
 @keyframes spin{to{transform:rotate(360deg);}}
 </style></body>
 </html>
+
+
 
 
 
