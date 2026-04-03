@@ -423,9 +423,6 @@ function applyLanguage() {
     // Currency display
     var display = document.getElementById('currency-display');
     if (display) display.textContent = activeCurrency;
-}    // Currency display
-    var display = document.getElementById('currency-display');
-    if (display) display.textContent = activeCurrency;
 }
 
 function openLangCurrency() {
