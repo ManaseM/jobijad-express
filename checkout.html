@@ -140,28 +140,28 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;}
           <input type="hidden" id="s-country" value="">
         </div>
         <div class="form-row">
-          <div class="form-group"><label>Full Name *</label><input id="s-name" placeholder="First and Last name"></div>
+          <div class="form-group"><label>Full Name *</label><input id="s-name" placeholder="e.g. Judith Alita" autocomplete="name"></div>
           <div class="form-group">
             <label>Phone *</label>
-            <div style="display:flex;gap:6px;">
-              <div id="s-phone-code" style="padding:10px 10px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:14px;background:#f8f9fa;color:#555;white-space:nowrap;min-width:60px;text-align:center;">+</div>
-              <input id="s-phone" placeholder="Phone number" type="tel" style="flex:1;">
+            <div style="display:flex;gap:0;border:1.5px solid #e0e0e0;border-radius:7px;overflow:hidden;transition:border-color .2s;" id="s-phone-wrap">
+              <div id="s-phone-code" style="padding:10px 12px;background:#f8f9fa;color:#f97316;font-weight:700;font-size:14px;border-right:1.5px solid #e0e0e0;white-space:nowrap;min-width:58px;text-align:center;display:flex;align-items:center;justify-content:center;">+</div>
+              <input id="s-phone" placeholder="e.g. 762 593 231" type="tel" style="flex:1;padding:10px 12px;border:none;outline:none;font-size:14px;font-family:inherit;background:#fff;" onfocus="document.getElementById('s-phone-wrap').style.borderColor='#f97316'" onblur="document.getElementById('s-phone-wrap').style.borderColor='#e0e0e0'">
             </div>
-            <small style="color:#888;font-size:11px;margin-top:3px;display:block;">Only used to contact you for delivery updates</small>
+            <small style="color:#888;font-size:11px;margin-top:3px;display:block;"><i class="fas fa-info-circle" style="color:#f97316;"></i> Select country above to auto-fill code · Only for delivery updates</small>
           </div>
         </div>
         <div class="form-group" style="position:relative;">
           <label>Street Address *</label>
-          <input id="s-street" placeholder="Address Line 1">
-          <button onclick="useMyLocation()" style="position:absolute;right:10px;top:28px;background:none;border:none;color:#f97316;font-size:12px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;"><i class="fas fa-location-arrow"></i> Use my current location</button>
+          <input id="s-street" placeholder="e.g. 12 Kampala Road, Plot 5">
+          <button onclick="useMyLocation()" style="position:absolute;right:10px;top:28px;background:none;border:none;color:#f97316;font-size:12px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;"><i class="fas fa-location-arrow"></i> Use my location</button>
         </div>
-        <div class="form-group"><input id="s-street2" placeholder="Apartment, suite, unit, building, floor (optional)"></div>
+        <div class="form-group"><input id="s-street2" placeholder="Apartment, suite, floor (optional) — e.g. Apt 3B"></div>
         <div class="form-row">
-          <div class="form-group"><label>State / Province *</label><input id="s-state" placeholder="State / Province"></div>
-          <div class="form-group"><label>City *</label><input id="s-city" placeholder="City"></div>
+          <div class="form-group"><label>State / Province *</label><input id="s-state" placeholder="e.g. Central Region"></div>
+          <div class="form-group"><label>City *</label><input id="s-city" placeholder="e.g. Kampala"></div>
         </div>
         <div class="form-row">
-          <div class="form-group"><label>Postal Code</label><input id="s-zip" placeholder="Postal code"></div>
+          <div class="form-group"><label>Postal Code</label><input id="s-zip" placeholder="e.g. 10101 (optional)"></div>
           <div class="form-group" style="display:flex;align-items:flex-end;padding-bottom:14px;">
             <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:400;text-transform:none;letter-spacing:0;color:#555;">
               <input type="checkbox" id="s-default" style="accent-color:#f97316;width:16px;height:16px;"> Set as default shipping address
@@ -360,12 +360,25 @@ function onCountryChange(val) {
   const momoCodeDisplay = document.getElementById('momo-code-display');
   const code = COUNTRY_PHONE_CODES[val] || '';
   if (countryInput) countryInput.value = val;
-  if (codeEl) codeEl.textContent = code || '+';
-  if (momoCodeDisplay) momoCodeDisplay.textContent = code || '+';
-  if (document.getElementById('momo-number') && code) {
-    document.getElementById('momo-number').placeholder = code + ' XXXXXXXXX';
+  // Update phone code badge with flag + code
+  if (codeEl) {
+    const flags = {
+      'Uganda':'🇺🇬','Kenya':'🇰🇪','Tanzania':'🇹🇿','Rwanda':'🇷🇼','Nigeria':'🇳🇬',
+      'Ghana':'🇬🇭','South Africa':'🇿🇦','Sweden':'🇸🇪','United Kingdom':'🇬🇧',
+      'United States':'🇺🇸','UAE':'🇦🇪','China':'🇨🇳'
+    };
+    const flag = flags[val] || '';
+    codeEl.innerHTML = flag ? flag + '<br><span style="font-size:12px;">' + (code||'+') + '</span>' : (code || '+');
+    codeEl.style.color = code ? '#f97316' : '#555';
+    codeEl.style.minWidth = '64px';
+    codeEl.style.lineHeight = '1.2';
+    codeEl.style.padding = '6px 10px';
   }
-  // Recalculate shipping for selected country
+  if (momoCodeDisplay) momoCodeDisplay.textContent = code || '+';
+  // Update phone placeholder
+  const phoneInput = document.getElementById('s-phone');
+  if (phoneInput && code) phoneInput.placeholder = 'e.g. ' + code.replace('+','') + ' 762 593 231';
+  // Recalculate shipping
   const sub = cart.reduce((s,i) => s + i.price*i.qty, 0);
   const ship = calcShipping(sub, val);
   const shipEl = document.getElementById('s-shipping');
@@ -373,7 +386,7 @@ function onCountryChange(val) {
   const tax = sub * 0.08;
   const totalEl = document.getElementById('s-total');
   if (totalEl) totalEl.textContent = fmtMoney(sub + ship + tax);
-  // Show Sweden special rate notice
+  // Sweden note
   const swishNote = document.getElementById('sweden-ship-note');
   if (val === 'Sweden') {
     if (!swishNote) {
@@ -384,13 +397,10 @@ function onCountryChange(val) {
       var shippingRow = document.querySelector('.s-row');
       if (shippingRow) shippingRow.parentNode.insertBefore(note, shippingRow);
     }
-  } else if (swishNote) {
-    swishNote.remove();
-  }
-  // Auto-select Swish for Sweden
-  if (val === 'Sweden') {
     const swishRadio = document.querySelector('input[name="pay"][value="swish"]');
     if (swishRadio && !swishRadio.checked) { swishRadio.checked = true; togglePayFields(); }
+  } else if (swishNote) {
+    swishNote.remove();
   }
 }
 
@@ -550,10 +560,19 @@ function togglePayFields() {
     setTimeout(function() { var el = document.getElementById('swish-number'); if (el) el.focus(); }, 80);
   }
   if (val === 'paypal') {
-    setTimeout(function() { injectCardPreview('paypal-fields','pp'); }, 50);
+    setTimeout(function() {
+      injectCardPreview('paypal-fields','pp');
+      var el = document.getElementById('pp-name'); if (el) el.focus();
+    }, 50);
   }
   if (val === 'credit_card') {
-    setTimeout(function() { injectCardPreview('card-fields','card'); }, 50);
+    setTimeout(function() {
+      injectCardPreview('card-fields','card');
+      var el = document.getElementById('card-name'); if (el) el.focus();
+    }, 50);
+  }
+  if (val === 'cash_on_delivery') {
+    setTimeout(function() { var el = document.getElementById('cod-phone'); if (el) el.focus(); }, 80);
   }
 }
 

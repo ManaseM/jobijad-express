@@ -220,14 +220,45 @@ tr:hover td{background:#fafafa;}
     </div>
     <div class="form-group"><label>Description</label><textarea id="p-desc" rows="2" placeholder="Short description..."></textarea></div>
     <div class="form-group">
-      <label>Product Image</label>
-      <div id="p-image-preview" style="display:none;margin-bottom:8px;"><img id="p-image-preview-img" src="" alt="Preview" style="width:100%;max-height:180px;object-fit:cover;border-radius:8px;border:1.5px solid #e0e0e0;"></div>
-      <label for="p-image-file" style="display:flex;align-items:center;gap:8px;padding:10px 14px;border:2px dashed #e0e0e0;border-radius:8px;cursor:pointer;font-size:13px;color:#888;font-weight:400;text-transform:none;transition:border-color .2s;" id="p-image-drop-label">
-        <i class="fas fa-cloud-upload-alt" style="font-size:20px;color:#f97316;"></i>
-        <span id="p-image-label-text">Click to choose a photo from your phone or computer</span>
-      </label>
-      <input type="file" id="p-image-file" accept="image/*" style="display:none;" onchange="handleImagePick(this)">
-      <input type="hidden" id="p-image">
+      <label>Product Images (up to 4)</label>
+      <div id="p-images-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        <!-- Image slot 1 (main) -->
+        <div class="img-slot" id="img-slot-0" style="position:relative;border:2px dashed #e0e0e0;border-radius:8px;overflow:hidden;aspect-ratio:1;cursor:pointer;background:#f8f9fa;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:border-color .2s;" onclick="triggerImageSlot(0)">
+          <img id="img-preview-0" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">
+          <div id="img-placeholder-0" style="text-align:center;padding:8px;"><i class="fas fa-camera" style="font-size:22px;color:#f97316;margin-bottom:4px;display:block;"></i><span style="font-size:11px;color:#888;">Main Photo</span></div>
+          <div id="img-remove-0" onclick="removeImageSlot(event,0)" style="display:none;position:absolute;top:4px;right:4px;background:rgba(239,68,68,.9);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:11px;cursor:pointer;display:none;align-items:center;justify-content:center;"><i class="fas fa-times"></i></div>
+        </div>
+        <!-- Image slot 2 -->
+        <div class="img-slot" id="img-slot-1" style="position:relative;border:2px dashed #e0e0e0;border-radius:8px;overflow:hidden;aspect-ratio:1;cursor:pointer;background:#f8f9fa;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:border-color .2s;" onclick="triggerImageSlot(1)">
+          <img id="img-preview-1" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">
+          <div id="img-placeholder-1" style="text-align:center;padding:8px;"><i class="fas fa-plus" style="font-size:18px;color:#ccc;margin-bottom:4px;display:block;"></i><span style="font-size:11px;color:#aaa;">Photo 2</span></div>
+          <div id="img-remove-1" onclick="removeImageSlot(event,1)" style="display:none;position:absolute;top:4px;right:4px;background:rgba(239,68,68,.9);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:11px;cursor:pointer;align-items:center;justify-content:center;"><i class="fas fa-times"></i></div>
+        </div>
+        <!-- Image slot 3 -->
+        <div class="img-slot" id="img-slot-2" style="position:relative;border:2px dashed #e0e0e0;border-radius:8px;overflow:hidden;aspect-ratio:1;cursor:pointer;background:#f8f9fa;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:border-color .2s;" onclick="triggerImageSlot(2)">
+          <img id="img-preview-2" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">
+          <div id="img-placeholder-2" style="text-align:center;padding:8px;"><i class="fas fa-plus" style="font-size:18px;color:#ccc;margin-bottom:4px;display:block;"></i><span style="font-size:11px;color:#aaa;">Photo 3</span></div>
+          <div id="img-remove-2" onclick="removeImageSlot(event,2)" style="display:none;position:absolute;top:4px;right:4px;background:rgba(239,68,68,.9);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:11px;cursor:pointer;align-items:center;justify-content:center;"><i class="fas fa-times"></i></div>
+        </div>
+        <!-- Image slot 4 -->
+        <div class="img-slot" id="img-slot-3" style="position:relative;border:2px dashed #e0e0e0;border-radius:8px;overflow:hidden;aspect-ratio:1;cursor:pointer;background:#f8f9fa;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:border-color .2s;" onclick="triggerImageSlot(3)">
+          <img id="img-preview-3" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">
+          <div id="img-placeholder-3" style="text-align:center;padding:8px;"><i class="fas fa-plus" style="font-size:18px;color:#ccc;margin-bottom:4px;display:block;"></i><span style="font-size:11px;color:#aaa;">Photo 4</span></div>
+          <div id="img-remove-3" onclick="removeImageSlot(event,3)" style="display:none;position:absolute;top:4px;right:4px;background:rgba(239,68,68,.9);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:11px;cursor:pointer;align-items:center;justify-content:center;"><i class="fas fa-times"></i></div>
+        </div>
+      </div>
+      <!-- Hidden file inputs for each slot -->
+      <input type="file" id="img-file-0" accept="image/*" style="display:none;" onchange="handleImageSlot(this,0)">
+      <input type="file" id="img-file-1" accept="image/*" style="display:none;" onchange="handleImageSlot(this,1)">
+      <input type="file" id="img-file-2" accept="image/*" style="display:none;" onchange="handleImageSlot(this,2)">
+      <input type="file" id="img-file-3" accept="image/*" style="display:none;" onchange="handleImageSlot(this,3)">
+      <!-- Hidden storage for image URLs -->
+      <input type="hidden" id="p-image-0" value="">
+      <input type="hidden" id="p-image-1" value="">
+      <input type="hidden" id="p-image-2" value="">
+      <input type="hidden" id="p-image-3" value="">
+      <input type="hidden" id="p-image"><!-- legacy compat -->
+      <small style="color:#aaa;font-size:11px;">Tap a slot to upload. First photo is the main product image.</small>
     </div>
     <div class="form-row">
       <div class="form-group"><label>Stock</label><input id="p-stock" type="number" placeholder="0"></div>
@@ -865,19 +896,21 @@ function openProductModal(product = null) {
   document.getElementById('p-stock').value = (product?.sizes||[]).reduce((t,s)=>t+(s.stock||0),0) || '';
   document.getElementById('p-featured').value = product?.featured ? 'true' : 'false';
   // Reset file input
-  document.getElementById('p-image-file').value = '';
+  document.getElementById('p-image-file') && (document.getElementById('p-image-file').value = '');
   const existingUrl = product?.images?.[0]?.url || '';
   const preview = document.getElementById('p-image-preview');
   const previewImg = document.getElementById('p-image-preview-img');
   const labelText = document.getElementById('p-image-label-text');
   if (existingUrl) {
-    previewImg.src = existingUrl;
-    preview.style.display = 'block';
-    labelText.textContent = 'Click to change the photo';
+    if (previewImg) previewImg.src = existingUrl;
+    if (preview) preview.style.display = 'block';
+    if (labelText) labelText.textContent = 'Click to change the photo';
   } else {
-    preview.style.display = 'none';
-    labelText.textContent = 'Click to choose a photo from your phone or computer';
+    if (preview) preview.style.display = 'none';
+    if (labelText) labelText.textContent = 'Click to choose a photo from your phone or computer';
   }
+  // Load images into slots
+  if (product) { loadImageSlotsFromProduct(product); } else { resetImageSlots(); }
   // Init sizes
   window._selectedSizes = {};
   document.querySelectorAll('.size-chip').forEach(c => c.classList.remove('active'));
@@ -939,13 +972,93 @@ function handleImagePick(input) {
   const labelText = document.getElementById('p-image-label-text');
   const preview = document.getElementById('p-image-preview');
   const previewImg = document.getElementById('p-image-preview-img');
-  labelText.textContent = file.name;
+  if (labelText) labelText.textContent = file.name;
   const reader = new FileReader();
   reader.onload = e => {
-    previewImg.src = e.target.result;
-    preview.style.display = 'block';
+    if (previewImg) { previewImg.src = e.target.result; }
+    if (preview) preview.style.display = 'block';
   };
   reader.readAsDataURL(file);
+}
+
+// ===== MULTI-IMAGE SLOT FUNCTIONS =====
+function triggerImageSlot(idx) {
+  var input = document.getElementById('img-file-' + idx);
+  if (input) input.click();
+}
+
+function handleImageSlot(input, idx) {
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var preview = document.getElementById('img-preview-' + idx);
+    var placeholder = document.getElementById('img-placeholder-' + idx);
+    var removeBtn = document.getElementById('img-remove-' + idx);
+    var slot = document.getElementById('img-slot-' + idx);
+    var hidden = document.getElementById('p-image-' + idx);
+    if (preview) { preview.src = e.target.result; preview.style.display = 'block'; }
+    if (placeholder) placeholder.style.display = 'none';
+    if (removeBtn) removeBtn.style.display = 'flex';
+    if (slot) slot.style.borderColor = '#f97316';
+    if (hidden) hidden.value = e.target.result; // store base64 temporarily
+    // Also set legacy p-image for slot 0
+    if (idx === 0) { var leg = document.getElementById('p-image'); if (leg) leg.value = e.target.result; }
+  };
+  reader.readAsDataURL(file);
+  input.value = '';
+}
+
+function removeImageSlot(e, idx) {
+  e.stopPropagation();
+  var preview = document.getElementById('img-preview-' + idx);
+  var placeholder = document.getElementById('img-placeholder-' + idx);
+  var removeBtn = document.getElementById('img-remove-' + idx);
+  var slot = document.getElementById('img-slot-' + idx);
+  var hidden = document.getElementById('p-image-' + idx);
+  if (preview) { preview.src = ''; preview.style.display = 'none'; }
+  if (placeholder) placeholder.style.display = 'flex';
+  if (removeBtn) removeBtn.style.display = 'none';
+  if (slot) slot.style.borderColor = '#e0e0e0';
+  if (hidden) hidden.value = '';
+  if (idx === 0) { var leg = document.getElementById('p-image'); if (leg) leg.value = ''; }
+}
+
+function resetImageSlots() {
+  for (var i = 0; i < 4; i++) {
+    var preview = document.getElementById('img-preview-' + i);
+    var placeholder = document.getElementById('img-placeholder-' + i);
+    var removeBtn = document.getElementById('img-remove-' + i);
+    var slot = document.getElementById('img-slot-' + i);
+    var hidden = document.getElementById('p-image-' + i);
+    if (preview) { preview.src = ''; preview.style.display = 'none'; }
+    if (placeholder) placeholder.style.display = 'flex';
+    if (removeBtn) removeBtn.style.display = 'none';
+    if (slot) slot.style.borderColor = '#e0e0e0';
+    if (hidden) hidden.value = '';
+  }
+}
+
+function loadImageSlotsFromProduct(product) {
+  resetImageSlots();
+  var images = product.images || [];
+  for (var i = 0; i < Math.min(images.length, 4); i++) {
+    var url = images[i].url || '';
+    if (!url) continue;
+    var preview = document.getElementById('img-preview-' + i);
+    var placeholder = document.getElementById('img-placeholder-' + i);
+    var removeBtn = document.getElementById('img-remove-' + i);
+    var slot = document.getElementById('img-slot-' + i);
+    var hidden = document.getElementById('p-image-' + i);
+    if (preview) { preview.src = url; preview.style.display = 'block'; }
+    if (placeholder) placeholder.style.display = 'none';
+    if (removeBtn) removeBtn.style.display = 'flex';
+    if (slot) slot.style.borderColor = '#f97316';
+    if (hidden) hidden.value = url;
+  }
+  // Legacy
+  var leg = document.getElementById('p-image');
+  if (leg && images[0]) leg.value = images[0].url || '';
 }
 
 async function saveProduct() {
@@ -959,30 +1072,48 @@ async function saveProduct() {
 
   if (!name || !price) { showToast('Name and price are required', true); return; }
 
-  // Upload image if a new file was picked
-  let imageUrl = document.getElementById('p-image').value.trim();
-  const fileInput = document.getElementById('p-image-file');
-  if (fileInput.files && fileInput.files[0]) {
-    const formData = new FormData();
-    formData.append('image', fileInput.files[0]);
-    try {
-      const upRes = await fetch(`${API}/products/upload-image`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData
-      });
-      if (!upRes.ok) {
-        const errData = await upRes.json().catch(() => ({}));
-        throw new Error(errData.message || 'Upload failed');
+  // Collect all 4 image slots — upload new files, keep existing URLs
+  const imageSlots = [];
+  for (let i = 0; i < 4; i++) {
+    const fileInput = document.getElementById('img-file-' + i);
+    const hiddenVal = (document.getElementById('p-image-' + i)?.value || '').trim();
+    if (fileInput && fileInput.files && fileInput.files[0]) {
+      // New file to upload
+      const formData = new FormData();
+      formData.append('image', fileInput.files[0]);
+      try {
+        const upRes = await fetch(`${API}/products/upload-image`, {
+          method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: formData
+        });
+        if (!upRes.ok) throw new Error('Upload failed for image ' + (i+1));
+        const upData = await upRes.json();
+        imageSlots.push({ url: upData.url, alt: name + ' ' + (i+1) });
+      } catch(e) {
+        // If upload fails but we have a base64 preview, use it directly
+        if (hiddenVal && hiddenVal.startsWith('data:')) {
+          imageSlots.push({ url: hiddenVal, alt: name + ' ' + (i+1) });
+        } else {
+          showToast(e.message || 'Image ' + (i+1) + ' upload failed', true); return;
+        }
       }
-      const upData = await upRes.json();
-      imageUrl = upData.url;
-    } catch(e) { showToast(e.message || 'Image upload failed', true); return; }
+    } else if (hiddenVal && !hiddenVal.startsWith('data:')) {
+      // Existing URL (not base64)
+      imageSlots.push({ url: hiddenVal, alt: name + ' ' + (i+1) });
+    } else if (hiddenVal && hiddenVal.startsWith('data:')) {
+      // Base64 — store directly (server will handle or use as-is)
+      imageSlots.push({ url: hiddenVal, alt: name + ' ' + (i+1) });
+    }
+  }
+
+  // Legacy fallback: if no slots filled, try old single image field
+  if (imageSlots.length === 0) {
+    const legacyUrl = (document.getElementById('p-image')?.value || '').trim();
+    if (legacyUrl) imageSlots.push({ url: legacyUrl, alt: name });
   }
 
   const body = {
     name, price, category, description, featured,
-    images: imageUrl ? [{ url: imageUrl, alt: name }] : [],
+    images: imageSlots,
     sizes: Object.keys(window._selectedSizes || {}).length > 0
       ? Object.entries(window._selectedSizes).map(([size, stock]) => ({ size, stock }))
       : [{ size: 'One Size', stock }]
@@ -1348,11 +1479,16 @@ function renderPromos() {
   var codes = {};
   try { codes = JSON.parse(localStorage.getItem('jobiPromoCodes') || 'null') || { 'JOBIJAD10': 10, 'WELCOME5': 5, 'AFRICA15': 15, 'SWEDEN20': 20 }; } catch(e) { codes = { 'JOBIJAD10': 10, 'WELCOME5': 5, 'AFRICA15': 15, 'SWEDEN20': 20 }; }
 
+  var milestoneKeys = ['LOYAL10','VIP15','GOLD20','ELITE25'];
   var rows = Object.entries(codes).map(function([code, discount]) {
+    var isMilestone = milestoneKeys.includes(code);
+    var typeLabel = isMilestone
+      ? '<span style="background:#eff6ff;color:#1e40af;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;">Auto-Milestone</span>'
+      : '<span style="background:#fff7ed;color:#f97316;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;">Manual</span>';
     return '<tr>' +
       '<td><strong style="font-family:monospace;font-size:14px;color:#f97316;letter-spacing:1px;">' + code + '</strong></td>' +
       '<td><span style="background:#dcfce7;color:#15803d;font-weight:700;padding:3px 10px;border-radius:10px;">' + discount + '% OFF</span></td>' +
-      '<td><span style="background:#dbeafe;color:#1e40af;font-size:11px;padding:2px 8px;border-radius:10px;">Active</span></td>' +
+      '<td>' + typeLabel + '</td>' +
       '<td><button class="btn btn-danger" onclick="deletePromoCode(\'' + code + '\')"><i class="fas fa-trash"></i> Delete</button></td>' +
       '</tr>';
   }).join('') || '<tr class="empty-row"><td colspan="4">No promo codes yet</td></tr>';
@@ -1371,10 +1507,13 @@ function renderPromos() {
     '<button class="btn btn-secondary" onclick="document.getElementById(\'add-promo-form\').style.display=\'none\'">Cancel</button>' +
     '</div></div>' +
     '<div style="padding:12px 18px;background:#f0fdf4;border-bottom:1px solid #d1fae5;font-size:12px;color:#15803d;">' +
-    '<i class="fas fa-info-circle"></i> Promo codes are stored locally and applied at checkout. Customers enter them in the cart.' +
+    '<i class="fas fa-shield-alt"></i> <strong>Secure:</strong> Codes are never shown to users. They are only awarded automatically after qualifying purchases (milestones: $100, $250, $500, $1000 spent).' +
+    '</div>' +
+    '<div style="padding:12px 18px;background:#eff6ff;border-bottom:1px solid #bfdbfe;font-size:12px;color:#1e40af;">' +
+    '<i class="fas fa-info-circle"></i> <strong>Auto-award milestones:</strong> LOYAL10 (10% at $100) · VIP15 (15% at $250) · GOLD20 (20% at $500) · ELITE25 (25% at $1000)' +
     '</div>' +
     '<div class="table-wrap"><table>' +
-    '<thead><tr><th>Code</th><th>Discount</th><th>Status</th><th>Action</th></tr></thead>' +
+    '<thead><tr><th>Code</th><th>Discount</th><th>Type</th><th>Action</th></tr></thead>' +
     '<tbody>' + rows + '</tbody>' +
     '</table></div></div>';
 }

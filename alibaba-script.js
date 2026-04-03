@@ -312,7 +312,41 @@ function updateCartBadge() {
 function checkout() {
     if (cart.length === 0) return;
     saveCart();
+    // Check purchase milestone — award promo code if eligible
+    checkPurchaseMilestone();
     window.location.href = 'checkout.html';
+}
+
+// Award promo codes based on total purchase history (milestone system)
+function checkPurchaseMilestone() {
+    const orders = JSON.parse(localStorage.getItem('jobiOrders') || '[]');
+    const totalSpent = orders.reduce(function(s, o) { return s + (parseFloat(o.total) || 0); }, 0);
+    const cartTotal = cart.reduce(function(s, i) { return s + i.price * i.qty; }, 0);
+    const newTotal = totalSpent + cartTotal;
+
+    // Milestone thresholds
+    const milestones = [
+        { threshold: 100, code: 'LOYAL10', discount: 10, msg: '🎉 You\'ve spent over $100! Here\'s your reward code: LOYAL10 (10% off)' },
+        { threshold: 250, code: 'VIP15', discount: 15, msg: '🌟 VIP milestone! You\'ve spent over $250! Code: VIP15 (15% off)' },
+        { threshold: 500, code: 'GOLD20', discount: 20, msg: '👑 Gold customer! Over $500 spent! Code: GOLD20 (20% off)' },
+        { threshold: 1000, code: 'ELITE25', discount: 25, msg: '💎 Elite status! Over $1000 spent! Code: ELITE25 (25% off)' }
+    ];
+
+    const awardedCodes = JSON.parse(localStorage.getItem('jobiAwardedCodes') || '[]');
+    milestones.forEach(function(m) {
+        if (newTotal >= m.threshold && !awardedCodes.includes(m.code)) {
+            // Award the code
+            awardedCodes.push(m.code);
+            localStorage.setItem('jobiAwardedCodes', JSON.stringify(awardedCodes));
+            // Add to active promo codes
+            var codes = {};
+            try { codes = JSON.parse(localStorage.getItem('jobiPromoCodes') || 'null') || {}; } catch(e) { codes = {}; }
+            codes[m.code] = m.discount;
+            localStorage.setItem('jobiPromoCodes', JSON.stringify(codes));
+            // Show notification
+            setTimeout(function() { showNotification(m.msg, 'success'); }, 500);
+        }
+    });
 }
 
 // ===== SEARCH =====
@@ -1268,29 +1302,36 @@ function updateFreeShippingBar() {
 }
 
 // ===== PROMO CODE =====
-// Admin can set promo codes via localStorage key 'jobiPromoCodes' (JSON object)
+// Promo codes are NEVER shown to users — only awarded after qualifying purchases
+// Admin sets codes via the Promo Codes tab in admin panel
 function getPromoCodes() {
     try {
         var adminCodes = JSON.parse(localStorage.getItem('jobiPromoCodes') || 'null');
         if (adminCodes && typeof adminCodes === 'object') return adminCodes;
     } catch(e) {}
-    // Default codes
+    // Default codes — NOT shown to users, only used for validation
     return { 'JOBIJAD10': 10, 'WELCOME5': 5, 'AFRICA15': 15, 'SWEDEN20': 20 };
 }
 
 function applyPromo() {
     const code = (document.getElementById('promo-input')?.value || '').trim().toUpperCase();
     const msg = document.getElementById('promo-msg');
-    if (!code) { showPromoMsg('Please enter a promo code', false); return; }
+    if (!code) { showPromoMsg('Please enter your promo code', false); return; }
     const codes = getPromoCodes();
     const discount = codes[code];
     if (discount) {
         appliedDiscount = discount;
-        showPromoMsg('✓ Promo applied! ' + discount + '% off your order.', true);
+        showPromoMsg('✓ Promo code applied! ' + discount + '% off your order.', true);
         renderCart();
+        // Mark code as used
+        const usedCodes = JSON.parse(localStorage.getItem('jobiUsedCodes') || '[]');
+        if (!usedCodes.includes(code)) {
+            usedCodes.push(code);
+            localStorage.setItem('jobiUsedCodes', JSON.stringify(usedCodes));
+        }
     } else {
         appliedDiscount = 0;
-        showPromoMsg('Invalid promo code.', false);
+        showPromoMsg('Invalid promo code. Codes are awarded after qualifying purchases.', false);
     }
 }
 function showPromoMsg(text, success) {

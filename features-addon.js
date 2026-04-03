@@ -341,8 +341,20 @@ function applyLanguage() {
         var key = el.getAttribute('data-i18n-html');
         var val = t(key);
         if (val && val !== key) {
-            // Wrap the highlighted word in a span
-            var highlighted = val.replace(/African|Africaine|Afrika|Afrikansk|أفريقية|非洲|Afrika/g, '<span>$&</span>');
+            // Find the word to highlight — look for the African fashion keyword in each language
+            var highlightWords = ['African','Africaine','Afrikansk','Afrika','أفريقية','非洲'];
+            var highlighted = val;
+            for (var i = 0; i < highlightWords.length; i++) {
+                if (val.indexOf(highlightWords[i]) !== -1) {
+                    highlighted = val.replace(highlightWords[i], '<span>' + highlightWords[i] + '</span>');
+                    break;
+                }
+            }
+            // If no match found, wrap the second word
+            if (highlighted === val) {
+                var words = val.split(' ');
+                if (words.length >= 2) highlighted = words[0] + ' <span>' + words[1] + '</span> ' + words.slice(2).join(' ');
+            }
             el.innerHTML = highlighted;
         }
     });
@@ -447,8 +459,11 @@ function saveLangCurrency() {
     localStorage.setItem('jobiCurrency', currency);
     closeLangCurrency();
     applyLanguage();
+    // Re-render products with new currency prices
     if (window._allProducts && typeof _renderProductCards === 'function') _renderProductCards(window._allProducts);
-    if (typeof showNotification === 'function') showNotification(t('siteName') + ' — ' + t('siteTagline'), 'success');
+    if (typeof showNotification === 'function') {
+        showNotification('✓ ' + t('siteName') + ' — ' + t('siteTagline'), 'success');
+    }
 }
 
 // ===== TRUST BAR FUNCTIONS =====
