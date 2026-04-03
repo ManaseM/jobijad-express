@@ -322,7 +322,7 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;}
           </div>
           <p style="font-size:11px;color:#888;margin-top:8px;"><i class="fas fa-info-circle" style="color:#f97316;margin-right:4px;"></i>Our team will call you to confirm delivery details and time.</p>
         </div>
-      </div>      </div>
+      </div>
     </div>
 
     <div class="summary-sticky">
@@ -355,11 +355,14 @@ const COUNTRY_PHONE_CODES = {
 const MOMO_COUNTRIES = ['Uganda','Kenya','Tanzania','Rwanda','Nigeria','Ghana'];
 
 function onCountryChange(val) {
+  // Always set the hidden country field
   const countryInput = document.getElementById('s-country');
   if (countryInput) countryInput.value = val;
-  const momoCodeDisplay = document.getElementById('momo-code-display');
+
   const code = COUNTRY_PHONE_CODES[val] || '';
-  if (countryInput) countryInput.value = val;
+  const codeEl = document.getElementById('s-phone-code');
+  const momoCodeDisplay = document.getElementById('momo-code-display');
+
   // Update phone code badge with flag + code
   if (codeEl) {
     const flags = {
@@ -375,9 +378,11 @@ function onCountryChange(val) {
     codeEl.style.padding = '6px 10px';
   }
   if (momoCodeDisplay) momoCodeDisplay.textContent = code || '+';
+
   // Update phone placeholder
   const phoneInput = document.getElementById('s-phone');
   if (phoneInput && code) phoneInput.placeholder = 'e.g. ' + code.replace('+','') + ' 762 593 231';
+
   // Recalculate shipping
   const sub = cart.reduce((s,i) => s + i.price*i.qty, 0);
   const ship = calcShipping(sub, val);
@@ -386,7 +391,8 @@ function onCountryChange(val) {
   const tax = sub * 0.08;
   const totalEl = document.getElementById('s-total');
   if (totalEl) totalEl.textContent = fmtMoney(sub + ship + tax);
-  // Sweden note
+
+  // Sweden special rate note
   const swishNote = document.getElementById('sweden-ship-note');
   if (val === 'Sweden') {
     if (!swishNote) {
@@ -621,6 +627,7 @@ function formatCardNumber(el) {
   var v = el.value.replace(/\D/g, '').substring(0, 16);
   el.value = v.replace(/(.{4})/g, '$1 ').trim();
   var icon = document.getElementById('card-brand-icon');
+  if (!icon) return;
   if (/^4/.test(v)) { icon.className = 'fab fa-cc-visa'; icon.style.color = '#1a1a2e'; }
   else if (/^5[1-5]/.test(v) || /^2[2-7]/.test(v)) { icon.className = 'fab fa-cc-mastercard'; icon.style.color = '#eb001b'; }
   else if (/^3[47]/.test(v)) { icon.className = 'fab fa-cc-amex'; icon.style.color = '#007bc1'; }
@@ -663,21 +670,22 @@ async function placeOrder() {
   if (!name) missing.push('s-name');
   if (!street) missing.push('s-street');
   if (!city) missing.push('s-city');
-  if (!state) missing.push('s-state');
   if (!country) missing.push('s-country-select');
+  // state is optional for some countries
 
   if (missing.length) {
     missing.forEach(function(id) {
       var el = document.getElementById(id);
-      if (el) { el.style.borderColor = '#ef4444'; el.focus(); }
+      if (el) { el.style.borderColor = '#ef4444'; el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
     });
-    // Reset border on input
     missing.forEach(function(id) {
       var el = document.getElementById(id);
       if (el) el.addEventListener('input', function() { el.style.borderColor = '#e0e0e0'; }, { once: true });
     });
-    alert('Please fill in all required shipping fields: ' + missing.map(function(id) {
-      return id.replace('s-','').replace('-select','').replace('-',' ');
+    alert('Please fill in: ' + missing.map(function(id) {
+      var labels = { 'sname': 'Full Name', 'sstreet': 'Street Address', 'scity': 'City', 'scountryselect': 'Country' };
+      var key = id.replace(/-/g,'');
+      return labels[key] || id.replace('s-','').replace('-select','');
     }).join(', '));
     return;
   }
@@ -686,8 +694,10 @@ async function placeOrder() {
   let swishNumber = '';
   if (payment === 'swish') {
     const swishRaw = document.getElementById('swish-number') ? document.getElementById('swish-number').value.trim() : '';
-    if (!swishRaw) { alert('Please enter your Swish phone number.'); return; }
-    swishNumber = '+46 ' + swishRaw;
+    if (swishRaw) {
+      swishNumber = '+46 ' + swishRaw;
+    }
+    // Swish number is optional — order can proceed, admin will follow up
   }
 
   // Validate Pay on Delivery
