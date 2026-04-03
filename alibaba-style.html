@@ -23,39 +23,40 @@
     <!-- Auth section at top of sidebar -->
     <div id="sidebar-auth-section" style="padding:16px;background:#f8f9fa;border-bottom:1px solid #f0f0f0;margin-bottom:4px;">
       <div id="sidebar-logged-out">
-        <p style="font-size:13px;color:#555;margin-bottom:10px;font-weight:600;">Welcome to Jobijad Express!</p>
-        <a href="login.html?mode=login" style="display:block;background:#f97316;color:#fff;text-align:center;padding:10px;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;margin-bottom:8px;">Sign In</a>
-        <a href="login.html?mode=register" style="display:block;background:#fff;color:#f97316;text-align:center;padding:9px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;border:1.5px solid #f97316;">Create Account</a>
-        <p style="font-size:11px;color:#aaa;margin-top:8px;text-align:center;">Or continue with:</p>
-        <div style="display:flex;justify-content:center;gap:12px;margin-top:6px;">
-          <a href="#" onclick="showNotification('Google login coming soon','info');return false;" style="width:38px;height:38px;border-radius:50%;background:#fff;border:1.5px solid #e0e0e0;display:flex;align-items:center;justify-content:center;font-size:18px;text-decoration:none;" title="Google"><i class="fab fa-google" style="color:#ea4335;"></i></a>
-          <a href="#" onclick="showNotification('Facebook login coming soon','info');return false;" style="width:38px;height:38px;border-radius:50%;background:#1877f2;border:none;display:flex;align-items:center;justify-content:center;font-size:18px;text-decoration:none;" title="Facebook"><i class="fab fa-facebook-f" style="color:#fff;"></i></a>
-        </div>
+        <p style="font-size:13px;color:#555;margin-bottom:10px;font-weight:600;" data-i18n="welcome">Welcome to Jobijad Express!</p>
+        <a href="login.html?mode=login" style="display:block;background:#f97316;color:#fff;text-align:center;padding:10px;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;margin-bottom:8px;" data-i18n="signIn">Sign In</a>
+        <a href="login.html?mode=register" style="display:block;background:#fff;color:#f97316;text-align:center;padding:9px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;border:1.5px solid #f97316;" data-i18n="createAccount">Create Account</a>
       </div>
       <div id="sidebar-logged-in" style="display:none;">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div style="width:40px;height:40px;border-radius:50%;background:#f97316;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;flex-shrink:0;"><i class="fas fa-user"></i></div>
-          <div><div id="sidebar-user-name" style="font-size:14px;font-weight:700;color:#1a1a2e;"></div><div style="font-size:11px;color:#888;">Tap to view account</div></div>
+        <div style="display:flex;align-items:center;gap:10px;cursor:pointer;" onclick="openAccountPanel();closeSidebar();">
+          <div id="sidebar-avatar-wrap" style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#f97316,#ea6c0a);display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;flex-shrink:0;overflow:hidden;">
+            <i class="fas fa-user" id="sidebar-avatar-icon"></i>
+            <img id="sidebar-avatar-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;">
+          </div>
+          <div>
+            <div id="sidebar-user-name" style="font-size:14px;font-weight:700;color:#1a1a2e;"></div>
+            <div style="font-size:11px;color:#f97316;font-weight:600;" data-i18n="tapToViewAccount">Tap to view account →</div>
+          </div>
         </div>
       </div>
     </div>
     <a href="#" class="sidebar-item" id="sidebar-auth-link" onclick="handleAccountBtn();closeSidebar();return false;">
-      <i class="fas fa-user-circle sidebar-item-icon"></i><span id="sidebar-auth-text">My Account</span>
+      <i class="fas fa-user-circle sidebar-item-icon"></i><span id="sidebar-auth-text" data-i18n="account">My Account</span>
     </a>
-    <a href="#" class="sidebar-item">
-      <i class="fas fa-home sidebar-item-icon"></i><span>Home</span>
+    <a href="#" class="sidebar-item" onclick="window.scrollTo({top:0,behavior:'smooth'});closeSidebar();return false;">
+      <i class="fas fa-home sidebar-item-icon"></i><span data-i18n="home">Home</span>
     </a>
     <a href="orders.html" class="sidebar-item">
-      <i class="fas fa-box sidebar-item-icon"></i><span>My Orders</span>
+      <i class="fas fa-box sidebar-item-icon"></i><span data-i18n="orders">My Orders</span>
     </a>
     <a href="#" class="sidebar-item" id="sidebar-wishlist-link" onclick="openWishlist();closeSidebar();return false;">
-      <i class="fas fa-heart sidebar-item-icon"></i><span>Favourites <span id="wishlist-sidebar-count" style="background:#f97316;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:4px;display:none">0</span></span>
+      <i class="fas fa-heart sidebar-item-icon"></i><span data-i18n="favourites">Favourites <span id="wishlist-sidebar-count" style="background:#f97316;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:4px;display:none">0</span></span>
     </a>
     <a href="#" class="sidebar-item" id="sidebar-messages-link" onclick="openMessages();closeSidebar();return false;">
-      <i class="fas fa-envelope sidebar-item-icon"></i><span>Messages <span id="messages-sidebar-count" style="background:#f97316;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:4px;display:none">0</span></span>
+      <i class="fas fa-envelope sidebar-item-icon"></i><span data-i18n="messages">Messages <span id="messages-sidebar-count" style="background:#f97316;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:4px;display:none">0</span></span>
     </a>
     <a href="#" class="sidebar-item" onclick="openRFQ();closeSidebar();return false;">
-      <i class="fas fa-file-alt sidebar-item-icon"></i><span>RFQs <span style="font-size:10px;color:#888;font-weight:400;">(Request for Quote)</span></span>
+      <i class="fas fa-file-alt sidebar-item-icon"></i><span data-i18n="rfq">RFQs</span>
     </a>
   </nav>
   <div class="sidebar-footer">
@@ -121,14 +122,14 @@
       <img src="pics/logo_white.png" alt="Jobijad Express" class="logo-img hero-logo-img">
     </a>
     <div class="hero-text">
-      <h1>Discover <span>African Fashion</span> Worldwide</h1>
-      <p>Premium Kitenge & more — shipped globally</p>
+      <h1 data-i18n-html="discoverTitle">Discover <span>African Fashion</span> Worldwide</h1>
+      <p data-i18n="discoverSub">Premium Kitenge & more — shipped globally</p>
       <div class="hero-cats">
-        <button class="hero-cat" onclick="filterCategory('women')"><i class="fas fa-female"></i> Women</button>
-        <button class="hero-cat" onclick="filterCategory('men')"><i class="fas fa-male"></i> Men</button>
-        <button class="hero-cat" onclick="filterCategory('children')"><i class="fas fa-child"></i> Children</button>
-        <button class="hero-cat" onclick="filterCategory('accessories')"><i class="fas fa-gem"></i> Accessories</button>
-        <button class="hero-cat" onclick="filterCategory('')"><i class="fas fa-th-large"></i> All</button>
+        <button class="hero-cat" onclick="filterCategory('women')"><i class="fas fa-female"></i> <span data-i18n="women">Women</span></button>
+        <button class="hero-cat" onclick="filterCategory('men')"><i class="fas fa-male"></i> <span data-i18n="men">Men</span></button>
+        <button class="hero-cat" onclick="filterCategory('children')"><i class="fas fa-child"></i> <span data-i18n="children">Children</span></button>
+        <button class="hero-cat" onclick="filterCategory('accessories')"><i class="fas fa-gem"></i> <span data-i18n="accessories">Accessories</span></button>
+        <button class="hero-cat" onclick="filterCategory('')"><i class="fas fa-th-large"></i> <span data-i18n="all">All</span></button>
       </div>
     </div>
   </div>
@@ -215,7 +216,7 @@
 <!-- Cart Panel -->
 <div id="cart-panel" class="cart-panel">
   <div class="cart-panel-header">
-    <h2><i class="fas fa-shopping-cart"></i> My Cart</h2>
+    <h2><i class="fas fa-shopping-cart"></i> <span data-i18n="cart">My Cart</span></h2>
     <button class="cart-close-btn" id="cart-close-btn"><i class="fas fa-times"></i></button>
   </div>
   <!-- Free shipping progress bar -->
@@ -231,12 +232,12 @@
   <div class="cart-footer" id="cart-footer" style="display:none">
     <!-- Promo code -->
     <div style="display:flex;gap:6px;margin-bottom:12px;">
-      <input id="promo-input" type="text" placeholder="Promo code" style="flex:1;padding:8px 12px;border:1.5px solid #e0e0e0;border-radius:6px;font-size:13px;outline:none;font-family:inherit;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'">
-      <button onclick="applyPromo()" style="background:#1a1a2e;color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">Apply</button>
+      <input id="promo-input" type="text" placeholder="Promo code" data-i18n-placeholder="promoPlaceholder" style="flex:1;padding:8px 12px;border:1.5px solid #e0e0e0;border-radius:6px;font-size:13px;outline:none;font-family:inherit;" onfocus="this.style.borderColor='#f97316'" onblur="this.style.borderColor='#e0e0e0'">
+      <button onclick="applyPromo()" style="background:#1a1a2e;color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;" data-i18n="applyPromo">Apply</button>
     </div>
     <div id="promo-msg" style="display:none;font-size:12px;margin-bottom:8px;padding:6px 10px;border-radius:5px;"></div>
     <div class="cart-total">Total <span id="cart-total">$0.00</span></div>
-    <button class="checkout-btn" onclick="checkout()"><i class="fas fa-lock"></i> Proceed to Checkout</button>
+    <button class="checkout-btn" onclick="checkout()"><i class="fas fa-lock"></i> <span data-i18n="checkout">Proceed to Checkout</span></button>
     <div style="text-align:center;font-size:11px;color:#aaa;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px;">
       <i class="fas fa-shield-alt" style="color:#22c55e;"></i> Secure checkout — your data is protected
     </div>

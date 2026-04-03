@@ -46,7 +46,7 @@ const TRANSLATIONS = {
         privacyPolicy:'Privacy Policy', termsOfService:'Terms of Service',
         returnsPolicy:'Returns Policy', contactFooter:'Contact Us',
         shopFooter:'Shop', accountFooter:'Account', loginRegister:'Login / Register',
-        checkoutFooter:'Checkout', worldwideShipping:'Worldwide Shipping'
+        checkoutFooter:'Checkout', worldwideShipping:'Worldwide Shipping', createAccount:'Create Account', tapToViewAccount:'Tap to view account →', promoPlaceholder:'Promo code', applyPromo:'Apply', secureNote:'Secure checkout — your data is protected'
     },
     fr:{
         siteName:'Jobijad Express', siteTagline:'Mode Africaine Premium',
@@ -85,7 +85,7 @@ const TRANSLATIONS = {
         privacyPolicy:'Politique de confidentialité', termsOfService:'Conditions d\'utilisation',
         returnsPolicy:'Politique de retour', contactFooter:'Nous contacter',
         shopFooter:'Boutique', accountFooter:'Compte', loginRegister:'Connexion / Inscription',
-        checkoutFooter:'Paiement', worldwideShipping:'Livraison mondiale'
+        checkoutFooter:'Paiement', worldwideShipping:'Livraison mondiale', createAccount:'Créer un compte', tapToViewAccount:'Voir le compte →', promoPlaceholder:'Code promo', applyPromo:'Appliquer', secureNote:'Paiement sécurisé — vos données sont protégées'
     },
     sw:{
         siteName:'Jobijad Express', siteTagline:'Mitindo ya Afrika ya Hali ya Juu',
@@ -124,7 +124,7 @@ const TRANSLATIONS = {
         privacyPolicy:'Sera ya Faragha', termsOfService:'Masharti ya Huduma',
         returnsPolicy:'Sera ya Kurudisha', contactFooter:'Wasiliana Nasi',
         shopFooter:'Duka', accountFooter:'Akaunti', loginRegister:'Ingia / Jisajili',
-        checkoutFooter:'Malipo', worldwideShipping:'Usafirishaji Duniani Kote'
+        checkoutFooter:'Malipo', worldwideShipping:'Usafirishaji Duniani Kote', createAccount:'Fungua Akaunti', tapToViewAccount:'Bonyeza kuona akaunti →', promoPlaceholder:'Nambari ya punguzo', applyPromo:'Tumia', secureNote:'Malipo salama — data yako inalindwa'
     },
     ar:{
         siteName:'جوبيجاد إكسبريس', siteTagline:'أزياء أفريقية فاخرة',
@@ -163,7 +163,7 @@ const TRANSLATIONS = {
         privacyPolicy:'سياسة الخصوصية', termsOfService:'شروط الخدمة',
         returnsPolicy:'سياسة الإرجاع', contactFooter:'تواصل معنا',
         shopFooter:'المتجر', accountFooter:'الحساب', loginRegister:'تسجيل الدخول / التسجيل',
-        checkoutFooter:'الدفع', worldwideShipping:'شحن عالمي'
+        checkoutFooter:'الدفع', worldwideShipping:'شحن عالمي', createAccount:'إنشاء حساب', tapToViewAccount:'اضغط لعرض الحساب →', promoPlaceholder:'رمز الخصم', applyPromo:'تطبيق', secureNote:'دفع آمن — بياناتك محمية'
     },
     zh:{
         siteName:'乔比贾德快递', siteTagline:'非洲高端时尚',
@@ -202,7 +202,7 @@ const TRANSLATIONS = {
         privacyPolicy:'隐私政策', termsOfService:'服务条款',
         returnsPolicy:'退货政策', contactFooter:'联系我们',
         shopFooter:'商店', accountFooter:'账户', loginRegister:'登录/注册',
-        checkoutFooter:'结账', worldwideShipping:'全球配送'
+        checkoutFooter:'结账', worldwideShipping:'全球配送', createAccount:'创建账户', tapToViewAccount:'点击查看账户 →', promoPlaceholder:'优惠码', applyPromo:'使用', secureNote:'安全结账 — 您的数据受到保护'
     },
     sv:{
         siteName:'Jobijad Express', siteTagline:'Premium Afrikansk Mode',
@@ -241,7 +241,7 @@ const TRANSLATIONS = {
         privacyPolicy:'Integritetspolicy', termsOfService:'Användarvillkor',
         returnsPolicy:'Returpolicy', contactFooter:'Kontakta oss',
         shopFooter:'Butik', accountFooter:'Konto', loginRegister:'Logga in / Registrera',
-        checkoutFooter:'Kassa', worldwideShipping:'Leverans världen över'
+        checkoutFooter:'Kassa', worldwideShipping:'Leverans världen över', createAccount:'Skapa konto', tapToViewAccount:'Tryck för att se konto →', promoPlaceholder:'Kampanjkod', applyPromo:'Använd', secureNote:'Säker kassa — dina uppgifter är skyddade'
     }
 };
 
@@ -305,15 +305,47 @@ function getShippingDisplay(subtotalUSD, country) {
 function applyLanguage() {
     var lang = activeLang;
 
-    // Site name / brand in header
-    document.querySelectorAll('.logo-text, .brand-name, .sidebar-logo-text').forEach(function(el) {
-        if (el.querySelector('span')) {
-            el.childNodes[0].textContent = t('siteName').replace(' Express','') + ' ';
+    // Page title
+    document.title = t('siteName') + ' - ' + t('siteTagline');
+
+    // ALL data-i18n elements — the primary translation mechanism
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n');
+        var val = t(key);
+        if (val && val !== key) {
+            // Preserve child elements (badges, icons) — only update text nodes
+            var hasChildren = el.querySelector('span, i, button, a');
+            if (hasChildren) {
+                // Update only the first text node
+                for (var i = 0; i < el.childNodes.length; i++) {
+                    if (el.childNodes[i].nodeType === 3 && el.childNodes[i].textContent.trim()) {
+                        el.childNodes[i].textContent = val + ' ';
+                        break;
+                    }
+                }
+            } else {
+                el.textContent = val;
+            }
         }
     });
 
-    // Page title
-    document.title = t('siteName') + ' - ' + t('siteTagline');
+    // data-i18n-placeholder elements
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n-placeholder');
+        var val = t(key);
+        if (val && val !== key) el.placeholder = val;
+    });
+
+    // data-i18n-html elements (for HTML content like hero title with <span>)
+    document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n-html');
+        var val = t(key);
+        if (val && val !== key) {
+            // Wrap the highlighted word in a span
+            var highlighted = val.replace(/African|Africaine|Afrika|Afrikansk|أفريقية|非洲|Afrika/g, '<span>$&</span>');
+            el.innerHTML = highlighted;
+        }
+    });
 
     // Search placeholders
     var hs = document.getElementById('header-search');
@@ -321,7 +353,7 @@ function applyLanguage() {
     var bs = document.getElementById('bottom-search-input');
     if (bs) bs.placeholder = t('searchPlaceholder');
 
-    // Auth button
+    // Auth button text (header)
     var authText = document.getElementById('auth-link-text');
     if (authText) {
         var cur = authText.textContent.trim();
@@ -333,31 +365,31 @@ function applyLanguage() {
     var st = document.getElementById('section-title');
     if (st) st.textContent = t('featured');
 
+    // Sort select options
+    var sortSel = document.getElementById('sort-select');
+    if (sortSel) {
+        var opts = sortSel.querySelectorAll('option');
+        var sortKeys = ['sortBy','','priceLow','priceHigh','nameAZ','featuredFirst'];
+        opts.forEach(function(opt, i) { if (sortKeys[i] && t(sortKeys[i])) opt.textContent = t(sortKeys[i]); });
+    }
+
     // Cart panel header
-    var cartH = document.querySelector('.cart-panel-header h2');
-    if (cartH) cartH.innerHTML = '<i class="fas fa-shopping-cart"></i> ' + t('cart');
+    var cartH = document.querySelector('.cart-panel-header h2 span[data-i18n]');
+    if (!cartH) {
+        var cartHFull = document.querySelector('.cart-panel-header h2');
+        if (cartHFull) cartHFull.innerHTML = '<i class="fas fa-shopping-cart"></i> ' + t('cart');
+    }
 
     // Checkout button
-    var cb = document.querySelector('.checkout-btn');
-    if (cb) cb.innerHTML = '<i class="fas fa-lock"></i> ' + t('checkout');
-
-    // Sidebar welcome
-    var sw = document.querySelector('#sidebar-logged-out p');
-    if (sw) sw.textContent = t('welcome');
+    var cb = document.querySelector('.checkout-btn span[data-i18n]');
+    if (!cb) {
+        var cbFull = document.querySelector('.checkout-btn');
+        if (cbFull) cbFull.innerHTML = '<i class="fas fa-lock"></i> ' + t('checkout');
+    }
 
     // Help button
     var helpTxt = document.querySelector('.help-btn-text');
     if (helpTxt) helpTxt.textContent = t('help');
-
-    // Sidebar nav items
-    var sidebarItems = document.querySelectorAll('.sidebar-item span');
-    var sidebarKeys = ['account','home','orders','favourites','messages','rfq'];
-    sidebarItems.forEach(function(el, i) {
-        if (sidebarKeys[i] && t(sidebarKeys[i])) {
-            // Only update if it's a plain text span (no badge inside)
-            if (!el.querySelector('span')) el.textContent = t(sidebarKeys[i]);
-        }
-    });
 
     // Add to cart buttons
     document.querySelectorAll('.add-to-cart-btn').forEach(function(btn) {
@@ -369,29 +401,19 @@ function applyLanguage() {
         btn.innerHTML = '<i class="fas fa-envelope"></i> ' + t('inquire');
     });
 
-    // Hero text
-    var heroH1 = document.querySelector('.hero-text h1');
-    if (heroH1) heroH1.innerHTML = t('discoverTitle').replace('African', '<span>African</span>');
-    var heroP = document.querySelector('.hero-text p');
-    if (heroP) heroP.textContent = t('discoverSub');
-
-    // Hero category buttons
-    var heroCats = document.querySelectorAll('.hero-cat');
-    var catKeys = ['women','men','children','accessories','all'];
-    heroCats.forEach(function(btn, i) {
-        if (catKeys[i]) {
-            var icon = btn.querySelector('i');
-            btn.textContent = t(catKeys[i]);
-            if (icon) btn.insertBefore(icon, btn.firstChild);
-        }
-    });
-
-    // Trust bar
+    // Trust bar shipping sub
     var trustShipSub = document.getElementById('trust-shipping-sub');
     if (trustShipSub) trustShipSub.textContent = t('freeShipSub');
-    document.querySelectorAll('[data-i18n]').forEach(function(el) {
-        var key = el.getAttribute('data-i18n');
-        if (t(key)) el.textContent = t(key);
+
+    // Footer links
+    var footerLinks = {
+        'footer-shop': 'shopFooter', 'footer-account': 'accountFooter',
+        'footer-contact': 'contactFooter', 'footer-privacy': 'privacyPolicy',
+        'footer-terms': 'termsOfService', 'footer-returns': 'returnsPolicy'
+    };
+    Object.keys(footerLinks).forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = t(footerLinks[id]);
     });
 
     // RTL for Arabic
@@ -399,6 +421,9 @@ function applyLanguage() {
     document.documentElement.lang = lang;
 
     // Currency display
+    var display = document.getElementById('currency-display');
+    if (display) display.textContent = activeCurrency;
+}    // Currency display
     var display = document.getElementById('currency-display');
     if (display) display.textContent = activeCurrency;
 }
@@ -597,6 +622,17 @@ function updateSidebarAuth() {
         if (loggedOut) loggedOut.style.display = 'none';
         if (loggedIn) loggedIn.style.display = 'block';
         if (userName) userName.textContent = user.name;
+        // Sync avatar in sidebar
+        var sidebarAvatarImg = document.getElementById('sidebar-avatar-img');
+        var sidebarAvatarIcon = document.getElementById('sidebar-avatar-icon');
+        if (user.avatar && sidebarAvatarImg) {
+            sidebarAvatarImg.src = user.avatar;
+            sidebarAvatarImg.style.display = 'block';
+            if (sidebarAvatarIcon) sidebarAvatarIcon.style.display = 'none';
+        } else if (sidebarAvatarImg) {
+            sidebarAvatarImg.style.display = 'none';
+            if (sidebarAvatarIcon) sidebarAvatarIcon.style.display = 'block';
+        }
     } else {
         if (loggedOut) loggedOut.style.display = 'block';
         if (loggedIn) loggedIn.style.display = 'none';
@@ -730,3 +766,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 document.addEventListener('productsLoaded', _patchRenderCards);
+

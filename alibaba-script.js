@@ -1268,18 +1268,29 @@ function updateFreeShippingBar() {
 }
 
 // ===== PROMO CODE =====
+// Admin can set promo codes via localStorage key 'jobiPromoCodes' (JSON object)
+function getPromoCodes() {
+    try {
+        var adminCodes = JSON.parse(localStorage.getItem('jobiPromoCodes') || 'null');
+        if (adminCodes && typeof adminCodes === 'object') return adminCodes;
+    } catch(e) {}
+    // Default codes
+    return { 'JOBIJAD10': 10, 'WELCOME5': 5, 'AFRICA15': 15, 'SWEDEN20': 20 };
+}
+
 function applyPromo() {
     const code = (document.getElementById('promo-input')?.value || '').trim().toUpperCase();
     const msg = document.getElementById('promo-msg');
     if (!code) { showPromoMsg('Please enter a promo code', false); return; }
-    const discount = PROMO_CODES[code];
+    const codes = getPromoCodes();
+    const discount = codes[code];
     if (discount) {
         appliedDiscount = discount;
-        showPromoMsg('Promo applied! ' + discount + '% off your order.', true);
+        showPromoMsg('✓ Promo applied! ' + discount + '% off your order.', true);
         renderCart();
     } else {
         appliedDiscount = 0;
-        showPromoMsg('Invalid promo code. Try JOBIJAD10 for 10% off!', false);
+        showPromoMsg('Invalid promo code.', false);
     }
 }
 function showPromoMsg(text, success) {

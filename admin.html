@@ -164,6 +164,7 @@ tr:hover td{background:#fafafa;}
     <div class="nav-item" data-tab="inquiries"><i class="fas fa-envelope"></i> Inquiries</div>
     <div class="nav-item" data-tab="feedback"><i class="fas fa-star"></i> Feedback</div>
     <div class="nav-item" data-tab="gifts"><i class="fas fa-gift"></i> Gifts &amp; Giveaways</div>
+    <div class="nav-item" data-tab="promos"><i class="fas fa-tag"></i> Promo Codes</div>
     <div class="nav-divider"></div>
     <div class="nav-item" onclick="window.open('alibaba-style.html?preview=1','_blank')"><i class="fas fa-store"></i> View Store</div>
   </div>
@@ -363,6 +364,7 @@ document.querySelectorAll('.nav-item[data-tab]').forEach(n => {
     else if (currentTab === 'inquiries') renderInquiries();
     else if (currentTab === 'feedback') renderFeedback();
     else if (currentTab === 'gifts') renderGifts();
+    else if (currentTab === 'promos') renderPromos();
     closeSidebar();
   });
 });
@@ -1024,25 +1026,55 @@ async function renderInquiries() {
     allInquiries = (await res.json()).inquiries || [];
   } catch(e) { allInquiries = []; }
 
-  const rows = allInquiries.map(q => `
-    <tr>
-      <td><strong>${q.name}</strong><br><span style="font-size:11px;color:#aaa">${q.email}</span></td>
-      <td>${q.productName || '—'}</td>
-      <td style="max-width:220px;font-size:12px;color:#555">${q.message}</td>
-      <td>${q.adminReply ? `<span style="font-size:12px;color:#555;background:#f0fdf4;padding:4px 8px;border-radius:4px;display:block">${q.adminReply}</span>` : '<span style="color:#aaa;font-size:12px">No reply yet</span>'}</td>
+  const rows = allInquiries.map(q => {
+    const isRFQ = q.message && q.message.startsWith('RFQ:');
+    const typeLabel = isRFQ
+      ? '<span style="background:#fff7ed;color:#f97316;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;border:1px solid #fed7aa;">RFQ</span>'
+      : '<span style="background:#eff6ff;color:#3b82f6;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;border:1px solid #bfdbfe;">Inquiry</span>';
+    return `<tr>
+      <td>
+        <strong>${q.name}</strong><br>
+        <span style="font-size:11px;color:#aaa">${q.email}</span><br>
+        ${typeLabel}
+      </td>
+      <td style="font-size:12px;font-weight:600;color:#f97316">${q.productName || '—'}</td>
+      <td style="max-width:260px;">
+        <div style="font-size:12px;color:#333;background:#f8f9fa;border-radius:6px;padding:8px 10px;border-left:3px solid #f97316;line-height:1.5;">${q.message}</div>
+      </td>
+      <td>
+        ${q.adminReply
+          ? `<div style="font-size:12px;color:#15803d;background:#f0fdf4;border-radius:6px;padding:8px 10px;border-left:3px solid #22c55e;line-height:1.5;">${q.adminReply}</div>`
+          : '<span style="color:#aaa;font-size:12px;font-style:italic">No reply yet</span>'}
+      </td>
       <td><span class="badge badge-${q.status === 'replied' ? 'confirmed' : 'pending'}">${q.status || 'open'}</span></td>
-      <td style="font-size:11px">${fmtDate(q.createdAt)}</td>
-      <td><button class="btn btn-primary" onclick="openReplyModal('${q.id}','inquiry','${(q.name||'').replace(/'/g,"\\'")}')"><i class="fas fa-reply"></i> Reply</button></td>
-    </tr>`).join('') || '<tr class="empty-row"><td colspan="7">No inquiries yet</td></tr>';
+      <td style="font-size:11px;white-space:nowrap">${fmtDate(q.createdAt)}</td>
+      <td>
+        <button class="btn btn-primary" style="white-space:nowrap" onclick="openReplyModal('${q.id}','inquiry','${(q.name||'').replace(/'/g,"\\'")}')">
+          <i class="fas fa-reply"></i> ${q.adminReply ? 'Update Reply' : 'Reply'}
+        </button>
+      </td>
+    </tr>`;
+  }).join('') || '<tr class="empty-row"><td colspan="7">No inquiries yet</td></tr>';
+
+  const rfqCount = allInquiries.filter(q => q.message && q.message.startsWith('RFQ:')).length;
+  const inquiryCount = allInquiries.length - rfqCount;
 
   document.getElementById('main-content').innerHTML = `
     <div class="section">
       <div class="section-head">
-        <h2>Customer Inquiries (${allInquiries.length})</h2>
-        <button class="btn btn-secondary" onclick="renderInquiries()"><i class="fas fa-sync"></i> Refresh</button>
+        <h2>Customer Inquiries & RFQs (${allInquiries.length})</h2>
+        <div class="head-actions">
+          <span style="font-size:12px;color:#888;background:#fff7ed;padding:4px 10px;border-radius:10px;border:1px solid #fed7aa;">
+            <i class="fas fa-file-alt" style="color:#f97316;margin-right:4px"></i>${rfqCount} RFQs
+          </span>
+          <span style="font-size:12px;color:#888;background:#eff6ff;padding:4px 10px;border-radius:10px;border:1px solid #bfdbfe;">
+            <i class="fas fa-envelope" style="color:#3b82f6;margin-right:4px"></i>${inquiryCount} Inquiries
+          </span>
+          <button class="btn btn-secondary" onclick="renderInquiries()"><i class="fas fa-sync"></i> Refresh</button>
+        </div>
       </div>
       <div class="table-wrap"><table>
-        <thead><tr><th>Customer</th><th>Product</th><th>Message</th><th>Admin Reply</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+        <thead><tr><th>Customer</th><th>Product / Item</th><th>Message</th><th>Admin Reply</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
         <tbody>${rows}</tbody>
       </table></div>
     </div>`;
@@ -1309,6 +1341,69 @@ async function postGiveaway() {
     document.getElementById('create-gift-modal').style.display = 'none';
     renderGifts();
   } catch(e) { showToast('Failed to post giveaway', true); }
+}
+
+// ===== PROMO CODES =====
+function renderPromos() {
+  var codes = {};
+  try { codes = JSON.parse(localStorage.getItem('jobiPromoCodes') || 'null') || { 'JOBIJAD10': 10, 'WELCOME5': 5, 'AFRICA15': 15, 'SWEDEN20': 20 }; } catch(e) { codes = { 'JOBIJAD10': 10, 'WELCOME5': 5, 'AFRICA15': 15, 'SWEDEN20': 20 }; }
+
+  var rows = Object.entries(codes).map(function([code, discount]) {
+    return '<tr>' +
+      '<td><strong style="font-family:monospace;font-size:14px;color:#f97316;letter-spacing:1px;">' + code + '</strong></td>' +
+      '<td><span style="background:#dcfce7;color:#15803d;font-weight:700;padding:3px 10px;border-radius:10px;">' + discount + '% OFF</span></td>' +
+      '<td><span style="background:#dbeafe;color:#1e40af;font-size:11px;padding:2px 8px;border-radius:10px;">Active</span></td>' +
+      '<td><button class="btn btn-danger" onclick="deletePromoCode(\'' + code + '\')"><i class="fas fa-trash"></i> Delete</button></td>' +
+      '</tr>';
+  }).join('') || '<tr class="empty-row"><td colspan="4">No promo codes yet</td></tr>';
+
+  document.getElementById('main-content').innerHTML =
+    '<div class="section">' +
+    '<div class="section-head"><h2><i class="fas fa-tag" style="color:#f97316;margin-right:6px"></i>Promo Codes</h2>' +
+    '<button class="btn btn-primary" onclick="showAddPromoForm()"><i class="fas fa-plus"></i> Add Code</button></div>' +
+    '<div id="add-promo-form" style="display:none;padding:16px 18px;background:#fff7ed;border-bottom:1px solid #fed7aa;">' +
+    '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">' +
+    '<div><label style="display:block;font-size:11px;font-weight:700;color:#666;margin-bottom:4px;text-transform:uppercase;">Code *</label>' +
+    '<input id="new-promo-code" type="text" placeholder="e.g. SUMMER25" style="padding:9px 12px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:13px;outline:none;font-family:inherit;text-transform:uppercase;width:160px;" oninput="this.value=this.value.toUpperCase()"></div>' +
+    '<div><label style="display:block;font-size:11px;font-weight:700;color:#666;margin-bottom:4px;text-transform:uppercase;">Discount % *</label>' +
+    '<input id="new-promo-discount" type="number" min="1" max="100" placeholder="e.g. 15" style="padding:9px 12px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:13px;outline:none;font-family:inherit;width:100px;"></div>' +
+    '<button class="btn btn-primary" onclick="addPromoCode()"><i class="fas fa-plus"></i> Add</button>' +
+    '<button class="btn btn-secondary" onclick="document.getElementById(\'add-promo-form\').style.display=\'none\'">Cancel</button>' +
+    '</div></div>' +
+    '<div style="padding:12px 18px;background:#f0fdf4;border-bottom:1px solid #d1fae5;font-size:12px;color:#15803d;">' +
+    '<i class="fas fa-info-circle"></i> Promo codes are stored locally and applied at checkout. Customers enter them in the cart.' +
+    '</div>' +
+    '<div class="table-wrap"><table>' +
+    '<thead><tr><th>Code</th><th>Discount</th><th>Status</th><th>Action</th></tr></thead>' +
+    '<tbody>' + rows + '</tbody>' +
+    '</table></div></div>';
+}
+
+function showAddPromoForm() {
+  var form = document.getElementById('add-promo-form');
+  if (form) { form.style.display = form.style.display === 'none' ? 'block' : 'none'; }
+}
+
+function addPromoCode() {
+  var code = (document.getElementById('new-promo-code')?.value || '').trim().toUpperCase();
+  var discount = parseInt(document.getElementById('new-promo-discount')?.value || '0');
+  if (!code || !discount || discount < 1 || discount > 100) { showToast('Enter a valid code and discount (1-100%)', true); return; }
+  var codes = {};
+  try { codes = JSON.parse(localStorage.getItem('jobiPromoCodes') || 'null') || { 'JOBIJAD10': 10, 'WELCOME5': 5, 'AFRICA15': 15, 'SWEDEN20': 20 }; } catch(e) { codes = {}; }
+  codes[code] = discount;
+  localStorage.setItem('jobiPromoCodes', JSON.stringify(codes));
+  showToast('Promo code "' + code + '" added (' + discount + '% off)');
+  renderPromos();
+}
+
+function deletePromoCode(code) {
+  if (!confirm('Delete promo code "' + code + '"?')) return;
+  var codes = {};
+  try { codes = JSON.parse(localStorage.getItem('jobiPromoCodes') || 'null') || {}; } catch(e) { codes = {}; }
+  delete codes[code];
+  localStorage.setItem('jobiPromoCodes', JSON.stringify(codes));
+  showToast('Promo code "' + code + '" deleted');
+  renderPromos();
 }
 
 // ===== INIT =====

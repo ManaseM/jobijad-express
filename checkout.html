@@ -303,12 +303,24 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;}
           <div style="flex:1;"><span style="display:block;font-size:14px;font-weight:500;">Pay on Delivery</span><small style="color:#888;font-size:12px;">Pay with Swish or Bank Card on delivery</small></div>
         </label>
         <div id="cod-fields" style="display:none;margin-top:4px;padding:14px;background:#f0fdf4;border:1.5px solid #22c55e;border-radius:8px;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-            <i class="fas fa-check-circle" style="color:#22c55e;font-size:18px;"></i>
-            <span style="font-size:13px;font-weight:600;color:#15803d;">Pay on Delivery selected</span>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <i class="fas fa-check-circle" style="color:#22c55e;font-size:20px;"></i>
+            <span style="font-size:13px;font-weight:700;color:#15803d;">Pay on Delivery selected</span>
           </div>
-          <p style="font-size:12px;color:#555;line-height:1.6;">Your order will be delivered first. Pay when it arrives using Swish or Bank Card. Available for select locations only.</p>
-          <p style="font-size:11px;color:#888;margin-top:6px;"><i class="fas fa-info-circle" style="color:#f97316;margin-right:4px;"></i>Our team will contact you to confirm delivery details.</p>
+          <p style="font-size:12px;color:#555;line-height:1.6;margin-bottom:10px;">Your order will be delivered first. Pay when it arrives using Swish or Bank Card. Available for select locations only.</p>
+          <div class="form-group" style="margin-bottom:8px;">
+            <label style="font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:5px;">Preferred Payment on Delivery *</label>
+            <select id="cod-method" style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:14px;outline:none;font-family:inherit;" onfocus="this.style.borderColor='#22c55e'" onblur="this.style.borderColor='#e0e0e0'">
+              <option value="swish_delivery">Swish (on delivery)</option>
+              <option value="card_delivery">Bank Card (on delivery)</option>
+              <option value="cash_delivery">Cash (on delivery)</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label style="font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:5px;">Contact Phone for Delivery *</label>
+            <input type="tel" id="cod-phone" placeholder="Your phone number for delivery confirmation" style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:14px;outline:none;font-family:inherit;" onfocus="this.style.borderColor='#22c55e'" onblur="this.style.borderColor='#e0e0e0'">
+          </div>
+          <p style="font-size:11px;color:#888;margin-top:8px;"><i class="fas fa-info-circle" style="color:#f97316;margin-right:4px;"></i>Our team will call you to confirm delivery details and time.</p>
         </div>
       </div>      </div>
     </div>
@@ -630,6 +642,14 @@ async function placeOrder() {
     swishNumber = '+46 ' + swishRaw;
   }
 
+  // Validate Pay on Delivery
+  let codMethod = '', codPhone = '';
+  if (payment === 'cash_on_delivery') {
+    codMethod = document.getElementById('cod-method') ? document.getElementById('cod-method').value : 'swish_delivery';
+    codPhone = document.getElementById('cod-phone') ? document.getElementById('cod-phone').value.trim() : '';
+    if (!codPhone) { alert('Please enter your phone number for delivery confirmation.'); document.getElementById('cod-phone')?.focus(); return; }
+  }
+
   // Validate mobile money (legacy)
   let momoNumber = '', momoNetwork = '';
   }
@@ -688,6 +708,8 @@ async function placeOrder() {
     swishNumber: swishNumber || undefined,
     momoNumber: momoNumber || undefined,
     momoNetwork: momoNetwork || undefined,
+    codMethod: codMethod || undefined,
+    codPhone: codPhone || undefined,
     paypalEmail: undefined,
     paypalCardName: paypalName || undefined,
     paypalCardLast4: paypalNumber ? paypalNumber.slice(-4) : undefined,
@@ -757,18 +779,31 @@ function showSuccess(orderNum, payment, momoNumber, momoNetwork) {
   document.querySelector('.page-title').style.display = 'none';
   document.getElementById('success-screen').style.display = 'block';
   document.getElementById('success-order-num').textContent = orderNum;
+  var momoInfo = document.getElementById('success-momo-info');
   if (payment === 'swish') {
-    var momoInfo = document.getElementById('success-momo-info');
     if (momoInfo) {
       momoInfo.style.display = 'block';
       momoInfo.style.borderColor = '#00a550';
       momoInfo.style.background = '#f0fff8';
+      var swishNum = document.getElementById('swish-number') ? '+46 ' + document.getElementById('swish-number').value : '';
       momoInfo.innerHTML = '<i class="fas fa-mobile-alt" style="color:#00a550;margin-right:6px"></i>' +
         '<strong style="color:#00a550;">Swish Payment Pending</strong><br>' +
-        '<span style="font-size:12px;margin-top:6px;display:block">A Swish payment request will be sent to <strong>' + (document.getElementById('swish-number') ? '+46 ' + document.getElementById('swish-number').value : '') + '</strong>.<br>Open your bank app and approve the payment to confirm your order.</span>';
+        '<span style="font-size:12px;margin-top:6px;display:block">A Swish payment request will be sent to <strong>' + swishNum + '</strong>.<br>Open your bank app and approve the payment to confirm your order.</span>';
     }
-  } else if (payment === 'mobile_money') {
-    document.getElementById('success-momo-info').style.display = 'block';
+  } else if (payment === 'cash_on_delivery') {
+    if (momoInfo) {
+      momoInfo.style.display = 'block';
+      momoInfo.style.borderColor = '#22c55e';
+      momoInfo.style.background = '#f0fdf4';
+      var codPhone = document.getElementById('cod-phone') ? document.getElementById('cod-phone').value : '';
+      var codMethodEl = document.getElementById('cod-method');
+      var codMethodText = codMethodEl ? codMethodEl.options[codMethodEl.selectedIndex].text : 'on delivery';
+      momoInfo.innerHTML = '<i class="fas fa-truck" style="color:#22c55e;margin-right:6px"></i>' +
+        '<strong style="color:#15803d;">Pay on Delivery Confirmed</strong><br>' +
+        '<span style="font-size:12px;margin-top:6px;display:block">Our team will contact you at <strong>' + codPhone + '</strong> to confirm delivery.<br>Payment method: <strong>' + codMethodText + '</strong>.</span>';
+    }
+  } else if (payment === 'mobile_money' && momoInfo) {
+    momoInfo.style.display = 'block';
     document.getElementById('success-momo-num').textContent = momoNumber;
     document.getElementById('success-momo-net').textContent = (momoNetwork || '').toUpperCase();
   }
