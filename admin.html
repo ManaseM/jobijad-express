@@ -771,92 +771,6 @@ function printReceipt() {
   setTimeout(function() { w.print(); }, 600);
 }
     <!-- Delivery Schedule Modal -->
-<div class="modal-bg" id="delivery-modal">
-  <div class="modal" style="max-width:500px">
-    <h3><i class="fas fa-truck" style="color:#f97316;margin-right:8px"></i>Set Delivery Schedule</h3>
-    <input type="hidden" id="dm-order-id">
-    <div style="background:#f0fdf4;border:1.5px solid #22c55e;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:#15803d">
-      <i class="fas fa-check-circle"></i> Payment will be approved and delivery schedule sent to customer.
-    </div>
-    <div class="form-group">
-      <label>Customer Country / Region</label>
-      <select id="dm-country" onchange="estimateDelivery()" style="width:100%;padding:9px 11px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:13px;outline:none;font-family:inherit;">
-        <option value="">-- Select country --</option>
-        <optgroup label="East Africa (3-5 days)">
-          <option value="Uganda" data-days="3">Uganda (3-5 days)</option>
-          <option value="Kenya" data-days="4">Kenya (3-5 days)</option>
-          <option value="Tanzania" data-days="4">Tanzania (4-6 days)</option>
-          <option value="Rwanda" data-days="4">Rwanda (3-5 days)</option>
-          <option value="Burundi" data-days="5">Burundi (4-6 days)</option>
-          <option value="Ethiopia" data-days="5">Ethiopia (5-7 days)</option>
-        </optgroup>
-        <optgroup label="West Africa (5-8 days)">
-          <option value="Nigeria" data-days="6">Nigeria (5-8 days)</option>
-          <option value="Ghana" data-days="6">Ghana (5-8 days)</option>
-          <option value="Senegal" data-days="7">Senegal (6-9 days)</option>
-          <option value="Ivory Coast" data-days="7">Ivory Coast (6-9 days)</option>
-        </optgroup>
-        <optgroup label="Southern Africa (5-8 days)">
-          <option value="South Africa" data-days="6">South Africa (5-8 days)</option>
-          <option value="Zimbabwe" data-days="6">Zimbabwe (5-7 days)</option>
-          <option value="Zambia" data-days="6">Zambia (5-7 days)</option>
-          <option value="Mozambique" data-days="7">Mozambique (6-8 days)</option>
-        </optgroup>
-        <optgroup label="Europe (7-14 days)">
-          <option value="Sweden" data-days="10">Sweden (8-14 days)</option>
-          <option value="UK" data-days="9">United Kingdom (7-12 days)</option>
-          <option value="Germany" data-days="10">Germany (8-14 days)</option>
-          <option value="France" data-days="10">France (8-14 days)</option>
-          <option value="Netherlands" data-days="10">Netherlands (8-14 days)</option>
-          <option value="Italy" data-days="11">Italy (9-14 days)</option>
-          <option value="Spain" data-days="11">Spain (9-14 days)</option>
-        </optgroup>
-        <optgroup label="North America (10-16 days)">
-          <option value="USA" data-days="12">United States (10-16 days)</option>
-          <option value="Canada" data-days="13">Canada (10-16 days)</option>
-        </optgroup>
-        <optgroup label="Middle East (6-10 days)">
-          <option value="UAE" data-days="7">UAE (6-10 days)</option>
-          <option value="Saudi Arabia" data-days="8">Saudi Arabia (7-11 days)</option>
-        </optgroup>
-        <optgroup label="Asia (10-18 days)">
-          <option value="China" data-days="12">China (10-16 days)</option>
-          <option value="India" data-days="12">India (10-16 days)</option>
-        </optgroup>
-        <option value="Other" data-days="14">Other / International (14-21 days)</option>
-      </select>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Ship Date *</label>
-        <input type="date" id="dm-ship-date" oninput="estimateDelivery()" style="width:100%;padding:9px 11px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:13px;outline:none;font-family:inherit;">
-      </div>
-      <div class="form-group">
-        <label>Est. Delivery Date</label>
-        <input type="date" id="dm-delivery-date" style="width:100%;padding:9px 11px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:13px;outline:none;font-family:inherit;">
-      </div>
-    </div>
-    <div id="dm-estimate-info" style="display:none;background:#fff7ed;border:1px solid #fed7aa;border-radius:7px;padding:10px 14px;font-size:12px;color:#92400e;margin-bottom:12px;">
-      <i class="fas fa-info-circle"></i> <span id="dm-estimate-text"></span>
-    </div>
-    <div class="form-group">
-      <label>Tracking Number <span style="color:#aaa;font-weight:400">(optional)</span></label>
-      <input type="text" id="dm-tracking" placeholder="e.g. JB123456789" style="width:100%;padding:9px 11px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:13px;outline:none;font-family:inherit;">
-    </div>
-    <div class="form-group">
-      <label>Message to Customer <span style="color:#aaa;font-weight:400">(optional)</span></label>
-      <textarea id="dm-note" rows="3" placeholder="e.g. Your order will be shipped via DHL Express. You will receive a tracking email once dispatched." style="width:100%;padding:9px 11px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:13px;outline:none;font-family:inherit;resize:vertical;"></textarea>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-secondary" onclick="document.getElementById('delivery-modal').classList.remove('open')">Cancel</button>
-      <button class="btn btn-primary" onclick="confirmApprovePayment()"><i class="fas fa-check-circle"></i> Approve & Notify Customer</button>
-    </div>
-  </div>
-</div>
-
-</body></html>`);
-  w.document.close();
-}
 
 // ===== PRODUCTS =====
 async function renderProducts() {
@@ -1664,4 +1578,5 @@ init();
 
 </body>
 </html>
+
 
