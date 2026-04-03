@@ -1,4 +1,4 @@
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+﻿const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:3000/api'
     : window.location.origin + '/api';
 let cart = JSON.parse(localStorage.getItem('jobiCart') || '[]');
@@ -286,21 +286,24 @@ function renderCart() {
     let total = 0;
     el.innerHTML = cart.map((item, i) => {
         total += item.price * item.qty;
-        return `<div class="cart-item">
-            <img class="cart-item-img" src="${item.image}" alt="${item.title}">
-            <div class="cart-item-details">
-                <div class="cart-item-title">${item.title}</div>
-                <div class="cart-item-price">$${(item.price * item.qty).toFixed(2)}</div>
-                <div class="cart-item-qty">
-                    <button class="qty-btn" onclick="changeQty(${i},-1)">−</button>
-                    <span class="qty-value">${item.qty}</span>
-                    <button class="qty-btn" onclick="changeQty(${i},1)">+</button>
-                </div>
-            </div>
-            <button class="cart-item-remove" onclick="removeFromCart(${i})"><i class="fas fa-trash"></i></button>
-        </div>`;
+        const linePrice = (typeof convertPrice === 'function') ? convertPrice(item.price * item.qty) : '$' + (item.price * item.qty).toFixed(2);
+        return '<div class="cart-item">' +
+            '<img class="cart-item-img" src="' + item.image + '" alt="' + item.title + '">' +
+            '<div class="cart-item-details">' +
+                '<div class="cart-item-title">' + item.title + '</div>' +
+                '<div class="cart-item-price">' + linePrice + '</div>' +
+                '<div class="cart-item-qty">' +
+                    '<button class="qty-btn" onclick="changeQty(' + i + ',-1)">&#8722;</button>' +
+                    '<span class="qty-value">' + item.qty + '</span>' +
+                    '<button class="qty-btn" onclick="changeQty(' + i + ',1)">+</button>' +
+                '</div>' +
+            '</div>' +
+            '<button class="cart-item-remove" onclick="removeFromCart(' + i + ')"><i class="fas fa-trash"></i></button>' +
+        '</div>';
     }).join('');
-    document.getElementById('cart-total').textContent = `$${total.toFixed(2)}`;
+    const totalDisplay = (typeof convertPrice === 'function') ? convertPrice(total) : '$' + total.toFixed(2);
+    document.getElementById('cart-total').textContent = totalDisplay;
+    if (typeof updateFreeShippingBar === 'function') updateFreeShippingBar();
 }
 
 function updateCartBadge() {
@@ -721,7 +724,7 @@ function renderWishlistPanel() {
             <img class="wishlist-item-img" src="${item.image}" alt="${item.title}">
             <div class="wishlist-item-info">
                 <div class="wishlist-item-title">${item.title}</div>
-                <div class="wishlist-item-price">$${item.price.toFixed(2)}</div>
+                <div class="wishlist-item-price">`+(typeof convertPrice===""function""?convertPrice(item.price):""$""+item.price.toFixed(2))+`</div>
                 <div class="wishlist-item-actions">
                     <button class="wl-cart-btn" onclick="addWishlistToCart(${i})"><i class="fas fa-cart-plus"></i> Add to Cart</button>
                     <button class="wl-remove-btn" onclick="removeFromWishlist(${i})"><i class="fas fa-trash"></i></button>
@@ -1295,7 +1298,12 @@ function updateFreeShippingBar() {
         if (text) text.innerHTML = '<strong style="color:#15803d;"><i class="fas fa-check-circle"></i> You\'ve unlocked FREE shipping!</strong>';
         if (progress) progress.style.background = '#22c55e';
     } else {
-        const remaining = (FREE_SHIPPING_THRESHOLD - total).toFixed(2);
+        const remaining = FREE_SHIPPING_THRESHOLD - total;
+        const remainingDisplay = (typeof convertPrice === 'function') ? convertPrice(remaining) : '$' + remaining.toFixed(2);
+        if (text) text.innerHTML = 'Add <strong>' + remainingDisplay + '</strong> more for <strong>FREE shipping!</strong>';
+        if (progress) progress.style.background = '#f97316';
+    }
+}
         if (text) text.innerHTML = 'Add <strong>$' + remaining + '</strong> more for <strong>FREE shipping!</strong>';
         if (progress) progress.style.background = '#f97316';
     }
@@ -1390,3 +1398,5 @@ document.addEventListener('DOMContentLoaded', () => {
     renderRecentlyViewed();
     updateFreeShippingBar();
 });
+
+
