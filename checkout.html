@@ -356,7 +356,7 @@ const MOMO_COUNTRIES = ['Uganda','Kenya','Tanzania','Rwanda','Nigeria','Ghana'];
 
 function onCountryChange(val) {
   const countryInput = document.getElementById('s-country');
-  const codeEl = document.getElementById('s-phone-code');
+  if (countryInput) countryInput.value = val;
   const momoCodeDisplay = document.getElementById('momo-code-display');
   const code = COUNTRY_PHONE_CODES[val] || '';
   if (countryInput) countryInput.value = val;
@@ -645,11 +645,40 @@ async function placeOrder() {
   const city = document.getElementById('s-city').value.trim();
   const state = document.getElementById('s-state').value.trim();
   const zip = document.getElementById('s-zip').value.trim();
-  const country = document.getElementById('s-country')?.value.trim() || document.getElementById('s-country-select')?.options[document.getElementById('s-country-select').selectedIndex]?.text.replace(/[🇦-🇿\s\(\+\d\)]+/g,'').trim() || '';
-  const payment = document.querySelector('input[name="pay"]:checked').value;
 
-  if (!name || !street || !city || !state || !country) {
-    alert('Please fill in all required shipping fields.');
+  // Get country from hidden field OR from select text (strip emoji/code)
+  let country = (document.getElementById('s-country')?.value || '').trim();
+  if (!country) {
+    const sel = document.getElementById('s-country-select');
+    if (sel && sel.selectedIndex > 0) {
+      // Extract just the country name — remove emoji flags and phone codes like (+256)
+      country = sel.options[sel.selectedIndex].value || '';
+    }
+  }
+
+  const payment = document.querySelector('input[name="pay"]:checked')?.value || 'swish';
+
+  // Highlight missing fields instead of just alerting
+  const missing = [];
+  if (!name) missing.push('s-name');
+  if (!street) missing.push('s-street');
+  if (!city) missing.push('s-city');
+  if (!state) missing.push('s-state');
+  if (!country) missing.push('s-country-select');
+
+  if (missing.length) {
+    missing.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) { el.style.borderColor = '#ef4444'; el.focus(); }
+    });
+    // Reset border on input
+    missing.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('input', function() { el.style.borderColor = '#e0e0e0'; }, { once: true });
+    });
+    alert('Please fill in all required shipping fields: ' + missing.map(function(id) {
+      return id.replace('s-','').replace('-select','').replace('-',' ');
+    }).join(', '));
     return;
   }
 
@@ -671,7 +700,6 @@ async function placeOrder() {
 
   // Validate mobile money (legacy)
   let momoNumber = '', momoNetwork = '';
-  }
 
   // Validate PayPal
   let paypalName = '', paypalNumber = '', paypalExpiry = '', paypalCvv = '';
