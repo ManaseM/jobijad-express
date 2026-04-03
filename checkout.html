@@ -388,12 +388,6 @@ const COUNTRY_PHONE_CODES = {
   'United States':'+1','UAE':'+971','China':'+86','Other':''
 };
 const MOMO_COUNTRIES = ['Uganda','Kenya','Tanzania','Rwanda','Nigeria','Ghana'];
-  'Uganda':'+256','Kenya':'+254','Tanzania':'+255','Rwanda':'+250','Nigeria':'+234',
-  'Ghana':'+233','South Africa':'+27','Sweden':'+46','United Kingdom':'+44',
-  'United States':'+1','UAE':'+971','China':'+86','Other':''
-};
-// Countries where mobile money is common — auto-fill momo prefix
-const MOMO_COUNTRIES = ['Uganda','Kenya','Tanzania','Rwanda','Nigeria','Ghana'];
 
 function onCountryChange(val) {
   // Always set the hidden country field
@@ -573,21 +567,30 @@ function updateCardPreview(prefix) {
   }
 }
 
-function fmtMoney(v) { return '$' + v.toFixed(2); }
-
+// calcShipping returns cost in USD; fmtMoney converts to active currency
 function calcShipping(sub, country) {
+  // Sweden: very cheap — free over 30 USD (~310 SEK), otherwise 0.99 USD (~10 SEK)
   const rates = {
-    'Sweden': { cost: 0.99, free: 30 },
-    'Norway': { cost: 4.99, free: 75 }, 'Denmark': { cost: 4.99, free: 75 },
-    'Finland': { cost: 4.99, free: 75 }, 'United Kingdom': { cost: 6.99, free: 75 },
-    'Germany': { cost: 5.99, free: 75 }, 'France': { cost: 5.99, free: 75 },
-    'Netherlands': { cost: 5.99, free: 75 }, 'United States': { cost: 9.99, free: 75 },
-    'Canada': { cost: 9.99, free: 75 }, 'Australia': { cost: 12.99, free: 100 },
-    'UAE': { cost: 8.99, free: 75 }, 'Uganda': { cost: 4.99, free: 50 },
-    'Kenya': { cost: 4.99, free: 50 }, 'Tanzania': { cost: 4.99, free: 50 },
-    'Rwanda': { cost: 4.99, free: 50 }, 'Nigeria': { cost: 7.99, free: 75 },
-    'Ghana': { cost: 7.99, free: 75 }, 'South Africa': { cost: 8.99, free: 75 },
-    'China': { cost: 6.99, free: 75 }
+    'Sweden':        { cost: 0.99,  free: 30  },
+    'Norway':        { cost: 4.99,  free: 75  },
+    'Denmark':       { cost: 4.99,  free: 75  },
+    'Finland':       { cost: 4.99,  free: 75  },
+    'United Kingdom':{ cost: 6.99,  free: 75  },
+    'Germany':       { cost: 5.99,  free: 75  },
+    'France':        { cost: 5.99,  free: 75  },
+    'Netherlands':   { cost: 5.99,  free: 75  },
+    'United States': { cost: 9.99,  free: 75  },
+    'Canada':        { cost: 9.99,  free: 75  },
+    'Australia':     { cost: 12.99, free: 100 },
+    'UAE':           { cost: 8.99,  free: 75  },
+    'Uganda':        { cost: 4.99,  free: 50  },
+    'Kenya':         { cost: 4.99,  free: 50  },
+    'Tanzania':      { cost: 4.99,  free: 50  },
+    'Rwanda':        { cost: 4.99,  free: 50  },
+    'Nigeria':       { cost: 7.99,  free: 75  },
+    'Ghana':         { cost: 7.99,  free: 75  },
+    'South Africa':  { cost: 8.99,  free: 75  },
+    'China':         { cost: 6.99,  free: 75  }
   };
   const r = rates[country] || { cost: 14.99, free: 100 };
   return sub >= r.free ? 0 : r.cost;
@@ -931,6 +934,7 @@ init();
 @keyframes spin{to{transform:rotate(360deg);}}
 </style></body>
 </html>
+
 
 
 
