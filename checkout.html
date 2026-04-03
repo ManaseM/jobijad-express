@@ -482,22 +482,37 @@ function init() {
   const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
   if (user.name) document.getElementById('s-name').value = user.name;
 
-  const items = document.getElementById('summary-items');
-  items.innerHTML = cart.map(i => `
-    <div class="s-item">
-      <img src="${i.image}" alt="${i.title}">
-      <div><div class="s-item-title">${i.title.substring(0,40)}</div>
-      <div class="s-item-price">$${(i.price*i.qty).toFixed(2)} � ${i.qty}</div></div>
-    </div>`).join('');
+  const cur = getActiveCurrency();
 
-  const sub = cart.reduce((s,i) => s + i.price*i.qty, 0);
-  const country = document.getElementById('s-country-select')?.value || '';
+  // Show active currency badge in summary
+  const summaryCard = document.querySelector('.summary-sticky .card h2');
+  if (summaryCard && cur !== 'USD') {
+    if (!summaryCard.querySelector('.cur-badge')) {
+      const b = document.createElement('span');
+      b.className = 'cur-badge';
+      b.style.cssText = 'margin-left:auto;font-size:11px;background:#fff7ed;color:#f97316;padding:2px 8px;border-radius:10px;border:1px solid #fed7aa;font-weight:700;';
+      b.textContent = cur;
+      summaryCard.appendChild(b);
+    }
+  }
+
+  const items = document.getElementById('summary-items');
+  items.innerHTML = cart.map(function(i) {
+    return '<div class="s-item">' +
+      '<img src="' + i.image + '" alt="' + i.title + '">' +
+      '<div><div class="s-item-title">' + i.title.substring(0,40) + '</div>' +
+      '<div class="s-item-price">' + fmtMoney(i.price * i.qty) + ' &times; ' + i.qty + '</div></div>' +
+      '</div>';
+  }).join('');
+
+  const sub = cart.reduce(function(s,i) { return s + i.price*i.qty; }, 0);
+  const country = document.getElementById('s-country-select') ? document.getElementById('s-country-select').value : '';
   const ship = calcShipping(sub, country);
   const tax = sub * 0.08;
   document.getElementById('s-subtotal').textContent = fmtMoney(sub);
   document.getElementById('s-shipping').textContent = ship === 0 ? 'FREE' : fmtMoney(ship);
   document.getElementById('s-tax').textContent = fmtMoney(tax);
-  document.getElementById('s-total').textContent = fmtMoney(sub+ship+tax);
+  document.getElementById('s-total').textContent = fmtMoney(sub + ship + tax);
 }
 
 function injectCardPreview(containerId, prefix) {
@@ -934,6 +949,7 @@ init();
 @keyframes spin{to{transform:rotate(360deg);}}
 </style></body>
 </html>
+
 
 
 
