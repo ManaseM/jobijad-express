@@ -29,7 +29,8 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;min-height:10
 .badge-processing{background:#ede9fe;color:#5b21b6;}.badge-shipped{background:#dcfce7;color:#15803d;}
 .badge-delivered{background:#dcfce7;color:#15803d;}.badge-cancelled{background:#fee2e2;color:#991b1b;}
 .order-body{padding:14px 18px;}
-.order-item-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f8f8f8;font-size:13px;color:#555;}
+.order-item-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f8f8f8;font-size:13px;color:#555;align-items:center;}
+.order-item-img{width:36px;height:36px;object-fit:cover;border-radius:5px;margin-right:8px;flex-shrink:0;}
 .order-totals{display:flex;justify-content:flex-end;gap:24px;font-size:13px;margin-top:10px;padding-top:10px;border-top:1px solid #f0f0f0;}
 .order-total-val{font-weight:700;color:#f97316;font-size:16px;}
 .order-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
@@ -64,6 +65,10 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;min-height:10
 .admin-reply-text{font-size:13px;color:#555;line-height:1.6;}
 .delivery-box{margin-top:10px;padding:10px 12px;background:#f0fdf4;border:1.5px solid #22c55e;border-radius:8px;font-size:12px;}
 .delivery-box-title{font-weight:700;color:#15803d;margin-bottom:6px;}
+/* Receipt modal */
+.receipt-modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;align-items:center;justify-content:center;padding:16px;}
+.receipt-modal-wrap.open{display:flex;}
+.receipt-modal-inner{background:#fff;border-radius:12px;padding:24px;width:100%;max-width:580px;max-height:92vh;overflow-y:auto;}
 </style>
 </head>
 <body>
@@ -73,7 +78,7 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;min-height:10
 </header>
 <div class="container">
   <div class="page-title"><i class="fas fa-box" style="color:#f97316;margin-right:8px"></i>Orders &amp; Reviews</div>
-  <div class="page-sub">Track your orders, leave feedback, and read customer reviews.</div>
+  <div class="page-sub">Track your orders, view receipts, and leave feedback.</div>
   <div class="tabs">
     <button class="tab active" onclick="switchTab('orders')"><i class="fas fa-box"></i> My Orders</button>
     <button class="tab" onclick="switchTab('review')"><i class="fas fa-star"></i> Leave a Review</button>
@@ -85,13 +90,13 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;min-height:10
   <div id="tab-review" class="tab-content">
     <div class="review-form-card">
       <h3 style="font-size:16px;font-weight:700;color:#1a1a2e;margin-bottom:6px;"><i class="fas fa-comment-dots" style="color:#f97316;margin-right:8px"></i>Leave a Review</h3>
-      <p style="font-size:13px;color:#888;margin-bottom:18px;">Say anything — good or bad. Your honest opinion helps us improve.</p>
+      <p style="font-size:13px;color:#888;margin-bottom:18px;">Your honest opinion helps us improve.</p>
       <div class="form-group">
         <label>Your Name <span style="color:#aaa;font-weight:400;font-size:10px">(optional)</span></label>
         <input type="text" id="fb-name" placeholder="Leave blank to post as Anonymous">
       </div>
       <div class="form-group">
-        <label>Rating <span style="color:#aaa;font-weight:400;font-size:10px">(optional)</span></label>
+        <label>Rating</label>
         <div class="stars" id="stars-row">
           <span class="star" data-v="1">&#9733;</span>
           <span class="star" data-v="2">&#9733;</span>
@@ -99,14 +104,14 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;min-height:10
           <span class="star" data-v="4">&#9733;</span>
           <span class="star" data-v="5">&#9733;</span>
         </div>
-        <input type="hidden" id="fb-rating" value="0">
-        <small style="color:#aaa;font-size:11px">Tap a star to rate (skipping defaults to 5 stars)</small>
+        <input type="hidden" id="fb-rating" value="5">
+        <small style="color:#aaa;font-size:11px">Tap a star to rate</small>
       </div>
       <div class="form-group">
         <label>Your Message *</label>
         <textarea id="fb-comment" rows="4" placeholder="Write anything — a compliment, complaint, suggestion..."></textarea>
       </div>
-      <button class="btn btn-primary" onclick="submitFeedback()" style="width:100%;justify-content:center;padding:11px;"><i class="fas fa-paper-plane"></i> Submit</button>
+      <button class="btn btn-primary" onclick="submitFeedback()" style="width:100%;justify-content:center;padding:11px;"><i class="fas fa-paper-plane"></i> Submit Review</button>
       <div id="fb-msg" class="fb-msg"></div>
     </div>
   </div>
@@ -117,33 +122,30 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;min-height:10
 </div>
 
 <!-- Receipt Modal -->
-<div id="receipt-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;">
-  <div style="background:#fff;border-radius:12px;padding:24px;width:90%;max-width:560px;max-height:90vh;overflow-y:auto;">
+<div id="receipt-modal" class="receipt-modal-wrap" onclick="if(event.target===this)closeReceipt()">
+  <div class="receipt-modal-inner">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-      <h3 style="font-size:16px;font-weight:700;color:#1a1a2e;margin:0;">Order Receipt</h3>
+      <h3 style="font-size:16px;font-weight:700;color:#1a1a2e;margin:0;"><i class="fas fa-receipt" style="color:#f97316;margin-right:8px"></i>Order Receipt</h3>
       <div style="display:flex;gap:8px;">
         <button class="btn btn-primary" onclick="printOrderReceipt()"><i class="fas fa-print"></i> Print</button>
-        <button class="btn btn-secondary" onclick="document.getElementById('receipt-modal').style.display='none'"><i class="fas fa-times"></i></button>
+        <button class="btn btn-secondary" onclick="closeReceipt()"><i class="fas fa-times"></i></button>
       </div>
     </div>
     <div id="receipt-body"></div>
   </div>
 </div>
 
-
 <script>
-var API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+var API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
   ? 'http://localhost:3000/api' : window.location.origin + '/api';
 var token = localStorage.getItem('jobiToken');
 var currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
 
 function switchTab(name) {
-  var tabs = document.querySelectorAll('.tab');
-  var contents = document.querySelectorAll('.tab-content');
-  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
-  for (var i = 0; i < contents.length; i++) contents[i].classList.remove('active');
+  document.querySelectorAll('.tab').forEach(function(t,i){ t.classList.remove('active'); });
+  document.querySelectorAll('.tab-content').forEach(function(c){ c.classList.remove('active'); });
   var map = {orders:0, review:1, public:2};
-  tabs[map[name]].classList.add('active');
+  document.querySelectorAll('.tab')[map[name]].classList.add('active');
   document.getElementById('tab-' + name).classList.add('active');
   if (name === 'orders') loadOrders();
   if (name === 'public') loadPublicReviews();
@@ -151,134 +153,198 @@ function switchTab(name) {
 
 function fmtDate(d) {
   if (!d) return '---';
-  return new Date(d).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'});
+  return new Date(d).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+}
+
+function fmtMoney(v) {
+  return '$' + (parseFloat(v) || 0).toFixed(2);
 }
 
 function setRating(val) {
   document.getElementById('fb-rating').value = val;
-  var stars = document.querySelectorAll('#stars-row .star');
-  for (var i = 0; i < stars.length; i++) {
-    if (i < val) stars[i].classList.add('active');
-    else stars[i].classList.remove('active');
-  }
+  document.querySelectorAll('#stars-row .star').forEach(function(s, i) {
+    s.classList.toggle('active', i < val);
+  });
 }
-(function() {
-  var stars = document.querySelectorAll('#stars-row .star');
-  for (var i = 0; i < stars.length; i++) {
-    (function(el) {
-      el.addEventListener('click', function() { setRating(parseInt(el.getAttribute('data-v'))); });
-    })(stars[i]);
-  }
-})();
+document.querySelectorAll('#stars-row .star').forEach(function(el) {
+  el.addEventListener('click', function() { setRating(parseInt(el.getAttribute('data-v'))); });
+});
+setRating(5);
 
+// ===== LOAD ORDERS =====
+// Merges server orders (if logged in) with locally-saved guest orders
 function loadOrders() {
   var list = document.getElementById('orders-list');
+  list.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin" style="font-size:24px;color:#f97316"></i><p style="margin-top:8px">Loading...</p></div>';
+
+  var localOrders = JSON.parse(localStorage.getItem('jobiOrders') || '[]');
+
   if (!token) {
-    list.innerHTML = '<div class="empty-state"><i class="fas fa-lock"></i><p>Please <a href="login.html">log in</a> to view your orders.</p></div>';
+    // Guest — show only local orders
+    renderOrderList(localOrders, list);
     return;
   }
-  list.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin" style="font-size:24px;color:#f97316"></i><p style="margin-top:8px">Loading...</p></div>';
-  fetch(API + '/orders/my', {headers:{Authorization:'Bearer ' + token}})
-    .then(function(r){return r.json();})
+
+  fetch(API + '/orders/my', { headers: { Authorization: 'Bearer ' + token } })
+    .then(function(r) { return r.json(); })
     .then(function(data) {
-      var orders = data.orders || [];
-      if (!orders.length) {
-        list.innerHTML = '<div class="empty-state"><i class="fas fa-box"></i><p>No orders yet. <a href="alibaba-style.html">Start shopping!</a></p></div>';
-        return;
-      }
-      var html = '';
-      for (var i = 0; i < orders.length; i++) {
-        var o = orders[i];
-        var rNum = o.orderNumber || String(o.id).substring(0,8).toUpperCase();
-        var items = o.items || [];
-        var iHtml = '';
-        for (var j = 0; j < items.length; j++) {
-          var it = items[j];
-          iHtml += '<div class="order-item-row"><span>' + (it.name||'Item') + ' x' + (it.quantity||1) + '</span>';
-          iHtml += '<span style="font-weight:600">$' + ((parseFloat(it.price)||0)*(it.quantity||1)).toFixed(2) + '</span></div>';
-        }
-        html += '<div class="order-card">';
-        html += '<div class="order-head"><div><div class="order-num">#' + rNum + '</div>';
-        html += '<div class="order-date">' + fmtDate(o.createdAt) + '</div></div>';
-        html += '<span class="badge badge-' + (o.orderStatus||'pending') + '">' + (o.orderStatus||'pending') + '</span></div>';
-        html += '<div class="order-body">' + iHtml;
-        html += '<div class="order-totals"><span style="color:#888;font-size:12px">Total:</span>';
-        html += '<span class="order-total-val">$' + (parseFloat(o.total)||0).toFixed(2) + '</span></div>';
-        if (o.shippingDate || o.estimatedDelivery || o.deliveryNote) {
-          html += '<div class="delivery-box"><div class="delivery-box-title"><i class="fas fa-truck"></i> Delivery Schedule</div>';
-          if (o.shippingDate) html += '<div style="color:#555;margin-bottom:3px"><i class="fas fa-box-open" style="color:#f97316;margin-right:5px"></i><strong>Ships:</strong> ' + fmtDate(o.shippingDate) + '</div>';
-          if (o.estimatedDelivery) html += '<div style="color:#555;margin-bottom:3px"><i class="fas fa-calendar-check" style="color:#22c55e;margin-right:5px"></i><strong>Est. Delivery:</strong> ' + fmtDate(o.estimatedDelivery) + '</div>';
-          if (o.deliveryNote) html += '<div style="color:#666;margin-top:6px;font-style:italic">' + o.deliveryNote + '</div>';
-          html += '</div>';
-        }
-        html += '<div class="order-actions"><button class="btn btn-secondary" onclick="openReceipt(\'' + o.id + '\')"><i class="fas fa-receipt"></i> View Receipt</button></div>';
-        html += '</div></div>';
-      }
-      list.innerHTML = html;
+      var serverOrders = data.orders || [];
+      // Merge: server orders take priority, append local-only ones
+      var serverIds = serverOrders.map(function(o) { return o.id || o.orderNumber; });
+      var localOnly = localOrders.filter(function(o) {
+        return !serverIds.includes(o.id) && !serverIds.includes(o.orderNumber);
+      });
+      var all = serverOrders.concat(localOnly);
+      renderOrderList(all, list);
     })
     .catch(function() {
-      list.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Could not load orders. Make sure the server is running.</p></div>';
+      // Server unreachable — show local orders
+      renderOrderList(localOrders, list);
     });
-}height:100px;width:auto;object-fit:contain;display:block;margin:0 auto 12px;filter:brightness(1.4) drop-shadow(0 0 6px #fff) drop-shadow(0 0 16px #fff) drop-shadow(0 0 35px rgba(255,255,255,.8));
+}
 
+function renderOrderList(orders, list) {
+  if (!orders || !orders.length) {
+    list.innerHTML = '<div class="empty-state"><i class="fas fa-box"></i><p>No orders yet. <a href="alibaba-style.html">Start shopping!</a></p></div>';
+    return;
+  }
+  // Sort newest first
+  orders.sort(function(a, b) { return new Date(b.createdAt) - new Date(a.createdAt); });
+  var html = '';
+  orders.forEach(function(o) {
+    var rNum = o.orderNumber || (o.id ? String(o.id).substring(0, 8).toUpperCase() : 'N/A');
+    var items = o.items || [];
+    var status = o.orderStatus || 'pending';
+    var iHtml = '';
+    items.forEach(function(it) {
+      iHtml += '<div class="order-item-row">';
+      if (it.image) iHtml += '<img class="order-item-img" src="' + it.image + '" alt="' + (it.name||'') + '">';
+      iHtml += '<span style="flex:1">' + (it.name || 'Item') + ' &times;' + (it.quantity || 1) + '</span>';
+      iHtml += '<span style="font-weight:600;color:#f97316">' + fmtMoney((parseFloat(it.price)||0) * (it.quantity||1)) + '</span>';
+      iHtml += '</div>';
+    });
+    var payLabel = (o.paymentMethod || '').replace(/_/g, ' ');
+    html += '<div class="order-card">';
+    html += '<div class="order-head">';
+    html += '<div><div class="order-num"><i class="fas fa-hashtag" style="color:#f97316;font-size:10px;margin-right:2px"></i>' + rNum + '</div>';
+    html += '<div class="order-date">' + fmtDate(o.createdAt) + ' &nbsp;|&nbsp; ' + payLabel + '</div></div>';
+    html += '<span class="badge badge-' + status + '">' + status + '</span>';
+    html += '</div>';
+    html += '<div class="order-body">';
+    html += iHtml;
+    html += '<div class="order-totals"><span style="color:#888;font-size:12px">Total:</span>';
+    html += '<span class="order-total-val">' + fmtMoney(o.total) + '</span></div>';
+    if (o.shippingDate || o.estimatedDelivery || o.deliveryNote) {
+      html += '<div class="delivery-box"><div class="delivery-box-title"><i class="fas fa-truck"></i> Delivery Schedule</div>';
+      if (o.shippingDate) html += '<div style="color:#555;margin-bottom:3px"><i class="fas fa-box-open" style="color:#f97316;margin-right:5px"></i><strong>Ships:</strong> ' + fmtDate(o.shippingDate) + '</div>';
+      if (o.estimatedDelivery) html += '<div style="color:#555;margin-bottom:3px"><i class="fas fa-calendar-check" style="color:#22c55e;margin-right:5px"></i><strong>Est. Delivery:</strong> ' + fmtDate(o.estimatedDelivery) + '</div>';
+      if (o.deliveryNote) html += '<div style="color:#666;margin-top:6px;font-style:italic">' + o.deliveryNote + '</div>';
+      html += '</div>';
+    }
+    var oid = o.id || o.orderNumber || '';
+    html += '<div class="order-actions">';
+    html += '<button class="btn btn-secondary" onclick="openReceipt(' + JSON.stringify(o) + ')"><i class="fas fa-receipt"></i> View Receipt</button>';
+    if (token && oid && !String(oid).startsWith('JE-')) {
+      html += '<button class="btn btn-secondary" onclick="openReceiptFromServer(\'' + oid + '\')"><i class="fas fa-cloud-download-alt"></i> Full Receipt</button>';
+    }
+    html += '</div>';
+    html += '</div></div>';
+  });
+  list.innerHTML = html;
+}
+</script>
 
-function openReceipt(orderId) {
+<script>
+// ===== RECEIPT =====
+function buildReceiptHTML(o) {
+  var rNum = o.orderNumber || (o.id ? String(o.id).substring(0,8).toUpperCase() : 'N/A');
+  var items = o.items || [];
+  var addr = o.shippingAddress || {};
+  var status = o.orderStatus || 'pending';
+  var sc = status === 'delivered' ? '#22c55e' : status === 'cancelled' ? '#ef4444' : '#f97316';
+
+  var rows = '';
+  items.forEach(function(it) {
+    var lineTotal = (parseFloat(it.price)||0) * (it.quantity||1);
+    rows += '<tr style="border-bottom:1px solid #f0f0f0">';
+    rows += '<td style="padding:8px 10px">' + (it.name||'Item') + '</td>';
+    rows += '<td style="padding:8px 10px;text-align:center">' + (it.quantity||1) + '</td>';
+    rows += '<td style="padding:8px 10px;text-align:right">' + fmtMoney(it.price) + '</td>';
+    rows += '<td style="padding:8px 10px;text-align:right;font-weight:600">' + fmtMoney(lineTotal) + '</td>';
+    rows += '</tr>';
+  });
+
+  var html = '<div id="receipt-print" style="font-family:Arial,sans-serif;">';
+  // Header
+  html += '<div style="text-align:center;margin-bottom:20px;border-bottom:2px solid #1a1a2e;padding-bottom:16px;">';
+  html += '<div style="font-size:22px;font-weight:700;color:#1a1a2e;">Jobijad <span style="color:#f97316;">Express</span></div>';
+  html += '<div style="font-size:12px;color:#888;margin-top:4px;">Premium African Fashion Marketplace</div>';
+  html += '<div style="font-size:11px;color:#aaa;margin-top:3px;">alitajudith2002@gmail.com &nbsp;|&nbsp; +46 762 593 231</div>';
+  html += '</div>';
+  // Order info
+  html += '<div style="display:flex;justify-content:space-between;margin-bottom:16px;font-size:13px;flex-wrap:wrap;gap:10px;">';
+  html += '<div>';
+  html += '<div style="font-weight:700;font-size:15px;color:#1a1a2e;">RECEIPT</div>';
+  html += '<div style="color:#888;margin-top:3px;">Order #' + rNum + '</div>';
+  html += '<div style="color:#888;">' + fmtDate(o.createdAt) + '</div>';
+  html += '<div style="margin-top:6px;"><span style="background:' + sc + ';color:#fff;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700;text-transform:uppercase;">' + status + '</span></div>';
+  html += '</div>';
+  html += '<div style="text-align:right;">';
+  html += '<div style="font-weight:600;color:#1a1a2e;">' + (addr.name||'') + '</div>';
+  if (addr.phone) html += '<div style="color:#888;font-size:12px;">' + addr.phone + '</div>';
+  html += '<div style="color:#888;font-size:12px;">' + (addr.street||'') + '</div>';
+  html += '<div style="color:#888;font-size:12px;">' + [addr.city, addr.state, addr.country].filter(Boolean).join(', ') + '</div>';
+  html += '</div></div>';
+  // Items table
+  html += '<table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px;">';
+  html += '<thead><tr style="background:#1a1a2e;color:#fff;">';
+  html += '<th style="padding:8px 10px;text-align:left;">Item</th>';
+  html += '<th style="padding:8px 10px;text-align:center;">Qty</th>';
+  html += '<th style="padding:8px 10px;text-align:right;">Price</th>';
+  html += '<th style="padding:8px 10px;text-align:right;">Subtotal</th>';
+  html += '</tr></thead><tbody>' + rows + '</tbody></table>';
+  // Totals
+  html += '<div style="border-top:2px solid #eee;padding-top:12px;font-size:13px;max-width:260px;margin-left:auto;">';
+  html += '<div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="color:#666;">Subtotal</span><span>' + fmtMoney(o.subtotal) + '</span></div>';
+  html += '<div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="color:#666;">Shipping</span><span>' + (parseFloat(o.shippingCost)===0 ? 'FREE' : fmtMoney(o.shippingCost)) + '</span></div>';
+  html += '<div style="display:flex;justify-content:space-between;margin-bottom:10px;"><span style="color:#666;">Tax (8%)</span><span>' + fmtMoney(o.tax) + '</span></div>';
+  html += '<div style="display:flex;justify-content:space-between;font-size:17px;font-weight:700;border-top:2px solid #1a1a2e;padding-top:10px;">';
+  html += '<span>TOTAL</span><span style="color:#f97316;">' + fmtMoney(o.total) + '</span></div></div>';
+  // Payment info
+  html += '<div style="margin-top:16px;padding:10px 14px;background:#f8f9fa;border-radius:6px;font-size:12px;color:#555;">';
+  html += '<strong>Payment Method:</strong> ' + (o.paymentMethod||'').replace(/_/g,' ').toUpperCase();
+  if (o.swishNumber) html += ' &nbsp; <strong>Swish:</strong> ' + o.swishNumber;
+  if (o.codPhone) html += ' &nbsp; <strong>Delivery Phone:</strong> ' + o.codPhone;
+  html += '</div>';
+  // Footer
+  html += '<div style="text-align:center;margin-top:20px;border-top:1px solid #eee;padding-top:14px;">';
+  html += '<div style="font-size:13px;color:#555;font-weight:600;">Thank you for shopping with Jobijad Express!</div>';
+  html += '<div style="font-size:11px;color:#aaa;margin-top:4px;">Keep this receipt for your records.</div>';
+  html += '</div>';
+  html += '</div>';
+  return html;
+}
+
+function openReceipt(orderObj) {
+  var o = typeof orderObj === 'string' ? JSON.parse(orderObj) : orderObj;
+  document.getElementById('receipt-body').innerHTML = buildReceiptHTML(o);
+  document.getElementById('receipt-modal').classList.add('open');
+}
+
+function openReceiptFromServer(orderId) {
   if (!token) return;
-  fetch(API + '/orders/' + orderId, {headers:{Authorization:'Bearer ' + token}})
-    .then(function(r){return r.json();})
+  fetch(API + '/orders/' + orderId, { headers: { Authorization: 'Bearer ' + token } })
+    .then(function(r) { return r.json(); })
     .then(function(data) {
       var o = data.order || data;
-      var rNum = o.orderNumber || String(o.id).substring(0,8).toUpperCase();
-      var items = o.items || [];
-      var rows = '';
-      for (var i = 0; i < items.length; i++) {
-        var it = items[i];
-        rows += '<tr style="border-bottom:1px solid #f0f0f0">';
-        rows += '<td style="padding:8px 10px">' + (it.name||'Item') + '</td>';
-        rows += '<td style="padding:8px 10px;text-align:center">' + (it.quantity||1) + '</td>';
-        rows += '<td style="padding:8px 10px;text-align:right">$' + (parseFloat(it.price)||0).toFixed(2) + '</td>';
-        rows += '<td style="padding:8px 10px;text-align:right;font-weight:600">$' + ((parseFloat(it.price)||0)*(it.quantity||1)).toFixed(2) + '</td>';
-        rows += '</tr>';
-      }
-      var addr = o.shippingAddress || {};
-      var sc = o.orderStatus==='delivered'?'#22c55e':o.orderStatus==='cancelled'?'#ef4444':'#f97316';
-      var html = '<div id="receipt-print">';
-      html += '<div style="text-align:center;margin-bottom:20px;border-bottom:2px solid #1a1a2e;padding-bottom:16px">';
-      html += '<div style="font-size:22px;font-weight:700;color:#1a1a2e">Jobijad <span style="color:#f97316">Express</span></div>';
-      html += '<div style="font-size:12px;color:#888;margin-top:4px">Premium African Fashion Marketplace</div>';
-      html += '<div style="font-size:11px;color:#aaa;margin-top:3px">alitajudith2002@gmail.com | +46 762 593 231</div></div>';
-      html += '<div style="display:flex;justify-content:space-between;margin-bottom:16px;font-size:13px;flex-wrap:wrap;gap:10px">';
-      html += '<div><div style="font-weight:700;font-size:15px">RECEIPT</div>';
-      html += '<div style="color:#888">#' + rNum + '</div>';
-      html += '<div style="color:#888">' + fmtDate(o.createdAt) + '</div></div>';
-      html += '<div style="text-align:right"><div style="font-weight:600">' + (addr.name||'') + '</div>';
-      html += '<div style="color:#888;font-size:12px">' + (addr.street||'') + '</div>';
-      html += '<div style="color:#888;font-size:12px">' + (addr.city||'') + ', ' + (addr.country||'') + '</div></div></div>';
-      html += '<table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px">';
-      html += '<thead><tr style="background:#1a1a2e;color:#fff">';
-      html += '<th style="padding:8px 10px;text-align:left">Item</th>';
-      html += '<th style="padding:8px 10px;text-align:center">Qty</th>';
-      html += '<th style="padding:8px 10px;text-align:right">Price</th>';
-      html += '<th style="padding:8px 10px;text-align:right">Subtotal</th>';
-      html += '</tr></thead><tbody>' + rows + '</tbody></table>';
-      html += '<div style="border-top:2px solid #eee;padding-top:12px;font-size:13px;max-width:260px;margin-left:auto">';
-      html += '<div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="color:#666">Subtotal</span><span>$' + (parseFloat(o.subtotal)||0).toFixed(2) + '</span></div>';
-      html += '<div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="color:#666">Shipping</span><span>$' + (parseFloat(o.shippingCost)||0).toFixed(2) + '</span></div>';
-      html += '<div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="color:#666">Tax (8%)</span><span>$' + (parseFloat(o.tax)||0).toFixed(2) + '</span></div>';
-      html += '<div style="display:flex;justify-content:space-between;font-size:17px;font-weight:700;border-top:2px solid #1a1a2e;padding-top:10px">';
-      html += '<span>TOTAL</span><span style="color:#f97316">$' + (parseFloat(o.total)||0).toFixed(2) + '</span></div></div>';
-      html += '<div style="margin-top:16px;padding:10px 14px;background:#f8f9fa;border-radius:6px;font-size:12px;color:#555">';
-      html += '<strong>Payment:</strong> ' + (o.paymentMethod||'').replace(/_/g,' ').toUpperCase();
-      html += ' &nbsp; <strong>Status:</strong> <span style="color:' + sc + ';font-weight:700;text-transform:uppercase">' + (o.orderStatus||'') + '</span></div>';
-      html += '<div style="text-align:center;margin-top:20px;border-top:1px solid #eee;padding-top:12px">';
-      html += '<img src="pics/download.png" style="width:90px;height:90px;border:2px solid #eee;border-radius:4px;" alt="QR Code"><br>';
-      html += '<div style="font-size:10px;color:#bbb;margin-top:4px">Scan to verify order authenticity</div>';
-      html += '<div style="font-size:11px;color:#aaa;margin-top:6px">Thank you for shopping with Jobijad Express!</div></div>';
-      html += '</div>';
-      document.getElementById('receipt-body').innerHTML = html;
-      document.getElementById('receipt-modal').style.display = 'flex';
+      document.getElementById('receipt-body').innerHTML = buildReceiptHTML(o);
+      document.getElementById('receipt-modal').classList.add('open');
     })
-    .catch(function() { alert('Could not load receipt.'); });
+    .catch(function() { alert('Could not load receipt from server.'); });
+}
+
+function closeReceipt() {
+  document.getElementById('receipt-modal').classList.remove('open');
 }
 
 function printOrderReceipt() {
@@ -289,33 +355,36 @@ function printOrderReceipt() {
   w.document.write('<style>*{box-sizing:border-box;}body{font-family:Arial,sans-serif;padding:32px;color:#222;max-width:580px;margin:0 auto;}table{width:100%;border-collapse:collapse;}@media print{.no-print{display:none!important;}}</style>');
   w.document.write('</head><body>');
   w.document.write(content.innerHTML);
-  w.document.write('<div class="no-print" style="margin-top:20px;display:flex;gap:10px">');
-  w.document.write('<button onclick="window.print()" style="padding:10px 20px;background:#f97316;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600">Print</button>');
-  w.document.write('<button onclick="window.close()" style="padding:10px 20px;background:#f4f6f8;color:#555;border:1px solid #e0e0e0;border-radius:6px;cursor:pointer;font-size:14px">Close</button>');
+  w.document.write('<div class="no-print" style="margin-top:20px;display:flex;gap:10px;">');
+  w.document.write('<button onclick="window.print()" style="padding:10px 20px;background:#f97316;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;">Print</button>');
+  w.document.write('<button onclick="window.close()" style="padding:10px 20px;background:#f4f6f8;color:#555;border:1px solid #e0e0e0;border-radius:6px;cursor:pointer;font-size:14px;">Close</button>');
   w.document.write('</div></body></html>');
-  w.document.close(); w.focus();
+  w.document.close();
+  w.focus();
+  setTimeout(function() { w.print(); }, 500);
 }
 
+// ===== FEEDBACK =====
 function submitFeedback() {
   var name = document.getElementById('fb-name').value.trim();
   var rating = parseInt(document.getElementById('fb-rating').value) || 5;
   var comment = document.getElementById('fb-comment').value.trim();
   if (!comment) { showFbMsg('Please write something!', true); return; }
-  var payload = {rating:rating, comment:comment, message:comment, customerName: name || 'Anonymous'};
-  var headers = {'Content-Type':'application/json'};
+  var payload = { rating: rating, comment: comment, message: comment, customerName: name || 'Anonymous' };
+  var headers = { 'Content-Type': 'application/json' };
   if (token) headers['Authorization'] = 'Bearer ' + token;
-  fetch(API + '/feedback', {method:'POST', headers:headers, body:JSON.stringify(payload)})
-    .then(function(r){return r.json();})
+  fetch(API + '/feedback', { method: 'POST', headers: headers, body: JSON.stringify(payload) })
+    .then(function(r) { return r.json(); })
     .then(function(data) {
-      if (data.feedback || data.id) {
+      if (data.feedback || data.id || data._id) {
         showFbMsg('Thank you! Your review has been submitted.', false);
         document.getElementById('fb-comment').value = '';
-        setRating(0);
+        setRating(5);
       } else {
         showFbMsg(data.message || 'Could not submit.', true);
       }
     })
-    .catch(function() { showFbMsg('Server error. Try again.', true); });
+    .catch(function() { showFbMsg('Server error. Please try again.', true); });
 }
 
 function showFbMsg(msg, isError) {
@@ -325,12 +394,13 @@ function showFbMsg(msg, isError) {
   el.style.display = 'block';
 }
 
+// ===== PUBLIC REVIEWS =====
 function loadPublicReviews() {
   var list = document.getElementById('public-reviews-list');
   var box = document.getElementById('reviews-summary-box');
   list.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin" style="font-size:24px;color:#f97316"></i><p style="margin-top:8px">Loading...</p></div>';
   fetch(API + '/feedback')
-    .then(function(r){return r.json();})
+    .then(function(r) { return r.json(); })
     .then(function(data) {
       var reviews = data.feedbacks || data.feedback || [];
       if (!reviews.length) {
@@ -339,30 +409,29 @@ function loadPublicReviews() {
         return;
       }
       var total = 0;
-      for (var i = 0; i < reviews.length; i++) total += (parseInt(reviews[i].rating)||0);
-      var avg = (total/reviews.length).toFixed(1);
+      reviews.forEach(function(r) { total += parseInt(r.rating) || 0; });
+      var avg = (total / reviews.length).toFixed(1);
       var ar = Math.round(parseFloat(avg));
       var ss = '';
       for (var i = 1; i <= 5; i++) ss += i <= ar ? '&#9733;' : '&#9734;';
-      box.innerHTML = '<div class="reviews-summary"><div class="avg-score">' + avg + '</div><div><div class="review-stars" style="font-size:22px">' + ss + '</div><div class="avg-label">' + reviews.length + ' review' + (reviews.length!==1?'s':'') + '</div></div></div>';
+      box.innerHTML = '<div class="reviews-summary"><div class="avg-score">' + avg + '</div><div><div class="review-stars" style="font-size:22px;">' + ss + '</div><div class="avg-label">' + reviews.length + ' review' + (reviews.length !== 1 ? 's' : '') + '</div></div></div>';
       var html = '';
-      for (var i = 0; i < reviews.length; i++) {
-        var r = reviews[i];
-        var rn = r.customerName || (r.User&&r.User.name) || 'Anonymous';
+      reviews.forEach(function(r) {
+        var rn = r.customerName || (r.User && r.User.name) || 'Anonymous';
         var rs = '';
-        var rv = parseInt(r.rating)||0;
-        for (var k = 1; k <= 5; k++) rs += k<=rv?'&#9733;':'&#9734;';
+        var rv = parseInt(r.rating) || 0;
+        for (var k = 1; k <= 5; k++) rs += k <= rv ? '&#9733;' : '&#9734;';
         html += '<div class="review-card">';
-        html += '<div class="review-header"><div><div class="reviewer-name"><i class="fas fa-user-circle" style="color:#f97316;margin-right:5px"></i>' + rn + '</div>';
+        html += '<div class="review-header"><div><div class="reviewer-name"><i class="fas fa-user-circle" style="color:#f97316;margin-right:5px;"></i>' + rn + '</div>';
         html += '<div class="review-stars">' + rs + '</div></div>';
         html += '<div class="review-date">' + fmtDate(r.createdAt) + '</div></div>';
-        html += '<div class="review-comment">' + (r.comment||'') + '</div>';
+        html += '<div class="review-comment">' + (r.comment || '') + '</div>';
         if (r.adminReply) {
           html += '<div class="admin-reply"><div class="admin-reply-label"><i class="fas fa-store"></i> Jobijad Express replied:</div>';
           html += '<div class="admin-reply-text">' + r.adminReply + '</div></div>';
         }
         html += '</div>';
-      }
+      });
       list.innerHTML = html;
     })
     .catch(function() {
@@ -371,10 +440,12 @@ function loadPublicReviews() {
     });
 }
 
+// Pre-fill name if logged in
 if (currentUser && currentUser.name) {
   var nameEl = document.getElementById('fb-name');
   if (nameEl) nameEl.value = currentUser.name;
 }
+
 loadOrders();
 </script>
 </body>
