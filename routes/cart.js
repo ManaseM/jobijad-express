@@ -51,4 +51,16 @@ router.delete('/clear', auth, async (req, res) => {
     }
 });
 
+router.delete('/remove/:productId', auth, async (req, res) => {
+    try {
+        const cart = await getOrCreateCart(req.user.userId);
+        const items = cart.items.filter(i => i.productId !== req.params.productId);
+        const total = items.reduce((s, i) => s + i.price * i.quantity, 0);
+        await cart.update({ items, total });
+        res.json({ message: 'Item removed', cart });
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 module.exports = router;

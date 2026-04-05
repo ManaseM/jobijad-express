@@ -91,8 +91,10 @@ router.post('/forgot-password', async (req, res) => {
         let newPassword = '';
         for (let i = 0; i < 10; i++) newPassword += chars[Math.floor(Math.random() * chars.length)];
 
-        // Update user password
-        await user.update({ password: newPassword });
+        // Update user password — explicitly hash since beforeUpdate hook needs changed() to fire
+        const bcrypt = require('bcryptjs');
+        const hashed = await bcrypt.hash(newPassword, 10);
+        await user.update({ password: hashed });
 
         // Send email with new password
         const { sendMail } = require('../utils/mailer');
