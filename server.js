@@ -14,6 +14,9 @@ require('./models/Feedback');
 
 const app = express();
 
+// Trust Render/proxy headers (required for rate limiting behind reverse proxy)
+app.set('trust proxy', 1);
+
 // ===== SECURITY HEADERS =====
 app.use(helmet({
     contentSecurityPolicy: false,
