@@ -1,4 +1,4 @@
-﻿const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:3000/api'
     : window.location.origin + '/api';
 let cart = JSON.parse(localStorage.getItem('jobiCart') || '[]');
@@ -727,7 +727,7 @@ function renderWishlistPanel() {
             <img class="wishlist-item-img" src="${item.image}" alt="${item.title}">
             <div class="wishlist-item-info">
                 <div class="wishlist-item-title">${item.title}</div>
-                <div class="wishlist-item-price">`+(typeof convertPrice===""function""?convertPrice(item.price):""$""+item.price.toFixed(2))+`</div>
+                <div class="wishlist-item-price">`+(typeof convertPrice==="function"?convertPrice(item.price):"$"+item.price.toFixed(2))+`</div>
                 <div class="wishlist-item-actions">
                     <button class="wl-cart-btn" onclick="addWishlistToCart(${i})"><i class="fas fa-cart-plus"></i> Add to Cart</button>
                     <button class="wl-remove-btn" onclick="removeFromWishlist(${i})"><i class="fas fa-trash"></i></button>
@@ -1304,10 +1304,6 @@ function updateFreeShippingBar() {
         const remaining = FREE_SHIPPING_THRESHOLD - total;
         const remainingDisplay = (typeof convertPrice === 'function') ? convertPrice(remaining) : '$' + remaining.toFixed(2);
         if (text) text.innerHTML = 'Add <strong>' + remainingDisplay + '</strong> more for <strong>FREE shipping!</strong>';
-        if (progress) progress.style.background = '#f97316';
-    }
-}
-        if (text) text.innerHTML = 'Add <strong>$' + remaining + '</strong> more for <strong>FREE shipping!</strong>';
         if (progress) progress.style.background = '#f97316';
     }
 }

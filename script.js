@@ -540,8 +540,7 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
-// A
-PI Helper Functions
+// API Helper Functions
 async function apiCall(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
     const config = {
@@ -967,8 +966,7 @@ function addToCart(id, name, price) {
         updateCartDisplay();
         showAddToCartFeedback();
     }
-}// User M
-enu Functions
+}// User Menu Functions
 function showProfile() {
     alert('Profile page would be implemented here. This would show user details, edit profile, etc.');
 }
@@ -1129,8 +1127,7 @@ function showWelcomeMessage(userName) {
         welcomeDiv.style.animation = 'welcomeSlide 0.5s ease reverse';
         setTimeout(() => welcomeDiv.remove(), 500);
     }, 5000);
-}// Enhance
-d Interactive Features
+}// Enhanced Interactive Features
 document.addEventListener('DOMContentLoaded', function() {
     initializeEnhancedFeatures();
 });

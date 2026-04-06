@@ -299,7 +299,7 @@ tr:hover td{background:#fafafa;}
 </style>
 
 <script>
-const API = (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?(window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?'http://localhost:3000/api':window.location.origin+'/api'):window.location.origin+'/api');
+const API = (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1') ? 'http://localhost:3000/api' : window.location.origin+'/api';
 
 // ===== ADMIN SECURITY =====
 // Session timeout: auto-logout after 30 minutes of inactivity
