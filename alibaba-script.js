@@ -563,6 +563,9 @@ async function loadProductsFromDB() {
             renderDBProducts(data.products);
             setTimeout(initScrollReveal, 50);
             document.dispatchEvent(new Event('productsLoaded'));
+        } else {
+            const grid = document.getElementById('products-grid');
+            if (grid) grid.innerHTML = '<div style="text-align:center;padding:60px 20px;color:#aaa;grid-column:1/-1;"><i class="fas fa-store" style="font-size:48px;color:#e0e0e0;display:block;margin-bottom:16px;"></i><p style="font-size:16px;font-weight:600;color:#555;margin-bottom:8px;">No products yet</p><p style="font-size:13px;">Check back soon — new arrivals coming!</p></div>';
         }
     } catch (e) { /* keep static products */ }
 }
