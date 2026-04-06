@@ -91,6 +91,49 @@ app.get('/api/health', async (req, res) => {
     }
 });
 
+// Login debug — REMOVE AFTER FIXING
+app.get('/api/debug-login', async (req, res) => {
+    try {
+        const User = require('./models/User');
+        const bcrypt = require('bcryptjs');
+        const users = await User.findAll({ attributes: ['id', 'email', 'role', 'password', 'createdAt'] });
+        const results = await Promise.all(users.map(async u => {
+            const pwdSnippet = u.password ? u.password.substring(0, 10) + '...' : 'NULL';
+            const isBcrypt = u.password && u.password.startsWith('$2');
+            let testMatch = null;
+            if (isBcrypt) {
+                testMatch = await bcrypt.compare('admin123', u.password);
+            }
+            return { email: u.email, role: u.role, pwdSnippet, isBcrypt, admin123Matches: testMatch };
+        }));
+        res.json({ users: results });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Fix passwords — re-hashes any plain-text passwords in the DB
+app.get('/api/fix-passwords', async (req, res) => {
+    try {
+        const User = require('./models/User');
+        const bcrypt = require('bcryptjs');
+        const { sequelize: db } = require('./config/database');
+        const users = await User.findAll();
+        let fixed = 0;
+        for (const u of users) {
+            if (!u.password || !u.password.startsWith('$2')) {
+                // Plain text — hash it now
+                const hashed = await bcrypt.hash(u.password || 'admin123', 10);
+                await User.update({ password: hashed }, { where: { id: u.id }, hooks: false });
+                fixed++;
+            }
+        }
+        res.json({ message: `Fixed ${fixed} user(s). Plain-text passwords have been hashed.` });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // ONE-TIME SETUP — remove after creating admin
 app.get('/api/setup', async (req, res) => {
     try {
