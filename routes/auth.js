@@ -58,6 +58,10 @@ router.post('/login', [
         console.log('[LOGIN] password match:', match);
         if (!match) return res.status(401).json({ message: 'Invalid credentials' });
 
+        if (!process.env.JWT_SECRET) {
+            console.error('[LOGIN] JWT_SECRET is not set!');
+            return res.status(500).json({ message: 'Server configuration error.' });
+        }
         const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '7d' });
         res.json({ message: 'Login successful', token, user: user.toSafeJSON() });
     } catch (err) {

@@ -85,7 +85,7 @@ app.get('/api/health', async (req, res) => {
         await sequelize.authenticate();
         const User = require('./models/User');
         const count = await User.count();
-        res.json({ status: 'ok', db: 'connected', users: count, env: process.env.NODE_ENV, hasDbUrl: !!process.env.DATABASE_URL });
+        res.json({ status: 'ok', db: 'connected', users: count, env: process.env.NODE_ENV, hasDbUrl: !!process.env.DATABASE_URL, hasJwtSecret: !!process.env.JWT_SECRET });
     } catch (err) {
         res.status(500).json({ status: 'error', db: 'disconnected', error: err.message, hasDbUrl: !!process.env.DATABASE_URL });
     }
