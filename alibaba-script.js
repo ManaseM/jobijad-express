@@ -287,11 +287,16 @@ function renderCart() {
     el.innerHTML = cart.map((item, i) => {
         total += item.price * item.qty;
         const linePrice = (typeof convertPrice === 'function') ? convertPrice(item.price * item.qty) : '$' + (item.price * item.qty).toFixed(2);
+        const unitPrice = (typeof convertPrice === 'function') ? convertPrice(item.price) : '$' + item.price.toFixed(2);
         return '<div class="cart-item">' +
             '<img class="cart-item-img" src="' + item.image + '" alt="' + item.title + '">' +
             '<div class="cart-item-details">' +
                 '<div class="cart-item-title">' + item.title + '</div>' +
-                '<div class="cart-item-price">' + linePrice + '</div>' +
+                '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+                    '<div class="cart-item-price">' + linePrice + '</div>' +
+                    (item.qty > 1 ? '<span style="font-size:11px;color:#888;">(' + unitPrice + ' each)</span>' : '') +
+                    '<span style="font-size:10px;background:#f0fdf4;color:#15803d;border:1px solid #86efac;border-radius:10px;padding:1px 7px;display:inline-flex;align-items:center;gap:3px;"><i class="fas fa-lock" style="font-size:9px;"></i> Price Locked</span>' +
+                '</div>' +
                 '<div class="cart-item-qty">' +
                     '<button class="qty-btn" onclick="changeQty(' + i + ',-1)">&#8722;</button>' +
                     '<span class="qty-value">' + item.qty + '</span>' +
@@ -302,10 +307,18 @@ function renderCart() {
         '</div>';
     }).join('');
     const totalDisplay = (typeof convertPrice === 'function') ? convertPrice(total) : '$' + total.toFixed(2);
-    document.getElementById('cart-total').textContent = totalDisplay;
+    const cartTotalEl = document.getElementById('cart-total');
+    if (cartTotalEl) cartTotalEl.textContent = totalDisplay;
+    // Update live breakdown
+    const tax = total * 0.02;
+    const cbSub = document.getElementById('cb-subtotal');
+    const cbTax = document.getElementById('cb-tax');
+    const cbTotal = document.getElementById('cb-total');
+    if (cbSub) cbSub.textContent = (typeof convertPrice === 'function') ? convertPrice(total) : '$' + total.toFixed(2);
+    if (cbTax) cbTax.textContent = (typeof convertPrice === 'function') ? convertPrice(tax) : '$' + tax.toFixed(2);
+    if (cbTotal) cbTotal.textContent = (typeof convertPrice === 'function') ? convertPrice(total + tax) : '$' + (total + tax).toFixed(2);
     if (typeof updateFreeShippingBar === 'function') updateFreeShippingBar();
 }
-
 function updateCartBadge() {
     const total = cart.reduce((s, i) => s + i.qty, 0);
     const badge = document.getElementById('cart-badge');
@@ -1382,11 +1395,32 @@ if (_origRenderCart) {
         // Apply discount to displayed total
         if (appliedDiscount > 0) {
             const totalEl = document.getElementById('cart-total');
+            const raw = cart.reduce((s, i) => s + i.price * i.qty, 0);
+            const discounted = raw * (1 - appliedDiscount / 100);
             if (totalEl) {
-                const raw = cart.reduce((s, i) => s + i.price * i.qty, 0);
-                const discounted = raw * (1 - appliedDiscount / 100);
                 totalEl.textContent = '$' + discounted.toFixed(2);
                 totalEl.title = 'After ' + appliedDiscount + '% discount';
+            }
+            // Also update breakdown with discounted values
+            const tax = discounted * 0.02;
+            const cbSub = document.getElementById('cb-subtotal');
+            const cbTax = document.getElementById('cb-tax');
+            const cbTotal = document.getElementById('cb-total');
+            const savingsEl = document.getElementById('cb-savings');
+            if (cbSub) cbSub.innerHTML = (typeof convertPrice === 'function' ? convertPrice(discounted) : '$' + discounted.toFixed(2)) +
+                ' <span style="font-size:10px;color:#22c55e;font-weight:700;">-' + appliedDiscount + '%</span>';
+            if (cbTax) cbTax.textContent = (typeof convertPrice === 'function') ? convertPrice(tax) : '$' + tax.toFixed(2);
+            if (cbTotal) cbTotal.textContent = (typeof convertPrice === 'function') ? convertPrice(discounted + tax) : '$' + (discounted + tax).toFixed(2);
+            if (!savingsEl) {
+                const breakdown = document.getElementById('cart-breakdown');
+                if (breakdown) {
+                    const saved = raw * appliedDiscount / 100;
+                    const div = document.createElement('div');
+                    div.id = 'cb-savings';
+                    div.style.cssText = 'display:flex;justify-content:space-between;color:#22c55e;font-weight:700;font-size:12px;margin-top:4px;';
+                    div.innerHTML = '<span>🎉 You save</span><span>' + (typeof convertPrice === 'function' ? convertPrice(saved) : '$' + saved.toFixed(2)) + '</span>';
+                    breakdown.appendChild(div);
+                }
             }
         }
     };

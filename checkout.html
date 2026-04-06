@@ -331,7 +331,7 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;}
         <div class="summary-items" id="summary-items"></div>
         <div class="s-row"><span>Subtotal</span><span id="s-subtotal">$0.00</span></div>
         <div class="s-row"><span>Shipping</span><span id="s-shipping">$10.00</span></div>
-        <div class="s-row"><span>Tax (8%)</span><span id="s-tax">$0.00</span></div>
+        <div class="s-row"><span>Tax (2%)</span><span id="s-tax">$0.00</span></div>
         <div class="s-total"><span>Total</span><span id="s-total">$0.00</span></div>
         <button class="place-btn" id="place-btn" onclick="placeOrder()">
           <i class="fas fa-check-circle"></i> Place Order
@@ -423,7 +423,7 @@ function onCountryChange(val) {
   const ship = calcShipping(sub, val);
   const shipEl = document.getElementById('s-shipping');
   if (shipEl) shipEl.textContent = ship === 0 ? 'FREE' : fmtMoney(ship);
-  const tax = sub * 0.08;
+  const tax = sub * 0.02;
   const totalEl = document.getElementById('s-total');
   if (totalEl) totalEl.textContent = fmtMoney(sub + ship + tax);
   // Also update subtotal
@@ -517,7 +517,7 @@ function init() {
   const sub = cart.reduce(function(s,i) { return s + i.price*i.qty; }, 0);
   const country = document.getElementById('s-country-select') ? document.getElementById('s-country-select').value : '';
   const ship = calcShipping(sub, country);
-  const tax = sub * 0.08;
+  const tax = sub * 0.02;
   document.getElementById('s-subtotal').textContent = fmtMoney(sub);
   document.getElementById('s-shipping').textContent = ship === 0 ? 'FREE' : fmtMoney(ship);
   document.getElementById('s-tax').textContent = fmtMoney(tax);
@@ -824,7 +824,7 @@ async function placeOrder() {
 
   const sub = cart.reduce((s,i) => s + i.price*i.qty, 0);
   const ship = calcShipping(sub, country);
-  const tax = sub * 0.08;
+  const tax = sub * 0.02;
   const cur = getActiveCurrency();
 
   const orderData = {

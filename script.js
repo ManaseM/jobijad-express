@@ -408,7 +408,7 @@ function createCheckoutModal() {
                         <span id="checkout-shipping">$0.00</span>
                     </div>
                     <div class="summary-row">
-                        <span>Tax:</span>
+                        <span>Tax (2%):</span>
                         <span id="checkout-tax">$0.00</span>
                     </div>
                     <div class="summary-row total">
@@ -444,7 +444,7 @@ function closeCheckoutModal() {
 function updateCheckoutSummary() {
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const shipping = subtotal > 75 ? 0 : 10;
-    const tax = subtotal * 0.08;
+    const tax = subtotal * 0.02;
     const total = subtotal + shipping + tax;
 
     document.getElementById('checkout-subtotal').textContent = `$${subtotal.toFixed(2)}`;
