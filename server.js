@@ -117,18 +117,35 @@ app.get('/api/fix-passwords', async (req, res) => {
     try {
         const User = require('./models/User');
         const bcrypt = require('bcryptjs');
-        const { sequelize: db } = require('./config/database');
         const users = await User.findAll();
         let fixed = 0;
         for (const u of users) {
             if (!u.password || !u.password.startsWith('$2')) {
-                // Plain text — hash it now
                 const hashed = await bcrypt.hash(u.password || 'admin123', 10);
                 await User.update({ password: hashed }, { where: { id: u.id }, hooks: false });
                 fixed++;
             }
         }
         res.json({ message: `Fixed ${fixed} user(s). Plain-text passwords have been hashed.` });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Reset all passwords to known values
+app.get('/api/reset-passwords', async (req, res) => {
+    try {
+        const User = require('./models/User');
+        const bcrypt = require('bcryptjs');
+        const users = await User.findAll();
+        const results = [];
+        for (const u of users) {
+            const newPwd = u.role === 'admin' ? 'Admin@1234' : 'Customer@1234';
+            const hashed = await bcrypt.hash(newPwd, 10);
+            await User.update({ password: hashed }, { where: { id: u.id }, hooks: false });
+            results.push({ email: u.email, role: u.role, newPassword: newPwd });
+        }
+        res.json({ message: 'All passwords reset.', users: results });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
