@@ -100,11 +100,12 @@ app.get('/api/debug-login', async (req, res) => {
         const results = await Promise.all(users.map(async u => {
             const pwdSnippet = u.password ? u.password.substring(0, 10) + '...' : 'NULL';
             const isBcrypt = u.password && u.password.startsWith('$2');
-            let testMatch = null;
+            let adminMatch = null, customerMatch = null;
             if (isBcrypt) {
-                testMatch = await bcrypt.compare('admin123', u.password);
+                adminMatch = await bcrypt.compare('Admin@1234', u.password);
+                customerMatch = await bcrypt.compare('Customer@1234', u.password);
             }
-            return { email: u.email, role: u.role, pwdSnippet, isBcrypt, admin123Matches: testMatch };
+            return { email: u.email, role: u.role, pwdSnippet, isBcrypt, 'Admin@1234': adminMatch, 'Customer@1234': customerMatch };
         }));
         res.json({ users: results });
     } catch (err) {
@@ -142,8 +143,14 @@ app.get('/api/reset-passwords', async (req, res) => {
         for (const u of users) {
             const newPwd = u.role === 'admin' ? 'Admin@1234' : 'Customer@1234';
             const hashed = await bcrypt.hash(newPwd, 10);
-            await User.update({ password: hashed }, { where: { id: u.id }, hooks: false });
-            results.push({ email: u.email, role: u.role, newPassword: newPwd });
+            // Use raw SQL to bypass ALL hooks
+            await sequelize.query(
+                `UPDATE users SET password = :pwd WHERE id = :id`,
+                { replacements: { pwd: hashed, id: u.id } }
+            );
+            // Verify it worked
+            const verify = await bcrypt.compare(newPwd, hashed);
+            results.push({ email: u.email, role: u.role, newPassword: newPwd, verified: verify });
         }
         res.json({ message: 'All passwords reset.', users: results });
     } catch (err) {

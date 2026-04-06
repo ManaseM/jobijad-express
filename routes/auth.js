@@ -39,17 +39,23 @@ router.post('/login', [
 ], async (req, res) => {
     try {
         const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+        if (!errors.isEmpty()) {
+            console.error('[LOGIN VALIDATION FAIL]', JSON.stringify(errors.array()));
+            return res.status(400).json({ errors: errors.array() });
+        }
 
         const { email, password } = req.body;
+        console.log('[LOGIN ATTEMPT] email:', email, 'pwd length:', password?.length);
 
         // Test DB connection first
         await require('../config/database').authenticate();
 
         const user = await User.findOne({ where: { email } });
+        console.log('[LOGIN] user found:', !!user);
         if (!user) return res.status(401).json({ message: 'Invalid credentials' });
 
         const match = await user.comparePassword(password);
+        console.log('[LOGIN] password match:', match);
         if (!match) return res.status(401).json({ message: 'Invalid credentials' });
 
         const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '7d' });
