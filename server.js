@@ -79,6 +79,18 @@ app.get('/admin', (req, res) => res.sendFile(__dirname + '/admin.html'));
 app.use(express.static('.'));
 app.use('/uploads', express.static(require('path').join(__dirname, 'uploads')));
 
+// Health check — visit /api/health to diagnose DB connection on Render
+app.get('/api/health', async (req, res) => {
+    try {
+        await sequelize.authenticate();
+        const User = require('./models/User');
+        const count = await User.count();
+        res.json({ status: 'ok', db: 'connected', users: count, env: process.env.NODE_ENV, hasDbUrl: !!process.env.DATABASE_URL });
+    } catch (err) {
+        res.status(500).json({ status: 'error', db: 'disconnected', error: err.message, hasDbUrl: !!process.env.DATABASE_URL });
+    }
+});
+
 // ONE-TIME SETUP — remove after creating admin
 app.get('/api/setup', async (req, res) => {
     try {
@@ -193,7 +205,6 @@ const PORT = process.env.PORT || 3000;
 sequelize.sync({ alter: true })
     .then(async () => {
         console.log('PostgreSQL connected & tables synced');
-
         // Auto-seed admin user if none exists
         try {
             const User = require('./models/User');
@@ -253,5 +264,9 @@ sequelize.sync({ alter: true })
     })
     .catch(err => {
         console.error('Database connection failed:', err.message);
-        process.exit(1);
+        console.error('Make sure DATABASE_URL is set in Render environment variables.');
+        // Start server anyway so /api/health can be used to diagnose
+        app.listen(PORT, () => {
+            console.log(`Server started WITHOUT DB on port ${PORT} — check /api/health`);
+        });
     });

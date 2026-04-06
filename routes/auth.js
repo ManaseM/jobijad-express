@@ -42,10 +42,13 @@ router.post('/login', [
         if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
         const { email, password } = req.body;
+
+        // Test DB connection first
+        await require('../config/database').authenticate();
+
         const user = await User.findOne({ where: { email } });
         if (!user) return res.status(401).json({ message: 'Invalid credentials' });
 
-        // If account is inactive, still allow login (don't leak account existence)
         const match = await user.comparePassword(password);
         if (!match) return res.status(401).json({ message: 'Invalid credentials' });
 
@@ -53,6 +56,9 @@ router.post('/login', [
         res.json({ message: 'Login successful', token, user: user.toSafeJSON() });
     } catch (err) {
         console.error('[LOGIN ERROR]', err.message);
+        if (err.name === 'SequelizeConnectionError' || err.name === 'SequelizeConnectionRefusedError' || err.message?.includes('connect')) {
+            return res.status(503).json({ message: 'Database unavailable. Please try again in a moment.' });
+        }
         res.status(500).json({ message: 'Login failed. Please try again.' });
     }
 });

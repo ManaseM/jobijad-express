@@ -135,7 +135,8 @@ async function handleLogin(e) {
         
     } catch (error) {
         hideLoading();
-        showError(e.target.querySelector('input[type="email"]'), error.message);
+        const msg = error.message || 'Login failed. Please check your credentials.';
+        showError(e.target.querySelector('input[type="email"]'), msg);
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
     }
