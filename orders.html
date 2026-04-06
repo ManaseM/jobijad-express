@@ -383,46 +383,47 @@ function buildReceiptHTML(o){
     rows+='<td style="padding:9px 10px;border-bottom:1px solid #f0f0f0;font-size:13px;text-align:right;">'+fmtMoney(it.price,cur)+'</td>';
     rows+='<td style="padding:9px 10px;border-bottom:1px solid #f0f0f0;font-size:13px;text-align:right;font-weight:700;color:#f97316;">'+fmtMoney(lt,cur)+'</td></tr>';
   });
-  var html='<div id="receipt-print">';
-  html+='<div style="background:linear-gradient(135deg,#1a1a2e,#0f3460);border-radius:8px 8px 0 0;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">';
-  html+='<div style="display:flex;align-items:center;gap:12px;"><img src="pics/logo_white.png" alt="Jobijad Express" style="height:50px;width:auto;object-fit:contain;filter:brightness(1.3);">';
-  html+='<div><div style="font-size:17px;font-weight:800;color:#fff;">Jobijad <span style="color:#f97316;">Express</span></div><div style="font-size:10px;color:rgba(255,255,255,.5);">Premium African Fashion</div></div></div>';
+  var html='<div id="receipt-print" style="font-family:Arial,sans-serif;max-width:600px;width:100%;margin:0 auto;">';
+  html+='<div style="background:linear-gradient(135deg,#1a1a2e,#0f3460);border-radius:8px 8px 0 0;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">';
+  html+='<div style="display:flex;align-items:center;gap:10px;"><img src="pics/logo_white.png" alt="Jobijad Express" style="height:40px;width:auto;object-fit:contain;filter:brightness(1.3);">';
+  html+='<div><div style="font-size:15px;font-weight:800;color:#fff;">Jobijad <span style="color:#f97316;">Express</span></div><div style="font-size:10px;color:rgba(255,255,255,.5);">Premium African Fashion</div></div></div>';
   html+='<div style="text-align:right;"><div style="font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;">Receipt</div>';
-  html+='<div style="font-size:18px;font-weight:800;color:#f97316;font-family:monospace;">#'+rNum+'</div>';
+  html+='<div style="font-size:16px;font-weight:800;color:#f97316;font-family:monospace;">#'+rNum+'</div>';
   html+='<div style="font-size:10px;color:rgba(255,255,255,.4);">'+fmtDate(o.createdAt)+'</div></div></div>';
-  html+='<div style="background:'+sc+';padding:5px 24px;display:flex;justify-content:space-between;align-items:center;">';
+  html+='<div style="background:'+sc+';padding:5px 20px;display:flex;justify-content:space-between;align-items:center;">';
   html+='<span style="font-size:11px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:1px;">'+status+'</span>';
   html+='<span style="font-size:11px;color:rgba(255,255,255,.8);">'+fmtDate(o.createdAt)+'</span></div>';
-  html+='<div style="background:#fff;border-radius:0 0 8px 8px;padding:20px 24px;">';
-  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px;padding-bottom:16px;border-bottom:1.5px dashed #e0e0e0;">';
-  html+='<div><div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Ship To</div>';
-  html+='<div style="font-size:14px;font-weight:700;color:#1a1a2e;">'+(addr.name||'—')+'</div>';
+  html+='<div style="background:#fff;border-radius:0 0 8px 8px;padding:16px 20px;">';
+  html+='<div style="display:flex;flex-wrap:wrap;gap:16px;margin-bottom:16px;padding-bottom:14px;border-bottom:1.5px dashed #e0e0e0;">';
+  html+='<div style="flex:1;min-width:140px;"><div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Ship To</div>';
+  html+='<div style="font-size:13px;font-weight:700;color:#1a1a2e;">'+(addr.name||'—')+'</div>';
   if(addr.phone)html+='<div style="font-size:12px;color:#666;margin-top:2px;"><i class="fas fa-phone" style="color:#f97316;margin-right:3px;font-size:10px;"></i>'+addr.phone+'</div>';
   html+='<div style="font-size:12px;color:#666;">'+(addr.street||'')+'</div>';
   html+='<div style="font-size:12px;color:#666;">'+[addr.city,addr.state,addr.country].filter(Boolean).join(', ')+'</div></div>';
-  html+='<div><div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Payment</div>';
+  html+='<div style="flex:1;min-width:140px;"><div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Payment</div>';
   html+='<div style="display:flex;align-items:center;gap:5px;margin-bottom:4px;"><i class="'+payIcon+'" style="color:#f97316;font-size:14px;"></i>';
   html+='<span style="font-size:13px;font-weight:600;color:#1a1a2e;text-transform:capitalize;">'+payMethod+'</span></div>';
   html+='<div style="font-size:11px;font-weight:700;color:'+sc+';text-transform:uppercase;">'+(o.paymentStatus||'pending')+'</div></div></div>';
-  html+='<table style="width:100%;border-collapse:collapse;margin-bottom:16px;">';
-  html+='<thead><tr style="background:#f8f9fa;"><th style="padding:8px 10px;text-align:left;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e0e0e0;">Item</th>';
-  html+='<th style="padding:8px 10px;text-align:center;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e0e0e0;">Qty</th>';
-  html+='<th style="padding:8px 10px;text-align:right;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e0e0e0;">Price</th>';
-  html+='<th style="padding:8px 10px;text-align:right;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e0e0e0;">Total</th>';
-  html+='</tr></thead><tbody>'+rows+'</tbody></table>';
+  html+='<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">';
+  html+='<table style="width:100%;min-width:280px;border-collapse:collapse;margin-bottom:16px;">';
+  html+='<thead><tr style="background:#f8f9fa;"><th style="padding:8px 8px;text-align:left;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e0e0e0;">Item</th>';
+  html+='<th style="padding:8px 6px;text-align:center;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e0e0e0;">Qty</th>';
+  html+='<th style="padding:8px 6px;text-align:right;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e0e0e0;">Price</th>';
+  html+='<th style="padding:8px 6px;text-align:right;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e0e0e0;">Total</th>';
+  html+='</tr></thead><tbody>'+rows+'</tbody></table></div>';
   var shipCost=parseFloat(o.shippingCost)||0;
-  html+='<div style="margin-left:auto;max-width:240px;">';
+  html+='<div style="margin-left:auto;max-width:100%;">';
   html+='<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:#666;border-bottom:1px solid #f5f5f5;"><span>Subtotal</span><span>'+fmtMoney(o.subtotal,cur)+'</span></div>';
   html+='<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:#666;border-bottom:1px solid #f5f5f5;"><span>Shipping</span><span>'+(shipCost===0?'<span style="color:#22c55e;font-weight:600;">FREE</span>':fmtMoney(shipCost,cur))+'</span></div>';
-  html+='<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:#666;border-bottom:1px solid #f5f5f5;"><span>Tax (8%)</span><span>'+fmtMoney(o.tax,cur)+'</span></div>';
-  html+='<div style="display:flex;justify-content:space-between;padding:10px 0 0;font-size:18px;font-weight:800;color:#1a1a2e;"><span>Total</span><span style="color:#f97316;">'+fmtMoney(o.total,cur)+'</span></div></div>';
-  html+='<div style="margin-top:20px;padding-top:16px;border-top:1.5px dashed #e0e0e0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">';
+  html+='<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:#666;border-bottom:1px solid #f5f5f5;"><span>Tax (2%)</span><span>'+fmtMoney(o.tax,cur)+'</span></div>';
+  html+='<div style="display:flex;justify-content:space-between;padding:10px 0 0;font-size:17px;font-weight:800;color:#1a1a2e;"><span>Total</span><span style="color:#f97316;">'+fmtMoney(o.total,cur)+'</span></div></div>';
+  html+='<div style="margin-top:16px;padding-top:14px;border-top:1.5px dashed #e0e0e0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">';
   html+='<div><div style="font-size:11px;color:#aaa;margin-bottom:3px;">Questions?</div>';
   html+='<div style="font-size:12px;color:#555;"><i class="fas fa-envelope" style="color:#f97316;margin-right:4px;"></i>alitajudith2002@gmail.com</div>';
   html+='<div style="font-size:12px;color:#555;"><i class="fas fa-phone" style="color:#f97316;margin-right:4px;"></i>+46 762 593 231</div></div>';
-  html+='<img src="https://api.qrserver.com/v1/create-qr-code/?size=72x72&data=JOBIJAD-'+rNum+'" style="width:64px;height:64px;border:2px solid #e0e0e0;border-radius:6px;" alt="QR">';
+  html+='<img src="https://api.qrserver.com/v1/create-qr-code/?size=64x64&data=JOBIJAD-'+rNum+'" style="width:56px;height:56px;border:2px solid #e0e0e0;border-radius:6px;" alt="QR">';
   html+='</div>';
-  html+='<div style="text-align:center;margin-top:14px;font-size:12px;color:#aaa;font-style:italic;">Thank you for shopping with Jobijad Express! &#10084;</div>';
+  html+='<div style="text-align:center;margin-top:12px;font-size:12px;color:#aaa;font-style:italic;">Thank you for shopping with Jobijad Express! &#10084;</div>';
   html+='</div></div>';
   return html;
 }
@@ -433,7 +434,7 @@ function printOrderReceipt(){
   var w=window.open('','_blank','width=680,height=900');
   w.document.write('<!DOCTYPE html><html><head><title>Receipt - Jobijad Express</title>');
   w.document.write('<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">');
-  w.document.write('<style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Arial,sans-serif;background:#f4f6f8;padding:20px;}.rc-wrap{max-width:600px;margin:0 auto;box-shadow:0 4px 24px rgba(0,0,0,.12);border-radius:10px;overflow:hidden;}table{width:100%;border-collapse:collapse;}@media print{body{background:#fff;padding:0;}.no-print{display:none!important;}.rc-wrap{box-shadow:none;}}</style>');
+  w.document.write('<style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Arial,sans-serif;background:#f4f6f8;padding:12px;}.rc-wrap{max-width:600px;width:100%;margin:0 auto;box-shadow:0 4px 24px rgba(0,0,0,.12);border-radius:10px;overflow:hidden;}table{width:100%;border-collapse:collapse;}@media(max-width:480px){body{padding:0;}.rc-wrap{border-radius:0;box-shadow:none;}td,th{padding:6px 4px!important;font-size:11px!important;}}@media print{body{background:#fff;padding:0;}.no-print{display:none!important;}.rc-wrap{box-shadow:none;}}</style>');
   w.document.write('</head><body><div class="rc-wrap">'+content.innerHTML+'</div>');
   w.document.write('<div class="no-print" style="max-width:600px;margin:16px auto;display:flex;gap:10px;">');
   w.document.write('<button onclick="window.print()" style="flex:1;padding:12px;background:#f97316;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">&#128438; Print</button>');
@@ -483,7 +484,7 @@ function submitFeedback(){
   var comment=document.getElementById('fb-comment').value.trim();
   var orderRef=document.getElementById('fb-order-select').value;
   if(!comment){showFbMsg('Please write something before submitting.',true);return;}
-  if(comment.length<10){showFbMsg('Please write at least 10 characters.',true);return;}
+  if(comment.length<3){showFbMsg('Please write at least 3 characters.',true);return;}
   var btn=document.querySelector('#tab-review .btn-primary');
   if(btn){btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Submitting...';btn.disabled=true;}
   var payload={rating:rating,comment:comment,message:comment,customerName:name||'Anonymous',orderRef:orderRef||undefined};

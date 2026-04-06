@@ -694,17 +694,22 @@ window.addEventListener('scroll', function() {
   if (btn) btn.style.display = window.scrollY > 400 ? 'flex' : 'none';
 });
 
-// Cookie notice
+// Privacy policy notice — shows once per login session, dismissed with "Got it"
 function acceptCookies() {
-  localStorage.setItem('cookiesAccepted', '1');
+  // Store dismissal tied to current login session token so it reappears on next login
+  var token = localStorage.getItem('jobiToken') || 'guest';
+  sessionStorage.setItem('privacyDismissed_' + token, '1');
   document.getElementById('cookie-notice').style.display = 'none';
 }
-if (!localStorage.getItem('cookiesAccepted')) {
-  setTimeout(function() {
-    var n = document.getElementById('cookie-notice');
-    if (n) n.style.display = 'flex';
-  }, 1500);
-}
+(function() {
+  var token = localStorage.getItem('jobiToken') || 'guest';
+  if (!sessionStorage.getItem('privacyDismissed_' + token)) {
+    setTimeout(function() {
+      var n = document.getElementById('cookie-notice');
+      if (n) n.style.display = 'flex';
+    }, 1500);
+  }
+})();
 </script>
 <div id="gift-panel" style="position:fixed;top:0;right:0;width:340px;height:100%;background:#fff;z-index:2000;display:flex;flex-direction:column;box-shadow:-4px 0 20px rgba(0,0,0,.15);transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);">
   <div style="background:#1a1a2e;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;">

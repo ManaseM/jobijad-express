@@ -533,7 +533,7 @@ function showInquiryForm(title) {
     const modal = createModal('Send Inquiry', `
         <div class="inquiry-form">
             <p style="margin-bottom:14px;color:#666;font-size:13px">Product: <strong>${title}</strong></p>
-            <div class="form-group"><label>Your Name *</label><input type="text" id="iq-name" placeholder="John Doe"></div>
+            <div class="form-group"><label>Your Name *</label><input type="text" id="iq-name" placeholder="Jobijad Express"></div>
             <div class="form-group"><label>Email *</label><input type="email" id="iq-email" placeholder="you@email.com"></div>
             <div class="form-group"><label>Quantity</label><input type="number" id="iq-qty" placeholder="1" min="1"></div>
             <div class="form-group"><label>Message *</label><textarea id="iq-msg" rows="3" placeholder="Describe your requirements..."></textarea></div>
@@ -571,7 +571,7 @@ function submitInquiry(title) {
 // ===== PRODUCTS FROM DB =====
 async function loadProductsFromDB() {
     try {
-        const data = await apiCall('/products?limit=100');
+        const data = await apiCall('/products?limit=10');
         if (data.products && data.products.length > 0) {
             renderDBProducts(data.products);
             setTimeout(initScrollReveal, 50);

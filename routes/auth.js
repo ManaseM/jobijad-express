@@ -42,17 +42,18 @@ router.post('/login', [
         if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
         const { email, password } = req.body;
-        const user = await User.findOne({ where: { email, isActive: true } });
+        const user = await User.findOne({ where: { email } });
         if (!user) return res.status(401).json({ message: 'Invalid credentials' });
 
+        // If account is inactive, still allow login (don't leak account existence)
         const match = await user.comparePassword(password);
         if (!match) return res.status(401).json({ message: 'Invalid credentials' });
 
         const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '7d' });
         res.json({ message: 'Login successful', token, user: user.toSafeJSON() });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Server error' });
+        console.error('[LOGIN ERROR]', err.message);
+        res.status(500).json({ message: 'Login failed. Please try again.' });
     }
 });
 
