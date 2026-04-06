@@ -743,7 +743,6 @@ function buildAdminReceiptHTML(o) {
   html += '</div></div>';
   return html;
 }
-  const itemRows = (o.items||[]).map(function(i) {
 
 function openDeliveryFromReceipt() {
   var btn = document.getElementById('receipt-delivery-btn');
@@ -770,7 +769,6 @@ function printReceipt() {
   w.focus();
   setTimeout(function() { w.print(); }, 600);
 }
-    <!-- Delivery Schedule Modal -->
 
 // ===== PRODUCTS =====
 async function renderProducts() {
@@ -1479,6 +1477,69 @@ function deletePromoCode(code) {
   localStorage.setItem('jobiPromoCodes', JSON.stringify(codes));
   showToast('Promo code "' + code + '" deleted');
   renderPromos();
+}
+
+// ===== AUTO REFRESH =====
+let autoRefreshInterval;
+function startAutoRefresh() {
+  clearInterval(autoRefreshInterval);
+  autoRefreshInterval = setInterval(async () => {
+    await fetchAll();
+    if (currentTab === 'overview') renderOverview();
+    else if (currentTab === 'orders') renderOrders();
+    else if (currentTab === 'users') renderUsers();
+  }, 60000);
+}
+
+// ===== DELIVERY MODAL =====
+function openDeliveryFromReceipt() {
+  const orderId = document.getElementById('receipt-body')?.dataset?.orderId;
+  if (orderId) openDeliveryModal(orderId);
+}
+
+function openDeliveryModal(orderId) {
+  document.getElementById('dm-order-id').value = orderId;
+  document.getElementById('dm-country').value = '';
+  document.getElementById('dm-ship-date').value = '';
+  document.getElementById('dm-delivery-date').value = '';
+  document.getElementById('dm-tracking').value = '';
+  document.getElementById('dm-note').value = '';
+  document.getElementById('dm-estimate-info').style.display = 'none';
+  document.getElementById('delivery-modal').classList.add('open');
+}
+
+function estimateDelivery() {
+  const country = document.getElementById('dm-country');
+  const shipDate = document.getElementById('dm-ship-date').value;
+  const selectedOption = country.options[country.selectedIndex];
+  const days = parseInt(selectedOption?.dataset?.days || '0');
+  if (!shipDate || !days) { document.getElementById('dm-estimate-info').style.display = 'none'; return; }
+  const ship = new Date(shipDate);
+  ship.setDate(ship.getDate() + days);
+  document.getElementById('dm-delivery-date').value = ship.toISOString().split('T')[0];
+  document.getElementById('dm-estimate-text').textContent = `Estimated delivery in ${days} days to ${selectedOption.value}`;
+  document.getElementById('dm-estimate-info').style.display = 'block';
+}
+
+async function confirmApprovePayment() {
+  const orderId = document.getElementById('dm-order-id').value;
+  const country = document.getElementById('dm-country').value;
+  const shipDate = document.getElementById('dm-ship-date').value;
+  const deliveryDate = document.getElementById('dm-delivery-date').value;
+  const tracking = document.getElementById('dm-tracking').value.trim();
+  const note = document.getElementById('dm-note').value.trim();
+  if (!country || !shipDate || !deliveryDate) { showToast('Please fill in country and ship date', true); return; }
+  try {
+    await fetch(`${API}/orders/${orderId}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ orderStatus: 'confirmed', paymentStatus: 'approved', country, shipDate, deliveryDate, tracking, note })
+    });
+    showToast('Payment approved & delivery schedule sent');
+    document.getElementById('delivery-modal').classList.remove('open');
+    await fetchAll();
+    if (currentTab === 'orders') renderOrders();
+  } catch(e) { showToast('Failed to approve payment', true); }
 }
 
 // ===== INIT =====
