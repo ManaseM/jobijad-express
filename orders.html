@@ -13,67 +13,90 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;min-height:10
 .logo{font-size:18px;font-weight:700;color:#fff;}.logo span{color:#f97316;}
 .back-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
 .back-btn:hover{background:rgba(255,255,255,.22);}
-.container{max-width:900px;margin:0 auto;padding:28px 16px;}
-.page-title{font-size:22px;font-weight:700;color:#1a1a2e;margin-bottom:6px;}
+.container{max-width:900px;margin:0 auto;padding:28px 16px 80px;}
+.page-title{font-size:22px;font-weight:700;color:#1a1a2e;margin-bottom:4px;}
 .page-sub{font-size:13px;color:#888;margin-bottom:24px;}
-.tabs{display:flex;gap:0;border-bottom:2px solid #e0e0e0;margin-bottom:24px;}
-.tab{padding:10px 22px;font-size:13px;font-weight:600;color:#888;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;}
+.tabs{display:flex;gap:0;border-bottom:2px solid #e0e0e0;margin-bottom:24px;overflow-x:auto;}
+.tab{padding:10px 20px;font-size:13px;font-weight:600;color:#888;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;white-space:nowrap;}
 .tab.active{color:#f97316;border-bottom-color:#f97316;}
 .tab-content{display:none;}.tab-content.active{display:block;}
-.order-card{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:16px;overflow:hidden;}
-.order-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #f0f0f0;flex-wrap:wrap;gap:8px;}
+.order-card{background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.07);margin-bottom:18px;overflow:hidden;transition:box-shadow .2s;}
+.order-card:hover{box-shadow:0 4px 18px rgba(0,0,0,.11);}
+.order-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #f0f0f0;flex-wrap:wrap;gap:8px;background:#fafafa;}
 .order-num{font-size:13px;font-weight:700;color:#1a1a2e;font-family:monospace;}
-.order-date{font-size:11px;color:#aaa;}
+.order-date{font-size:11px;color:#aaa;margin-top:2px;}
 .badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;text-transform:uppercase;}
 .badge-pending{background:#fef9c3;color:#854d0e;}.badge-confirmed{background:#dbeafe;color:#1e40af;}
 .badge-processing{background:#ede9fe;color:#5b21b6;}.badge-shipped{background:#dcfce7;color:#15803d;}
 .badge-delivered{background:#dcfce7;color:#15803d;}.badge-cancelled{background:#fee2e2;color:#991b1b;}
-.order-body{padding:14px 18px;}
-.order-item-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f8f8f8;font-size:13px;color:#555;align-items:center;}
-.order-item-img{width:36px;height:36px;object-fit:cover;border-radius:5px;margin-right:8px;flex-shrink:0;}
-.order-totals{display:flex;justify-content:flex-end;gap:24px;font-size:13px;margin-top:10px;padding-top:10px;border-top:1px solid #f0f0f0;}
-.order-total-val{font-weight:700;color:#f97316;font-size:16px;}
+.order-body{padding:16px 18px;}
+.order-item-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f8f8f8;font-size:13px;color:#555;}
+.order-item-img{width:42px;height:42px;object-fit:cover;border-radius:7px;flex-shrink:0;border:1px solid #f0f0f0;}
+.order-item-name{flex:1;font-weight:500;color:#333;}
+.order-item-price{font-weight:700;color:#f97316;white-space:nowrap;}
+.order-totals{display:flex;justify-content:flex-end;gap:6px;align-items:center;font-size:13px;margin-top:12px;padding-top:10px;border-top:1px solid #f0f0f0;}
+.order-total-val{font-weight:700;color:#f97316;font-size:17px;}
 .order-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
-.btn{padding:7px 16px;border-radius:6px;font-size:12px;cursor:pointer;border:none;font-family:inherit;font-weight:600;display:inline-flex;align-items:center;gap:5px;transition:all .2s;}
+.btn{padding:7px 16px;border-radius:7px;font-size:12px;cursor:pointer;border:none;font-family:inherit;font-weight:600;display:inline-flex;align-items:center;gap:5px;transition:all .2s;}
 .btn-primary{background:#f97316;color:#fff;}.btn-primary:hover{background:#ea6c0a;}
 .btn-secondary{background:#f4f6f8;color:#555;border:1px solid #e0e0e0;}.btn-secondary:hover{background:#e8eaed;}
+.btn-danger{background:#fee2e2;color:#991b1b;border:1px solid #fecaca;}.btn-danger:hover{background:#fecaca;}
+.btn-success{background:#dcfce7;color:#15803d;border:1px solid #bbf7d0;}.btn-success:hover{background:#bbf7d0;}
 .empty-state{text-align:center;padding:60px 20px;color:#aaa;}
 .empty-state i{font-size:48px;color:#e0e0e0;margin-bottom:12px;display:block;}
 .empty-state a{color:#f97316;text-decoration:none;font-weight:600;}
 .loading{text-align:center;padding:40px;color:#aaa;}
-.review-form-card{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);padding:24px;}
+/* Status tracker */
+.status-track{display:flex;align-items:center;margin:14px 0 6px;overflow-x:auto;padding-bottom:4px;}
+.st-step{display:flex;flex-direction:column;align-items:center;flex:1;min-width:60px;}
+.st-dot{width:28px;height:28px;border-radius:50%;border:2px solid #e0e0e0;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;color:#ccc;transition:all .3s;flex-shrink:0;}
+.st-dot.done{background:#f97316;border-color:#f97316;color:#fff;}
+.st-dot.active{background:#fff;border-color:#f97316;color:#f97316;box-shadow:0 0 0 3px rgba(249,115,22,.2);}
+.st-dot.cancelled{background:#fee2e2;border-color:#ef4444;color:#ef4444;}
+.st-label{font-size:10px;color:#aaa;margin-top:4px;text-align:center;white-space:nowrap;}
+.st-label.done,.st-label.active{color:#f97316;font-weight:600;}
+.st-line{flex:1;height:2px;background:#e0e0e0;margin:0 2px;margin-bottom:18px;min-width:16px;}
+.st-line.done{background:#f97316;}
+/* Delivery box */
+.delivery-box{margin-top:12px;padding:12px 14px;background:#f0fdf4;border:1.5px solid #22c55e;border-radius:9px;font-size:12px;}
+.delivery-box-title{font-weight:700;color:#15803d;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+/* Review form */
+.review-form-card{background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.07);padding:24px;}
 .form-group{margin-bottom:14px;}
 .form-group label{display:block;font-size:11px;font-weight:700;color:#666;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;}
-.form-group input,.form-group textarea{width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:13px;outline:none;font-family:inherit;}
-.form-group input:focus,.form-group textarea:focus{border-color:#f97316;}
-.stars{display:flex;gap:6px;margin-bottom:4px;}
-.star{font-size:28px;color:#e0e0e0;cursor:pointer;transition:color .15s;}.star.active{color:#f97316;}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:7px;font-size:13px;outline:none;font-family:inherit;transition:border .2s;}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:#f97316;}
+.stars{display:flex;gap:4px;margin-bottom:4px;}
+.star{font-size:32px;color:#e0e0e0;cursor:pointer;transition:color .1s,transform .1s;line-height:1;}
+.star:hover,.star.active{color:#f97316;}
+.star:hover{transform:scale(1.15);}
 .fb-msg{padding:10px 14px;border-radius:7px;font-size:13px;margin-top:10px;display:none;}
 .fb-msg.success{background:#dcfce7;color:#15803d;display:block;}
 .fb-msg.error{background:#fee2e2;color:#991b1b;display:block;}
-.reviews-summary{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
-.avg-score{font-size:48px;font-weight:700;color:#f97316;line-height:1;}
-.avg-label{font-size:13px;color:#888;}
-.review-card{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);padding:18px 20px;margin-bottom:14px;}
-.review-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px;}
+/* Public reviews */
+.reviews-summary{background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.07);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
+.avg-score{font-size:52px;font-weight:700;color:#f97316;line-height:1;}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+.bar-track{flex:1;height:7px;background:#f0f0f0;border-radius:4px;overflow:hidden;min-width:80px;}
+.bar-fill{height:100%;background:#f97316;border-radius:4px;transition:width .5s;}
+.review-card{background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.07);padding:18px 20px;margin-bottom:14px;}
+.review-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px;}
 .reviewer-name{font-weight:700;font-size:14px;color:#1a1a2e;}
-.review-stars{color:#f97316;font-size:14px;}
+.review-stars{color:#f97316;font-size:14px;letter-spacing:1px;}
 .review-date{font-size:11px;color:#bbb;}
-.review-comment{font-size:13px;color:#555;line-height:1.6;margin-bottom:10px;}
-.admin-reply{border:2px solid #f97316;border-radius:8px;padding:12px 14px;background:#fff7ed;margin-top:10px;}
+.review-comment{font-size:13px;color:#555;line-height:1.7;margin-bottom:10px;}
+.admin-reply{border-left:3px solid #f97316;padding:10px 14px;background:#fff7ed;border-radius:0 8px 8px 0;margin-top:10px;}
 .admin-reply-label{font-size:11px;font-weight:700;color:#f97316;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;display:flex;align-items:center;gap:5px;}
 .admin-reply-text{font-size:13px;color:#555;line-height:1.6;}
-.delivery-box{margin-top:10px;padding:10px 12px;background:#f0fdf4;border:1.5px solid #22c55e;border-radius:8px;font-size:12px;}
-.delivery-box-title{font-weight:700;color:#15803d;margin-bottom:6px;}
 /* Receipt modal */
 .receipt-modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;align-items:center;justify-content:center;padding:12px;}
 .receipt-modal-wrap.open{display:flex;}
 .receipt-modal-inner{background:#fff;border-radius:12px;width:100%;max-width:600px;max-height:94vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.3);}
-.rc-td{padding:9px 10px;border-bottom:1px solid #f0f0f0;font-size:13px;color:#333;}
-.rc-center{text-align:center;}.rc-right{text-align:right;}.rc-bold{font-weight:700;color:#f97316;}
-@media(max-width:480px){
-  .receipt-modal-inner{border-radius:10px 10px 0 0;position:fixed;bottom:0;left:0;right:0;max-height:88vh;}
+.receipt-modal-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid #f0f0f0;position:sticky;top:0;background:#fff;z-index:10;}
+@media(max-width:600px){
+  .receipt-modal-inner{border-radius:14px 14px 0 0;position:fixed;bottom:0;left:0;right:0;max-height:90vh;}
   .receipt-modal-wrap{align-items:flex-end;padding:0;}
+  .order-head{flex-direction:column;align-items:flex-start;}
 }
 </style>
 </head>
@@ -82,27 +105,40 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;min-height:10
   <div class="logo">Jobijad <span>Express</span></div>
   <a href="alibaba-style.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Store</a>
 </header>
+
 <div class="container">
   <div class="page-title"><i class="fas fa-box" style="color:#f97316;margin-right:8px"></i>Orders &amp; Reviews</div>
-  <div class="page-sub">Track your orders, view receipts, and leave feedback.</div>
+  <div class="page-sub">Track your orders, view receipts, and share your experience.</div>
   <div class="tabs">
     <button class="tab active" onclick="switchTab('orders')"><i class="fas fa-box"></i> My Orders</button>
     <button class="tab" onclick="switchTab('review')"><i class="fas fa-star"></i> Leave a Review</button>
     <button class="tab" onclick="switchTab('public')"><i class="fas fa-comments"></i> Customer Reviews</button>
   </div>
+
+  <!-- ORDERS TAB -->
   <div id="tab-orders" class="tab-content active">
-    <div id="orders-list"><div class="loading"><i class="fas fa-spinner fa-spin" style="font-size:24px;color:#f97316"></i><p style="margin-top:8px">Loading orders...</p></div></div>
+    <div id="orders-list">
+      <div class="loading"><i class="fas fa-spinner fa-spin" style="font-size:24px;color:#f97316"></i><p style="margin-top:8px">Loading orders...</p></div>
+    </div>
   </div>
+
+  <!-- REVIEW TAB -->
   <div id="tab-review" class="tab-content">
     <div class="review-form-card">
-      <h3 style="font-size:16px;font-weight:700;color:#1a1a2e;margin-bottom:6px;"><i class="fas fa-comment-dots" style="color:#f97316;margin-right:8px"></i>Leave a Review</h3>
-      <p style="font-size:13px;color:#888;margin-bottom:18px;">Your honest opinion helps us improve.</p>
+      <h3 style="font-size:16px;font-weight:700;color:#1a1a2e;margin-bottom:4px;"><i class="fas fa-comment-dots" style="color:#f97316;margin-right:8px"></i>Leave a Review</h3>
+      <p style="font-size:13px;color:#888;margin-bottom:20px;">Your honest opinion helps us and other shoppers.</p>
       <div class="form-group">
         <label>Your Name <span style="color:#aaa;font-weight:400;font-size:10px">(optional)</span></label>
         <input type="text" id="fb-name" placeholder="Leave blank to post as Anonymous">
       </div>
       <div class="form-group">
-        <label>Rating</label>
+        <label>Linked Order <span style="color:#aaa;font-weight:400;font-size:10px">(optional)</span></label>
+        <select id="fb-order-select">
+          <option value="">-- Select an order (optional) --</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Rating *</label>
         <div class="stars" id="stars-row">
           <span class="star" data-v="1">&#9733;</span>
           <span class="star" data-v="2">&#9733;</span>
@@ -111,388 +147,434 @@ body{font-family:'Roboto',sans-serif;background:#f4f6f8;color:#222;min-height:10
           <span class="star" data-v="5">&#9733;</span>
         </div>
         <input type="hidden" id="fb-rating" value="5">
-        <small style="color:#aaa;font-size:11px">Tap a star to rate</small>
+        <small id="rating-label" style="color:#f97316;font-size:12px;font-weight:600;">Excellent &#9733;&#9733;&#9733;&#9733;&#9733;</small>
       </div>
       <div class="form-group">
-        <label>Your Message *</label>
-        <textarea id="fb-comment" rows="4" placeholder="Write anything — a compliment, complaint, suggestion..."></textarea>
+        <label>Your Review *</label>
+        <textarea id="fb-comment" rows="4" placeholder="Tell us about your experience — quality, delivery, packaging..."></textarea>
+        <small id="char-count" style="color:#aaa;font-size:11px;">0 / 500 characters</small>
       </div>
-      <button class="btn btn-primary" onclick="submitFeedback()" style="width:100%;justify-content:center;padding:11px;"><i class="fas fa-paper-plane"></i> Submit Review</button>
+      <button class="btn btn-primary" onclick="submitFeedback()" style="width:100%;justify-content:center;padding:12px;font-size:14px;">
+        <i class="fas fa-paper-plane"></i> Submit Review
+      </button>
       <div id="fb-msg" class="fb-msg"></div>
     </div>
   </div>
+
+  <!-- PUBLIC REVIEWS TAB -->
   <div id="tab-public" class="tab-content">
     <div id="reviews-summary-box"></div>
-    <div id="public-reviews-list"><div class="loading"><i class="fas fa-spinner fa-spin" style="font-size:24px;color:#f97316"></i><p style="margin-top:8px">Loading reviews...</p></div></div>
+    <div id="public-reviews-list">
+      <div class="loading"><i class="fas fa-spinner fa-spin" style="font-size:24px;color:#f97316"></i><p style="margin-top:8px">Loading reviews...</p></div>
+    </div>
   </div>
 </div>
 
 <!-- Receipt Modal -->
 <div id="receipt-modal" class="receipt-modal-wrap" onclick="if(event.target===this)closeReceipt()">
   <div class="receipt-modal-inner">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-      <h3 style="font-size:16px;font-weight:700;color:#1a1a2e;margin:0;"><i class="fas fa-receipt" style="color:#f97316;margin-right:8px"></i>Order Receipt</h3>
+    <div class="receipt-modal-head">
+      <h3 style="font-size:15px;font-weight:700;color:#1a1a2e;margin:0;"><i class="fas fa-receipt" style="color:#f97316;margin-right:8px"></i>Order Receipt</h3>
       <div style="display:flex;gap:8px;">
         <button class="btn btn-primary" onclick="printOrderReceipt()"><i class="fas fa-print"></i> Print</button>
         <button class="btn btn-secondary" onclick="closeReceipt()"><i class="fas fa-times"></i></button>
       </div>
     </div>
-    <div id="receipt-body"></div>
+    <div id="receipt-body" style="padding:0 20px 20px;"></div>
+  </div>
+</div>
+
+<!-- Cancel Confirm Modal -->
+<div id="cancel-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;align-items:center;justify-content:center;padding:16px;" onclick="if(event.target===this)closeCancelModal()">
+  <div style="background:#fff;border-radius:12px;padding:24px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);">
+    <div style="text-align:center;margin-bottom:16px;">
+      <div style="width:56px;height:56px;background:#fee2e2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;"><i class="fas fa-times-circle" style="color:#ef4444;font-size:24px;"></i></div>
+      <h3 style="font-size:16px;font-weight:700;color:#1a1a2e;margin-bottom:6px;">Cancel Order?</h3>
+      <p style="font-size:13px;color:#666;">Are you sure you want to cancel this order? This action cannot be undone.</p>
+    </div>
+    <input type="hidden" id="cancel-order-id">
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-secondary" onclick="closeCancelModal()" style="flex:1;justify-content:center;">Keep Order</button>
+      <button class="btn btn-danger" onclick="confirmCancel()" style="flex:1;justify-content:center;"><i class="fas fa-times"></i> Cancel Order</button>
+    </div>
   </div>
 </div>
 
 <script>
-var API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-  ? 'http://localhost:3000/api' : window.location.origin + '/api';
+var API = (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1') ? 'http://localhost:3000/api' : window.location.origin+'/api';
 var token = localStorage.getItem('jobiToken');
-var currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-
-function switchTab(name) {
-  document.querySelectorAll('.tab').forEach(function(t,i){ t.classList.remove('active'); });
-  document.querySelectorAll('.tab-content').forEach(function(c){ c.classList.remove('active'); });
-  var map = {orders:0, review:1, public:2};
-  document.querySelectorAll('.tab')[map[name]].classList.add('active');
-  document.getElementById('tab-' + name).classList.add('active');
-  if (name === 'orders') loadOrders();
-  if (name === 'public') loadPublicReviews();
-}
-
-function fmtDate(d) {
-  if (!d) return '---';
-  return new Date(d).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
-}
-
-// Currency rates (mirrors features-addon.js)
+var currentUser = JSON.parse(localStorage.getItem('currentUser')||'{}');
 var ORD_RATES = {USD:1,UGX:3700,KES:130,TZS:2600,NGN:1600,GHS:15,ZAR:18.5,EUR:0.92,GBP:0.79,SEK:10.4,AED:3.67,CNY:7.25,JPY:149,CAD:1.36,AUD:1.53,CHF:0.89,INR:83};
-var ORD_SYMS = {USD:'$',UGX:'USh ',KES:'KSh ',TZS:'TSh ',NGN:'\u20a6',GHS:'GH\u20b5',ZAR:'R',EUR:'\u20ac',GBP:'\u00a3',SEK:'kr ',AED:'AED ',CNY:'\u00a5',JPY:'\u00a5',CAD:'CA$',AUD:'A$',CHF:'CHF ',INR:'\u20b9'};
+var ORD_SYMS = {USD:'$',UGX:'USh ',KES:'KSh ',TZS:'TSh ',NGN:'₦',GHS:'GH₵',ZAR:'R',EUR:'€',GBP:'£',SEK:'kr ',AED:'AED ',CNY:'¥',JPY:'¥',CAD:'CA$',AUD:'A$',CHF:'CHF ',INR:'₹'};
 
-function getOrderCurrency(order) {
-  // Use the currency stored with the order, or fall back to user's active currency
-  return (order && order.currency) || localStorage.getItem('jobiCurrency') || 'USD';
+function fmtDate(d){if(!d)return '---';return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}
+function getOrderCurrency(o){return (o&&o.currency)||localStorage.getItem('jobiCurrency')||'USD';}
+function fmtMoney(v,cur){cur=cur||localStorage.getItem('jobiCurrency')||'USD';var rate=ORD_RATES[cur]||1;var sym=ORD_SYMS[cur]||'$';var c=(parseFloat(v)||0)*rate;if(['UGX','TZS','NGN','JPY','INR'].indexOf(cur)>=0)return sym+Math.round(c).toLocaleString();return sym+c.toFixed(2);}
+
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active');});
+  var map={orders:0,review:1,public:2};
+  document.querySelectorAll('.tab')[map[name]].classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='orders')loadOrders();
+  if(name==='public')loadPublicReviews();
 }
 
-function fmtMoney(v, cur) {
-  cur = cur || localStorage.getItem('jobiCurrency') || 'USD';
-  var rate = ORD_RATES[cur] || 1;
-  var sym = ORD_SYMS[cur] || '$';
-  var converted = (parseFloat(v) || 0) * rate;
-  if (['UGX','TZS','NGN','JPY','INR'].indexOf(cur) >= 0) return sym + Math.round(converted).toLocaleString();
-  return sym + converted.toFixed(2);
-}
-
-function setRating(val) {
-  document.getElementById('fb-rating').value = val;
-  document.querySelectorAll('#stars-row .star').forEach(function(s, i) {
-    s.classList.toggle('active', i < val);
+// ===== STATUS TRACKER =====
+var STATUS_STEPS = ['pending','confirmed','processing','shipped','delivered'];
+function buildStatusTracker(status){
+  if(status==='cancelled'){
+    return '<div style="display:inline-flex;align-items:center;gap:6px;background:#fee2e2;border:1px solid #fecaca;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;color:#991b1b;margin:10px 0;"><i class="fas fa-times-circle"></i> Order Cancelled</div>';
+  }
+  var idx=STATUS_STEPS.indexOf(status);
+  var html='<div class="status-track">';
+  var icons=['fa-clock','fa-check','fa-cog','fa-truck','fa-box-open'];
+  STATUS_STEPS.forEach(function(s,i){
+    var cls=i<idx?'done':i===idx?'active':'';
+    html+='<div class="st-step"><div class="st-dot '+cls+'"><i class="fas '+icons[i]+'"></i></div><div class="st-label '+cls+'">'+s.charAt(0).toUpperCase()+s.slice(1)+'</div></div>';
+    if(i<STATUS_STEPS.length-1)html+='<div class="st-line '+(i<idx?'done':'')+'"></div>';
   });
+  return html+'</div>';
 }
-document.querySelectorAll('#stars-row .star').forEach(function(el) {
-  el.addEventListener('click', function() { setRating(parseInt(el.getAttribute('data-v'))); });
-});
-setRating(5);
 
 // ===== LOAD ORDERS =====
-// Merges server orders (if logged in) with locally-saved guest orders
-function loadOrders() {
-  var list = document.getElementById('orders-list');
-  list.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin" style="font-size:24px;color:#f97316"></i><p style="margin-top:8px">Loading...</p></div>';
-
-  var localOrders = JSON.parse(localStorage.getItem('jobiOrders') || '[]');
-
-  if (!token) {
-    // Guest — show only local orders
-    renderOrderList(localOrders, list);
-    return;
-  }
-
-  fetch(API + '/orders/my', { headers: { Authorization: 'Bearer ' + token } })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      var serverOrders = data.orders || [];
-      // Merge: server orders take priority, append local-only ones
-      var serverIds = serverOrders.map(function(o) { return o.id || o.orderNumber; });
-      var localOnly = localOrders.filter(function(o) {
-        return !serverIds.includes(o.id) && !serverIds.includes(o.orderNumber);
-      });
-      var all = serverOrders.concat(localOnly);
-      renderOrderList(all, list);
+function loadOrders(){
+  var list=document.getElementById('orders-list');
+  list.innerHTML='<div class="loading"><i class="fas fa-spinner fa-spin" style="font-size:24px;color:#f97316"></i><p style="margin-top:8px">Loading...</p></div>';
+  var localOrders=JSON.parse(localStorage.getItem('jobiOrders')||'[]');
+  if(!token){renderOrderList(localOrders,list);populateOrderSelect(localOrders);return;}
+  fetch(API+'/orders/my',{headers:{Authorization:'Bearer '+token}})
+    .then(function(r){return r.json();})
+    .then(function(data){
+      var serverOrders=data.orders||[];
+      var serverIds=serverOrders.map(function(o){return String(o.id||o.orderNumber);});
+      var localOnly=localOrders.filter(function(o){return !serverIds.includes(String(o.id))&&!serverIds.includes(String(o.orderNumber));});
+      var all=serverOrders.concat(localOnly);
+      renderOrderList(all,list);
+      populateOrderSelect(all);
     })
-    .catch(function() {
-      // Server unreachable — show local orders
-      renderOrderList(localOrders, list);
-    });
+    .catch(function(){renderOrderList(localOrders,list);populateOrderSelect(localOrders);});
 }
 
-function renderOrderList(orders, list) {
-  if (!orders || !orders.length) {
-    list.innerHTML = '<div class="empty-state"><i class="fas fa-box"></i><p>No orders yet. <a href="alibaba-style.html">Start shopping!</a></p></div>';
+function populateOrderSelect(orders){
+  var sel=document.getElementById('fb-order-select');
+  if(!sel)return;
+  sel.innerHTML='<option value="">-- Select an order (optional) --</option>';
+  orders.forEach(function(o){
+    var rNum=o.orderNumber||(o.id?String(o.id).substring(0,8).toUpperCase():'N/A');
+    var opt=document.createElement('option');
+    opt.value=rNum;
+    opt.textContent='#'+rNum+' — '+(o.items&&o.items[0]?o.items[0].name:'Order')+' ('+fmtDate(o.createdAt)+')';
+    sel.appendChild(opt);
+  });
+}
+
+function renderOrderList(orders,list){
+  if(!orders||!orders.length){
+    list.innerHTML='<div class="empty-state"><i class="fas fa-box"></i><p style="margin-bottom:12px">No orders yet.</p><a href="alibaba-style.html" class="btn btn-primary"><i class="fas fa-shopping-bag"></i> Start Shopping</a></div>';
     return;
   }
-  // Sort newest first
-  orders.sort(function(a, b) { return new Date(b.createdAt) - new Date(a.createdAt); });
-  var html = '';
-  orders.forEach(function(o) {
-    var rNum = o.orderNumber || (o.id ? String(o.id).substring(0, 8).toUpperCase() : 'N/A');
-    var items = o.items || [];
-    var status = o.orderStatus || 'pending';
-    var iHtml = '';
-    items.forEach(function(it) {
-      var cur = getOrderCurrency(o);
-      iHtml += '<div class="order-item-row">';
-      if (it.image) iHtml += '<img class="order-item-img" src="' + it.image + '" alt="' + (it.name||'') + '">';
-      iHtml += '<span style="flex:1">' + (it.name || 'Item') + ' &times;' + (it.quantity || 1) + '</span>';
-      iHtml += '<span style="font-weight:600;color:#f97316">' + fmtMoney((parseFloat(it.price)||0) * (it.quantity||1), cur) + '</span>';
-      iHtml += '</div>';
-    });
-    });
-    var payLabel = (o.paymentMethod || '').replace(/_/g, ' ');
-    html += '<div class="order-card">';
-    html += '<div class="order-head">';
-    html += '<div><div class="order-num"><i class="fas fa-hashtag" style="color:#f97316;font-size:10px;margin-right:2px"></i>' + rNum + '</div>';
-    html += '<div class="order-date">' + fmtDate(o.createdAt) + ' &nbsp;|&nbsp; ' + payLabel + '</div></div>';
-    html += '<span class="badge badge-' + status + '">' + status + '</span>';
-    html += '</div>';
-    html += '<div class="order-body">';
-    html += iHtml;
-    html += '<div class="order-totals"><span style="color:#888;font-size:12px">Total:</span>';
+  orders.sort(function(a,b){return new Date(b.createdAt)-new Date(a.createdAt);});
+  var html='';
+  orders.forEach(function(o){
+    var rNum=o.orderNumber||(o.id?String(o.id).substring(0,8).toUpperCase():'N/A');
+    var items=o.items||[];
+    var status=o.orderStatus||'pending';
+    var cur=getOrderCurrency(o);
+    var canCancel=(status==='pending'||status==='confirmed');
+    var oid=o.id||o.orderNumber||'';
+    var isLocal=String(oid).startsWith('JE-');
 
-    if (o.shippingDate || o.estimatedDelivery || o.deliveryNote) {
-      html += '<div class="delivery-box"><div class="delivery-box-title"><i class="fas fa-truck"></i> Delivery Schedule</div>';
-      if (o.shippingDate) html += '<div style="color:#555;margin-bottom:3px"><i class="fas fa-box-open" style="color:#f97316;margin-right:5px"></i><strong>Ships:</strong> ' + fmtDate(o.shippingDate) + '</div>';
-      if (o.estimatedDelivery) html += '<div style="color:#555;margin-bottom:3px"><i class="fas fa-calendar-check" style="color:#22c55e;margin-right:5px"></i><strong>Est. Delivery:</strong> ' + fmtDate(o.estimatedDelivery) + '</div>';
-      if (o.deliveryNote) html += '<div style="color:#666;margin-top:6px;font-style:italic">' + o.deliveryNote + '</div>';
-      html += '</div>';
+    var iHtml='';
+    items.forEach(function(it){
+      iHtml+='<div class="order-item-row">';
+      if(it.image)iHtml+='<img class="order-item-img" src="'+it.image+'" alt="'+escHtml(it.name||'')+'">';
+      iHtml+='<span class="order-item-name">'+escHtml(it.name||'Item')+'</span>';
+      iHtml+='<span style="font-size:12px;color:#aaa;margin-right:8px;">x'+(it.quantity||1)+'</span>';
+      iHtml+='<span class="order-item-price">'+fmtMoney((parseFloat(it.price)||0)*(it.quantity||1),cur)+'</span>';
+      iHtml+='</div>';
+    });
+
+    html+='<div class="order-card">';
+    html+='<div class="order-head">';
+    html+='<div><div class="order-num"><i class="fas fa-hashtag" style="color:#f97316;font-size:10px;margin-right:2px"></i>'+rNum+'</div>';
+    html+='<div class="order-date"><i class="fas fa-calendar-alt" style="margin-right:4px;color:#ccc;"></i>'+fmtDate(o.createdAt)+'&nbsp;&nbsp;<i class="fas fa-credit-card" style="margin-right:4px;color:#ccc;"></i>'+(o.paymentMethod||'').replace(/_/g,' ')+'</div></div>';
+    html+='<span class="badge badge-'+status+'">'+status+'</span>';
+    html+='</div>';
+    html+='<div class="order-body">';
+    html+=buildStatusTracker(status);
+    html+=iHtml;
+    html+='<div class="order-totals"><span style="color:#888;font-size:12px;">Order Total:</span><span class="order-total-val">'+fmtMoney(o.total,cur)+'</span></div>';
+
+    if(o.shippingDate||o.estimatedDelivery||o.deliveryNote||o.trackingNumber){
+      html+='<div class="delivery-box"><div class="delivery-box-title"><i class="fas fa-truck"></i> Delivery Schedule</div>';
+      if(o.shippingDate)html+='<div style="color:#555;margin-bottom:4px;"><i class="fas fa-box-open" style="color:#f97316;margin-right:6px;width:14px;"></i><strong>Ships:</strong> '+fmtDate(o.shippingDate)+'</div>';
+      if(o.estimatedDelivery)html+='<div style="color:#555;margin-bottom:4px;"><i class="fas fa-calendar-check" style="color:#22c55e;margin-right:6px;width:14px;"></i><strong>Est. Delivery:</strong> '+fmtDate(o.estimatedDelivery)+'</div>';
+      if(o.trackingNumber)html+='<div style="color:#555;margin-bottom:4px;"><i class="fas fa-barcode" style="color:#3b82f6;margin-right:6px;width:14px;"></i><strong>Tracking:</strong> <span style="font-family:monospace;font-weight:700;">'+o.trackingNumber+'</span></div>';
+      if(o.deliveryNote)html+='<div style="color:#666;margin-top:6px;font-style:italic;border-top:1px solid #d1fae5;padding-top:6px;">'+escHtml(o.deliveryNote)+'</div>';
+      html+='</div>';
     }
-    var oid = o.id || o.orderNumber || '';
-    html += '<div class="order-actions">';
-    html += '<button class="btn btn-secondary" onclick="openReceipt(' + JSON.stringify(o) + ')"><i class="fas fa-receipt"></i> View Receipt</button>';
-    if (token && oid && !String(oid).startsWith('JE-')) {
-      html += '<button class="btn btn-secondary" onclick="openReceiptFromServer(\'' + oid + '\')"><i class="fas fa-cloud-download-alt"></i> Full Receipt</button>';
+
+    html+='<div class="order-actions">';
+    html+='<button class="btn btn-secondary" onclick="openReceipt('+JSON.stringify(o).replace(/"/g,'&quot;')+')" title="View Receipt"><i class="fas fa-receipt"></i> Receipt</button>';
+    if(token&&oid&&!isLocal){
+      html+='<button class="btn btn-secondary" onclick="openReceiptFromServer(\''+oid+'\')" title="Refresh from server"><i class="fas fa-sync-alt"></i> Refresh</button>';
     }
-    html += '</div>';
-    html += '</div></div>';
+    if(canCancel&&token&&oid&&!isLocal){
+      html+='<button class="btn btn-danger" onclick="openCancelModal(\''+oid+'\')"><i class="fas fa-times"></i> Cancel</button>';
+    }
+    if(status==='delivered'){
+      html+='<button class="btn btn-success" onclick="switchTab(\'review\')"><i class="fas fa-star"></i> Review</button>';
+    }
+    html+='</div>';
+    html+='</div></div>';
   });
-  list.innerHTML = html;
+  list.innerHTML=html;
+}
+
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ===== CANCEL ORDER =====
+function openCancelModal(oid){
+  document.getElementById('cancel-order-id').value=oid;
+  document.getElementById('cancel-modal').style.display='flex';
+}
+function closeCancelModal(){document.getElementById('cancel-modal').style.display='none';}
+function confirmCancel(){
+  var oid=document.getElementById('cancel-order-id').value;
+  if(!oid||!token)return;
+  fetch(API+'/orders/'+oid+'/status',{method:'PUT',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({orderStatus:'cancelled'})})
+    .then(function(r){return r.json();})
+    .then(function(){closeCancelModal();loadOrders();})
+    .catch(function(){alert('Could not cancel order. Please contact support.');closeCancelModal();});
+}
+
+// ===== RECEIPT =====
+function openReceipt(o){
+  if(typeof o==='string')o=JSON.parse(o);
+  document.getElementById('receipt-body').innerHTML=buildReceiptHTML(o);
+  document.getElementById('receipt-modal').classList.add('open');
+}
+function openReceiptFromServer(oid){
+  if(!token)return;
+  fetch(API+'/orders/'+oid,{headers:{Authorization:'Bearer '+token}})
+    .then(function(r){return r.json();})
+    .then(function(data){openReceipt(data.order||data);})
+    .catch(function(){alert('Could not load receipt from server.');});
+}
+function closeReceipt(){document.getElementById('receipt-modal').classList.remove('open');}
+
+function buildReceiptHTML(o){
+  var rNum=o.orderNumber||(o.id?String(o.id).substring(0,8).toUpperCase():'N/A');
+  var items=o.items||[];
+  var addr=o.shippingAddress||{};
+  var status=o.orderStatus||'pending';
+  var cur=getOrderCurrency(o);
+  var statusColors={delivered:'#22c55e',cancelled:'#ef4444',shipped:'#3b82f6',confirmed:'#8b5cf6',processing:'#f59e0b'};
+  var sc=statusColors[status]||'#f97316';
+  var payMethod=(o.paymentMethod||'').replace(/_/g,' ');
+  var payIcon=o.paymentMethod==='swish'?'fas fa-mobile-alt':o.paymentMethod==='paypal'?'fab fa-paypal':o.paymentMethod==='credit_card'?'fas fa-credit-card':'fas fa-hand-holding-usd';
+  var rows='';
+  items.forEach(function(it){
+    var lt=(parseFloat(it.price)||0)*(it.quantity||1);
+    rows+='<tr><td style="padding:9px 10px;border-bottom:1px solid #f0f0f0;font-size:13px;">'+escHtml(it.name||'Item')+'</td>';
+    rows+='<td style="padding:9px 10px;border-bottom:1px solid #f0f0f0;font-size:13px;text-align:center;">'+(it.quantity||1)+'</td>';
+    rows+='<td style="padding:9px 10px;border-bottom:1px solid #f0f0f0;font-size:13px;text-align:right;">'+fmtMoney(it.price,cur)+'</td>';
+    rows+='<td style="padding:9px 10px;border-bottom:1px solid #f0f0f0;font-size:13px;text-align:right;font-weight:700;color:#f97316;">'+fmtMoney(lt,cur)+'</td></tr>';
+  });
+  var html='<div id="receipt-print">';
+  html+='<div style="background:linear-gradient(135deg,#1a1a2e,#0f3460);border-radius:8px 8px 0 0;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">';
+  html+='<div style="display:flex;align-items:center;gap:12px;"><img src="pics/logo_white.png" alt="Jobijad Express" style="height:50px;width:auto;object-fit:contain;filter:brightness(1.3);">';
+  html+='<div><div style="font-size:17px;font-weight:800;color:#fff;">Jobijad <span style="color:#f97316;">Express</span></div><div style="font-size:10px;color:rgba(255,255,255,.5);">Premium African Fashion</div></div></div>';
+  html+='<div style="text-align:right;"><div style="font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;">Receipt</div>';
+  html+='<div style="font-size:18px;font-weight:800;color:#f97316;font-family:monospace;">#'+rNum+'</div>';
+  html+='<div style="font-size:10px;color:rgba(255,255,255,.4);">'+fmtDate(o.createdAt)+'</div></div></div>';
+  html+='<div style="background:'+sc+';padding:5px 24px;display:flex;justify-content:space-between;align-items:center;">';
+  html+='<span style="font-size:11px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:1px;">'+status+'</span>';
+  html+='<span style="font-size:11px;color:rgba(255,255,255,.8);">'+fmtDate(o.createdAt)+'</span></div>';
+  html+='<div style="background:#fff;border-radius:0 0 8px 8px;padding:20px 24px;">';
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px;padding-bottom:16px;border-bottom:1.5px dashed #e0e0e0;">';
+  html+='<div><div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Ship To</div>';
+  html+='<div style="font-size:14px;font-weight:700;color:#1a1a2e;">'+(addr.name||'—')+'</div>';
+  if(addr.phone)html+='<div style="font-size:12px;color:#666;margin-top:2px;"><i class="fas fa-phone" style="color:#f97316;margin-right:3px;font-size:10px;"></i>'+addr.phone+'</div>';
+  html+='<div style="font-size:12px;color:#666;">'+(addr.street||'')+'</div>';
+  html+='<div style="font-size:12px;color:#666;">'+[addr.city,addr.state,addr.country].filter(Boolean).join(', ')+'</div></div>';
+  html+='<div><div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Payment</div>';
+  html+='<div style="display:flex;align-items:center;gap:5px;margin-bottom:4px;"><i class="'+payIcon+'" style="color:#f97316;font-size:14px;"></i>';
+  html+='<span style="font-size:13px;font-weight:600;color:#1a1a2e;text-transform:capitalize;">'+payMethod+'</span></div>';
+  html+='<div style="font-size:11px;font-weight:700;color:'+sc+';text-transform:uppercase;">'+(o.paymentStatus||'pending')+'</div></div></div>';
+  html+='<table style="width:100%;border-collapse:collapse;margin-bottom:16px;">';
+  html+='<thead><tr style="background:#f8f9fa;"><th style="padding:8px 10px;text-align:left;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e0e0e0;">Item</th>';
+  html+='<th style="padding:8px 10px;text-align:center;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e0e0e0;">Qty</th>';
+  html+='<th style="padding:8px 10px;text-align:right;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e0e0e0;">Price</th>';
+  html+='<th style="padding:8px 10px;text-align:right;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e0e0e0;">Total</th>';
+  html+='</tr></thead><tbody>'+rows+'</tbody></table>';
+  var shipCost=parseFloat(o.shippingCost)||0;
+  html+='<div style="margin-left:auto;max-width:240px;">';
+  html+='<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:#666;border-bottom:1px solid #f5f5f5;"><span>Subtotal</span><span>'+fmtMoney(o.subtotal,cur)+'</span></div>';
+  html+='<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:#666;border-bottom:1px solid #f5f5f5;"><span>Shipping</span><span>'+(shipCost===0?'<span style="color:#22c55e;font-weight:600;">FREE</span>':fmtMoney(shipCost,cur))+'</span></div>';
+  html+='<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:#666;border-bottom:1px solid #f5f5f5;"><span>Tax (8%)</span><span>'+fmtMoney(o.tax,cur)+'</span></div>';
+  html+='<div style="display:flex;justify-content:space-between;padding:10px 0 0;font-size:18px;font-weight:800;color:#1a1a2e;"><span>Total</span><span style="color:#f97316;">'+fmtMoney(o.total,cur)+'</span></div></div>';
+  html+='<div style="margin-top:20px;padding-top:16px;border-top:1.5px dashed #e0e0e0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">';
+  html+='<div><div style="font-size:11px;color:#aaa;margin-bottom:3px;">Questions?</div>';
+  html+='<div style="font-size:12px;color:#555;"><i class="fas fa-envelope" style="color:#f97316;margin-right:4px;"></i>alitajudith2002@gmail.com</div>';
+  html+='<div style="font-size:12px;color:#555;"><i class="fas fa-phone" style="color:#f97316;margin-right:4px;"></i>+46 762 593 231</div></div>';
+  html+='<img src="https://api.qrserver.com/v1/create-qr-code/?size=72x72&data=JOBIJAD-'+rNum+'" style="width:64px;height:64px;border:2px solid #e0e0e0;border-radius:6px;" alt="QR">';
+  html+='</div>';
+  html+='<div style="text-align:center;margin-top:14px;font-size:12px;color:#aaa;font-style:italic;">Thank you for shopping with Jobijad Express! &#10084;</div>';
+  html+='</div></div>';
+  return html;
+}
+
+function printOrderReceipt(){
+  var content=document.getElementById('receipt-print');
+  if(!content)return;
+  var w=window.open('','_blank','width=680,height=900');
+  w.document.write('<!DOCTYPE html><html><head><title>Receipt - Jobijad Express</title>');
+  w.document.write('<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">');
+  w.document.write('<style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Arial,sans-serif;background:#f4f6f8;padding:20px;}.rc-wrap{max-width:600px;margin:0 auto;box-shadow:0 4px 24px rgba(0,0,0,.12);border-radius:10px;overflow:hidden;}table{width:100%;border-collapse:collapse;}@media print{body{background:#fff;padding:0;}.no-print{display:none!important;}.rc-wrap{box-shadow:none;}}</style>');
+  w.document.write('</head><body><div class="rc-wrap">'+content.innerHTML+'</div>');
+  w.document.write('<div class="no-print" style="max-width:600px;margin:16px auto;display:flex;gap:10px;">');
+  w.document.write('<button onclick="window.print()" style="flex:1;padding:12px;background:#f97316;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">&#128438; Print</button>');
+  w.document.write('<button onclick="window.close()" style="padding:12px 20px;background:#f4f6f8;color:#555;border:1px solid #e0e0e0;border-radius:8px;font-size:14px;cursor:pointer;">Close</button>');
+  w.document.write('</div></body></html>');
+  w.document.close();w.focus();setTimeout(function(){w.print();},600);
 }
 </script>
 
 <script>
-// ===== RECEIPT =====
-function buildReceiptHTML(o) {
-  var rNum = o.orderNumber || (o.id ? String(o.id).substring(0,8).toUpperCase() : 'N/A');
-  var items = o.items || [];
-  var addr = o.shippingAddress || {};
-  var status = o.orderStatus || 'pending';
-  var cur = getOrderCurrency(o);
-  var sym = ORD_SYMS[cur] || '$';
-  var statusColors = { delivered:'#22c55e', cancelled:'#ef4444', shipped:'#3b82f6', confirmed:'#8b5cf6', processing:'#f59e0b' };
-  var sc = statusColors[status] || '#f97316';
-  var payMethod = (o.paymentMethod||'').replace(/_/g,' ');
-  var payIcon = o.paymentMethod==='swish'?'fas fa-mobile-alt':o.paymentMethod==='paypal'?'fab fa-paypal':o.paymentMethod==='credit_card'?'fas fa-credit-card':'fas fa-hand-holding-usd';
+// ===== REVIEW FORM =====
+var ratingLabels=['','Terrible &#9733;','Poor &#9733;&#9733;','Okay &#9733;&#9733;&#9733;','Good &#9733;&#9733;&#9733;&#9733;','Excellent &#9733;&#9733;&#9733;&#9733;&#9733;'];
 
-  var rows = '';
-  items.forEach(function(it) {
-    var lineTotal = (parseFloat(it.price)||0) * (it.quantity||1);
-    rows += '<tr>';
-    rows += '<td class="rc-td">' + (it.name||'Item') + '</td>';
-    rows += '<td class="rc-td rc-center">' + (it.quantity||1) + '</td>';
-    rows += '<td class="rc-td rc-right">' + fmtMoney(it.price, cur) + '</td>';
-    rows += '<td class="rc-td rc-right rc-bold">' + fmtMoney(lineTotal, cur) + '</td>';
-    rows += '</tr>';
+function setRating(val){
+  document.getElementById('fb-rating').value=val;
+  document.querySelectorAll('#stars-row .star').forEach(function(s,i){s.classList.toggle('active',i<val);});
+  var lbl=document.getElementById('rating-label');
+  if(lbl)lbl.innerHTML=ratingLabels[val]||'';
+}
+
+document.querySelectorAll('#stars-row .star').forEach(function(el){
+  el.addEventListener('mouseover',function(){
+    var v=parseInt(el.getAttribute('data-v'));
+    document.querySelectorAll('#stars-row .star').forEach(function(s,i){s.style.color=i<v?'#f97316':'#e0e0e0';});
   });
+  el.addEventListener('mouseout',function(){
+    var cur=parseInt(document.getElementById('fb-rating').value)||5;
+    document.querySelectorAll('#stars-row .star').forEach(function(s,i){s.style.color=i<cur?'#f97316':'#e0e0e0';});
+  });
+  el.addEventListener('click',function(){setRating(parseInt(el.getAttribute('data-v')));});
+});
+setRating(5);
 
-  var html = '<div id="receipt-print">';
-
-  // Header band
-  html += '<div style="background:linear-gradient(135deg,#1a1a2e 0%,#0f3460 100%);border-radius:10px 10px 0 0;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">';
-  html += '<div style="display:flex;align-items:center;gap:12px;">';
-  html += '<img src="pics/logo_white.png" alt="Jobijad Express" style="height:52px;width:auto;object-fit:contain;filter:brightness(1.3) drop-shadow(0 0 6px rgba(255,255,255,.5));">';
-  html += '<div><div style="font-size:17px;font-weight:800;color:#fff;">Jobijad <span style="color:#f97316;">Express</span></div>';
-  html += '<div style="font-size:10px;color:rgba(255,255,255,.5);">Premium African Fashion</div></div></div>';
-  html += '<div style="text-align:right;">';
-  html += '<div style="font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;">Receipt</div>';
-  html += '<div style="font-size:18px;font-weight:800;color:#f97316;font-family:monospace;">#' + rNum + '</div>';
-  html += '<div style="font-size:10px;color:rgba(255,255,255,.4);">' + fmtDate(o.createdAt) + '</div>';
-  if (cur !== 'USD') html += '<div style="font-size:10px;background:rgba(249,115,22,.3);color:#f97316;padding:1px 7px;border-radius:8px;margin-top:3px;font-weight:700;">' + cur + '</div>';
-  html += '</div></div>';
-
-  // Status ribbon
-  html += '<div style="background:' + sc + ';padding:5px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px;">';
-  html += '<span style="font-size:11px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:1px;"><i class="fas fa-circle" style="font-size:7px;margin-right:5px;"></i>Status: ' + status.toUpperCase() + '</span>';
-  html += '<span style="font-size:11px;color:rgba(255,255,255,.85);">' + fmtDate(o.createdAt) + '</span>';
-  html += '</div>';
-
-  // Body
-  html += '<div style="background:#fff;border-radius:0 0 10px 10px;padding:20px 24px;">';
-
-  // Info grid
-  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px;padding-bottom:16px;border-bottom:1.5px dashed #e0e0e0;">';
-  html += '<div><div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Ship To</div>';
-  html += '<div style="font-size:14px;font-weight:700;color:#1a1a2e;">' + (addr.name||'—') + '</div>';
-  if (addr.phone) html += '<div style="font-size:12px;color:#666;margin-top:2px;"><i class="fas fa-phone" style="color:#f97316;margin-right:3px;font-size:10px;"></i>' + addr.phone + '</div>';
-  html += '<div style="font-size:12px;color:#666;">' + (addr.street||'') + '</div>';
-  html += '<div style="font-size:12px;color:#666;">' + [addr.city, addr.state, addr.country].filter(Boolean).join(', ') + '</div></div>';
-  html += '<div><div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Payment</div>';
-  html += '<div style="display:flex;align-items:center;gap:5px;margin-bottom:4px;"><i class="' + payIcon + '" style="color:#f97316;font-size:14px;"></i>';
-  html += '<span style="font-size:13px;font-weight:600;color:#1a1a2e;text-transform:capitalize;">' + payMethod + '</span></div>';
-  html += '<div style="margin-top:4px;display:inline-block;background:' + sc + '22;border:1px solid ' + sc + ';color:' + sc + ';font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;text-transform:uppercase;">' + status + '</div>';
-  html += '</div></div>';
-
-  // Items table
-  html += '<div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Order Items</div>';
-  html += '<table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px;">';
-  html += '<thead><tr style="background:#f8f9fa;">';
-  html += '<th style="padding:8px 10px;text-align:left;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e0e0e0;">Item</th>';
-  html += '<th style="padding:8px 10px;text-align:center;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e0e0e0;">Qty</th>';
-  html += '<th style="padding:8px 10px;text-align:right;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e0e0e0;">Price</th>';
-  html += '<th style="padding:8px 10px;text-align:right;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e0e0e0;">Total</th>';
-  html += '</tr></thead><tbody>' + rows + '</tbody></table>';
-
-  // Totals
-  var shipCost = parseFloat(o.shippingCost) || 0;
-  html += '<div style="margin-left:auto;max-width:240px;">';
-  html += '<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:#666;border-bottom:1px solid #f5f5f5;"><span>Subtotal</span><span>' + fmtMoney(o.subtotal, cur) + '</span></div>';
-  html += '<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:#666;border-bottom:1px solid #f5f5f5;"><span>Shipping</span><span>' + (shipCost === 0 ? '<span style="color:#22c55e;font-weight:600;">FREE</span>' : fmtMoney(shipCost, cur)) + '</span></div>';
-  html += '<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:#666;border-bottom:1px solid #f5f5f5;"><span>Tax (8%)</span><span>' + fmtMoney(o.tax, cur) + '</span></div>';
-  html += '<div style="display:flex;justify-content:space-between;padding:10px 0 0;font-size:18px;font-weight:800;color:#1a1a2e;"><span>Total</span><span style="color:#f97316;">' + fmtMoney(o.total, cur) + '</span></div>';
-  html += '</div>';
-
-  // Footer
-  html += '<div style="margin-top:20px;padding-top:16px;border-top:1.5px dashed #e0e0e0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">';
-  html += '<div><div style="font-size:11px;color:#aaa;margin-bottom:3px;">Questions?</div>';
-  html += '<div style="font-size:12px;color:#555;"><i class="fas fa-envelope" style="color:#f97316;margin-right:4px;"></i>alitajudith2002@gmail.com</div>';
-  html += '<div style="font-size:12px;color:#555;"><i class="fas fa-phone" style="color:#f97316;margin-right:4px;"></i>+46 762 593 231</div></div>';
-  html += '<img src="https://api.qrserver.com/v1/create-qr-code/?size=72x72&data=JOBIJAD-' + rNum + '" style="width:64px;height:64px;border:2px solid #e0e0e0;border-radius:6px;" alt="QR">';
-  html += '</div>';
-  html += '<div style="text-align:center;margin-top:14px;font-size:12px;color:#aaa;font-style:italic;">Thank you for shopping with Jobijad Express! &#10084;</div>';
-  html += '</div></div>';
-  return html;
-}
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      var o = data.order || data;
-      document.getElementById('receipt-body').innerHTML = buildReceiptHTML(o);
-      document.getElementById('receipt-modal').classList.add('open');
-    })
-    .catch(function() { alert('Could not load receipt from server.'); });
+var fbComment=document.getElementById('fb-comment');
+if(fbComment){
+  fbComment.addEventListener('input',function(){
+    var len=this.value.length;
+    var cc=document.getElementById('char-count');
+    if(cc){cc.textContent=len+' / 500 characters';cc.style.color=len>450?'#ef4444':'#aaa';}
+    if(len>500)this.value=this.value.substring(0,500);
+  });
 }
 
-function closeReceipt() {
-  document.getElementById('receipt-modal').classList.remove('open');
-}
-
-function printOrderReceipt() {
-  var content = document.getElementById('receipt-print');
-  if (!content) return;
-  var w = window.open('', '_blank', 'width=680,height=900');
-  w.document.write('<!DOCTYPE html><html><head><title>Receipt - Jobijad Express</title>');
-  w.document.write('<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">');
-  w.document.write('<style>');
-  w.document.write('*{box-sizing:border-box;margin:0;padding:0;}');
-  w.document.write('body{font-family:Arial,Helvetica,sans-serif;background:#f4f6f8;padding:20px;}');
-  w.document.write('.rc-wrap{max-width:600px;margin:0 auto;box-shadow:0 4px 24px rgba(0,0,0,.12);border-radius:10px;overflow:hidden;}');
-  w.document.write('table{width:100%;border-collapse:collapse;}');
-  w.document.write('.rc-td{padding:9px 10px;border-bottom:1px solid #f0f0f0;font-size:13px;color:#333;}');
-  w.document.write('.rc-center{text-align:center;}.rc-right{text-align:right;}.rc-bold{font-weight:700;}');
-  w.document.write('@media print{body{background:#fff;padding:0;}.no-print{display:none!important;}.rc-wrap{box-shadow:none;}}');
-  w.document.write('</style></head><body>');
-  w.document.write('<div class="rc-wrap">' + content.innerHTML + '</div>');
-  w.document.write('<div class="no-print" style="max-width:600px;margin:16px auto;display:flex;gap:10px;">');
-  w.document.write('<button onclick="window.print()" style="flex:1;padding:12px;background:#f97316;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">&#128438; Print Receipt</button>');
-  w.document.write('<button onclick="window.close()" style="padding:12px 20px;background:#f4f6f8;color:#555;border:1px solid #e0e0e0;border-radius:8px;font-size:14px;cursor:pointer;">Close</button>');
-  w.document.write('</div></body></html>');
-  w.document.close();
-  w.focus();
-  setTimeout(function() { w.print(); }, 600);
-}
-
-// ===== FEEDBACK =====
-function submitFeedback() {
-  var name = document.getElementById('fb-name').value.trim();
-  var rating = parseInt(document.getElementById('fb-rating').value) || 5;
-  var comment = document.getElementById('fb-comment').value.trim();
-  if (!comment) { showFbMsg('Please write something!', true); return; }
-  var payload = { rating: rating, comment: comment, message: comment, customerName: name || 'Anonymous' };
-  var headers = { 'Content-Type': 'application/json' };
-  if (token) headers['Authorization'] = 'Bearer ' + token;
-  fetch(API + '/feedback', { method: 'POST', headers: headers, body: JSON.stringify(payload) })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      if (data.feedback || data.id || data._id) {
-        showFbMsg('Thank you! Your review has been submitted.', false);
-        document.getElementById('fb-comment').value = '';
+function submitFeedback(){
+  var name=document.getElementById('fb-name').value.trim();
+  var rating=parseInt(document.getElementById('fb-rating').value)||5;
+  var comment=document.getElementById('fb-comment').value.trim();
+  var orderRef=document.getElementById('fb-order-select').value;
+  if(!comment){showFbMsg('Please write something before submitting.',true);return;}
+  if(comment.length<10){showFbMsg('Please write at least 10 characters.',true);return;}
+  var btn=document.querySelector('#tab-review .btn-primary');
+  if(btn){btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Submitting...';btn.disabled=true;}
+  var payload={rating:rating,comment:comment,message:comment,customerName:name||'Anonymous',orderRef:orderRef||undefined};
+  var headers={'Content-Type':'application/json'};
+  if(token)headers['Authorization']='Bearer '+token;
+  fetch(API+'/feedback',{method:'POST',headers:headers,body:JSON.stringify(payload)})
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(btn){btn.innerHTML='<i class="fas fa-paper-plane"></i> Submit Review';btn.disabled=false;}
+      if(data.feedback||data.id||data._id||data.message==='Feedback submitted'){
+        showFbMsg('&#10003; Thank you! Your review has been submitted.',false);
+        document.getElementById('fb-comment').value='';
+        document.getElementById('fb-name').value='';
+        document.getElementById('fb-order-select').value='';
         setRating(5);
+        var cc=document.getElementById('char-count');if(cc)cc.textContent='0 / 500 characters';
       } else {
-        showFbMsg(data.message || 'Could not submit.', true);
+        showFbMsg(data.message||'Could not submit. Please try again.',true);
       }
     })
-    .catch(function() { showFbMsg('Server error. Please try again.', true); });
+    .catch(function(){
+      if(btn){btn.innerHTML='<i class="fas fa-paper-plane"></i> Submit Review';btn.disabled=false;}
+      showFbMsg('Server error. Please try again later.',true);
+    });
 }
 
-function showFbMsg(msg, isError) {
-  var el = document.getElementById('fb-msg');
-  el.textContent = msg;
-  el.className = 'fb-msg ' + (isError ? 'error' : 'success');
-  el.style.display = 'block';
+function showFbMsg(msg,isError){
+  var el=document.getElementById('fb-msg');
+  el.innerHTML=msg;
+  el.className='fb-msg '+(isError?'error':'success');
+  el.style.display='block';
+  if(!isError)setTimeout(function(){el.style.display='none';},5000);
 }
 
 // ===== PUBLIC REVIEWS =====
-function loadPublicReviews() {
-  var list = document.getElementById('public-reviews-list');
-  var box = document.getElementById('reviews-summary-box');
-  list.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin" style="font-size:24px;color:#f97316"></i><p style="margin-top:8px">Loading...</p></div>';
-  fetch(API + '/feedback')
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      var reviews = data.feedbacks || data.feedback || [];
-      if (!reviews.length) {
-        box.innerHTML = '';
-        list.innerHTML = '<div class="empty-state"><i class="fas fa-star"></i><p>No reviews yet. Be the first!</p></div>';
+function loadPublicReviews(){
+  var list=document.getElementById('public-reviews-list');
+  var box=document.getElementById('reviews-summary-box');
+  list.innerHTML='<div class="loading"><i class="fas fa-spinner fa-spin" style="font-size:24px;color:#f97316"></i><p style="margin-top:8px">Loading...</p></div>';
+  fetch(API+'/feedback')
+    .then(function(r){return r.json();})
+    .then(function(data){
+      var reviews=data.feedbacks||data.feedback||[];
+      if(!reviews.length){
+        box.innerHTML='';
+        list.innerHTML='<div class="empty-state"><i class="fas fa-star"></i><p style="margin-bottom:12px">No reviews yet. Be the first!</p><button class="btn btn-primary" onclick="switchTab(\'review\')"><i class="fas fa-star"></i> Write a Review</button></div>';
         return;
       }
-      var total = 0;
-      reviews.forEach(function(r) { total += parseInt(r.rating) || 0; });
-      var avg = (total / reviews.length).toFixed(1);
-      var ar = Math.round(parseFloat(avg));
-      var ss = '';
-      for (var i = 1; i <= 5; i++) ss += i <= ar ? '&#9733;' : '&#9734;';
-      box.innerHTML = '<div class="reviews-summary"><div class="avg-score">' + avg + '</div><div><div class="review-stars" style="font-size:22px;">' + ss + '</div><div class="avg-label">' + reviews.length + ' review' + (reviews.length !== 1 ? 's' : '') + '</div></div></div>';
-      var html = '';
-      reviews.forEach(function(r) {
-        var rn = r.customerName || (r.User && r.User.name) || 'Anonymous';
-        var rs = '';
-        var rv = parseInt(r.rating) || 0;
-        for (var k = 1; k <= 5; k++) rs += k <= rv ? '&#9733;' : '&#9734;';
-        html += '<div class="review-card">';
-        html += '<div class="review-header"><div><div class="reviewer-name"><i class="fas fa-user-circle" style="color:#f97316;margin-right:5px;"></i>' + rn + '</div>';
-        html += '<div class="review-stars">' + rs + '</div></div>';
-        html += '<div class="review-date">' + fmtDate(r.createdAt) + '</div></div>';
-        html += '<div class="review-comment">' + (r.comment || '') + '</div>';
-        if (r.adminReply) {
-          html += '<div class="admin-reply"><div class="admin-reply-label"><i class="fas fa-store"></i> Jobijad Express replied:</div>';
-          html += '<div class="admin-reply-text">' + r.adminReply + '</div></div>';
+      var total=0,counts=[0,0,0,0,0];
+      reviews.forEach(function(r){var v=parseInt(r.rating)||0;total+=v;if(v>=1&&v<=5)counts[v-1]++;});
+      var avg=(total/reviews.length).toFixed(1);
+      var ar=Math.round(parseFloat(avg));
+      var ss='';for(var i=1;i<=5;i++)ss+=i<=ar?'&#9733;':'&#9734;';
+      var barsHtml='';
+      for(var k=5;k>=1;k--){
+        var pct=reviews.length?Math.round((counts[k-1]/reviews.length)*100):0;
+        barsHtml+='<div class="bar-row"><span style="font-size:12px;color:#888;width:10px;">'+k+'</span><i class="fas fa-star" style="color:#f97316;font-size:11px;margin:0 4px;"></i><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%"></div></div><span style="font-size:11px;color:#aaa;width:28px;text-align:right;">'+counts[k-1]+'</span></div>';
+      }
+      box.innerHTML='<div class="reviews-summary"><div style="text-align:center;"><div class="avg-score">'+avg+'</div><div style="color:#f97316;font-size:20px;letter-spacing:2px;">'+ss+'</div><div style="font-size:12px;color:#888;margin-top:4px;">'+reviews.length+' review'+(reviews.length!==1?'s':'')+'</div></div><div style="flex:1;">'+barsHtml+'</div><button class="btn btn-primary" onclick="switchTab(\'review\')" style="align-self:center;"><i class="fas fa-star"></i> Write a Review</button></div>';
+      var html='';
+      reviews.forEach(function(r){
+        var rn=r.customerName||(r.User&&r.User.name)||'Anonymous';
+        var rs='';var rv=parseInt(r.rating)||0;
+        for(var k=1;k<=5;k++)rs+=k<=rv?'<span style="color:#f97316;">&#9733;</span>':'<span style="color:#e0e0e0;">&#9734;</span>';
+        var verified=r.orderRef?'<span style="background:#dcfce7;color:#15803d;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:8px;"><i class="fas fa-check-circle"></i> Verified Purchase</span>':'';
+        html+='<div class="review-card">';
+        html+='<div class="review-header"><div><div class="reviewer-name"><i class="fas fa-user-circle" style="color:#f97316;margin-right:5px;"></i>'+escHtml(rn)+verified+'</div>';
+        html+='<div class="review-stars" style="margin-top:4px;">'+rs+'</div></div>';
+        html+='<div class="review-date">'+fmtDate(r.createdAt)+'</div></div>';
+        html+='<div class="review-comment">'+escHtml(r.comment||r.message||'')+'</div>';
+        if(r.adminReply){
+          html+='<div class="admin-reply"><div class="admin-reply-label"><i class="fas fa-store"></i> Jobijad Express replied:</div>';
+          html+='<div class="admin-reply-text">'+escHtml(r.adminReply)+'</div></div>';
         }
-        html += '</div>';
+        html+='</div>';
       });
-      list.innerHTML = html;
+      list.innerHTML=html;
     })
-    .catch(function() {
-      box.innerHTML = '';
-      list.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Could not load reviews.</p></div>';
+    .catch(function(){
+      box.innerHTML='';
+      list.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Could not load reviews. Please try again.</p></div>';
     });
 }
 
 // Pre-fill name if logged in
-if (currentUser && currentUser.name) {
-  var nameEl = document.getElementById('fb-name');
-  if (nameEl) nameEl.value = currentUser.name;
+if(currentUser&&currentUser.name){
+  var nameEl=document.getElementById('fb-name');
+  if(nameEl)nameEl.value=currentUser.name;
 }
 
 loadOrders();
 </script>
 </body>
 </html>
-
-
-
-
