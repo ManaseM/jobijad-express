@@ -244,15 +244,23 @@ function loadOrders(){
   list.innerHTML='<div class="loading"><i class="fas fa-spinner fa-spin" style="font-size:24px;color:#f97316"></i><p style="margin-top:8px">Loading...</p></div>';
   var localOrders=JSON.parse(localStorage.getItem('jobiOrders')||'[]');
   if(!token){renderOrderList(localOrders,list);populateOrderSelect(localOrders);return;}
+  // Always fetch fresh from server so admin-set delivery dates are visible
   fetch(API+'/orders/my',{headers:{Authorization:'Bearer '+token}})
     .then(function(r){return r.json();})
     .then(function(data){
       var serverOrders=data.orders||[];
-      var serverIds=serverOrders.map(function(o){return String(o.id||o.orderNumber);});
-      var localOnly=localOrders.filter(function(o){return !serverIds.includes(String(o.id))&&!serverIds.includes(String(o.orderNumber));});
-      var all=serverOrders.concat(localOnly);
-      renderOrderList(all,list);
-      populateOrderSelect(all);
+      // Sync server orders back into localStorage so receipt modal has latest data
+      if(serverOrders.length){
+        var serverIds=serverOrders.map(function(o){return String(o.id||o.orderNumber);});
+        var localOnly=localOrders.filter(function(o){return !serverIds.includes(String(o.id))&&!serverIds.includes(String(o.orderNumber));});
+        var merged=serverOrders.concat(localOnly);
+        localStorage.setItem('jobiOrders',JSON.stringify(merged));
+        renderOrderList(merged,list);
+        populateOrderSelect(merged);
+      } else {
+        renderOrderList(localOrders,list);
+        populateOrderSelect(localOrders);
+      }
     })
     .catch(function(){renderOrderList(localOrders,list);populateOrderSelect(localOrders);});
 }
@@ -308,11 +316,11 @@ function renderOrderList(orders,list){
     html+='<div class="order-totals"><span style="color:#888;font-size:12px;">Order Total:</span><span class="order-total-val">'+fmtMoney(o.total,cur)+'</span></div>';
 
     if(o.shippingDate||o.estimatedDelivery||o.deliveryNote||o.trackingNumber){
-      html+='<div class="delivery-box"><div class="delivery-box-title"><i class="fas fa-truck"></i> Delivery Schedule</div>';
-      if(o.shippingDate)html+='<div style="color:#555;margin-bottom:4px;"><i class="fas fa-box-open" style="color:#f97316;margin-right:6px;width:14px;"></i><strong>Ships:</strong> '+fmtDate(o.shippingDate)+'</div>';
-      if(o.estimatedDelivery)html+='<div style="color:#555;margin-bottom:4px;"><i class="fas fa-calendar-check" style="color:#22c55e;margin-right:6px;width:14px;"></i><strong>Est. Delivery:</strong> '+fmtDate(o.estimatedDelivery)+'</div>';
-      if(o.trackingNumber)html+='<div style="color:#555;margin-bottom:4px;"><i class="fas fa-barcode" style="color:#3b82f6;margin-right:6px;width:14px;"></i><strong>Tracking:</strong> <span style="font-family:monospace;font-weight:700;">'+o.trackingNumber+'</span></div>';
-      if(o.deliveryNote)html+='<div style="color:#666;margin-top:6px;font-style:italic;border-top:1px solid #d1fae5;padding-top:6px;">'+escHtml(o.deliveryNote)+'</div>';
+      html+='<div class="delivery-box"><div class="delivery-box-title"><i class="fas fa-truck"></i> Delivery Schedule <span style="background:#22c55e;color:#fff;font-size:10px;padding:2px 7px;border-radius:10px;margin-left:6px;font-weight:700;">CONFIRMED</span></div>';
+      if(o.estimatedDelivery)html+='<div style="color:#15803d;font-size:14px;font-weight:700;margin-bottom:6px;"><i class="fas fa-calendar-check" style="margin-right:6px;"></i>Delivery by: '+fmtDate(o.estimatedDelivery)+'</div>';
+      if(o.shippingDate)html+='<div style="color:#555;margin-bottom:4px;font-size:12px;"><i class="fas fa-box-open" style="color:#f97316;margin-right:6px;width:14px;"></i><strong>Ships:</strong> '+fmtDate(o.shippingDate)+'</div>';
+      if(o.trackingNumber)html+='<div style="color:#555;margin-bottom:4px;font-size:12px;"><i class="fas fa-barcode" style="color:#3b82f6;margin-right:6px;width:14px;"></i><strong>Tracking:</strong> <span style="font-family:monospace;font-weight:700;">'+o.trackingNumber+'</span></div>';
+      if(o.deliveryNote)html+='<div style="color:#666;margin-top:6px;font-size:12px;font-style:italic;border-top:1px solid #d1fae5;padding-top:6px;">'+escHtml(o.deliveryNote)+'</div>';
       html+='</div>';
     }
 
