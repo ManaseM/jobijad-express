@@ -573,8 +573,8 @@ function renderOrders() {
             <td style="font-size:11px">${fmtDate(o.createdAt)}</td>
             <td style="white-space:nowrap">
               <button class="btn btn-secondary" style="margin-bottom:3px;display:block;width:100%" onclick="showReceipt('${o.id}')"><i class="fas fa-receipt"></i> View Receipt</button>
-              ${o.paymentMethod==='mobile_money' && o.paymentStatus!=='paid' ? `<button class="btn btn-success" style="margin-bottom:3px;display:block;width:100%" onclick="approvePayment('${o.id}')"><i class="fas fa-check-circle"></i> Approve Payment</button>` : ''}
-              ${o.orderStatus==='pending' && o.paymentStatus==='paid' ? `<button class="btn btn-success" style="margin-bottom:3px;display:block;width:100%" onclick="approveOrder('${o.id}')"><i class="fas fa-check"></i> Confirm Order</button>` : ''}
+              ${o.paymentStatus!=='paid' ? `<button class="btn btn-success" style="margin-bottom:3px;display:block;width:100%" onclick="approvePayment('${o.id}')"><i class="fas fa-check-circle"></i> Approve & Set Delivery</button>` : `<button class="btn btn-secondary" style="margin-bottom:3px;display:block;width:100%;opacity:.7" onclick="openDeliveryModal('${o.id}')"><i class="fas fa-truck"></i> Update Delivery</button>`}
+              ${o.orderStatus==='pending' ? `<button class="btn btn-primary" style="margin-bottom:3px;display:block;width:100%" onclick="approveOrder('${o.id}')"><i class="fas fa-check"></i> Confirm Order</button>` : ''}
             </td>
           </tr>`).join('') || '<tr class="empty-row"><td colspan="8">No orders found</td></tr>'}
         </tbody>

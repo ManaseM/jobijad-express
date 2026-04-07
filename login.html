@@ -341,21 +341,30 @@ async function doLogin() {
   var btn = document.getElementById('login-btn');
   btn.textContent = 'LOGGING IN...'; btn.disabled = true;
   try {
+    var controller = new AbortController();
+    var timer = setTimeout(function() { controller.abort(); }, 8000);
     var res = await fetch((window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1'?'http://localhost:3000/api':window.location.origin+'/api') + '/auth/login', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ email, password: pass })
+      body: JSON.stringify({ email, password: pass }),
+      signal: controller.signal
     });
+    clearTimeout(timer);
     var data = await res.json();
     if (res.ok) {
       localStorage.setItem('jobiToken', data.token);
       localStorage.setItem('currentUser', JSON.stringify(data.user));
+      // Redirect immediately — no delay
       window.location.href = data.user && data.user.role === 'admin' ? 'admin.html' : 'alibaba-style.html';
     } else {
       showError(data.message || 'Invalid email or password.');
       btn.textContent = 'LOGIN'; btn.disabled = false;
     }
   } catch(e) {
-    showError('Cannot connect to server. Make sure npm start is running.');
+    if (e.name === 'AbortError') {
+      showError('Request timed out. Please try again.');
+    } else {
+      showError('Cannot connect to server. Please try again.');
+    }
     btn.textContent = 'LOGIN'; btn.disabled = false;
   }
 }

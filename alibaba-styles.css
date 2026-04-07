@@ -641,3 +641,8 @@ html{scroll-behavior:smooth;}
 
 /* Better tap highlight */
 a,button{-webkit-tap-highlight-color:rgba(249,115,22,.15);}
+
+/* Skeleton card shimmer */
+.skeleton-card{pointer-events:none;animation:skeletonPulse 1.4s ease-in-out infinite;}
+.skeleton-card .product-image{background:linear-gradient(90deg,#ececec 25%,#f5f5f5 50%,#ececec 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;}
+@keyframes skeletonPulse{0%,100%{opacity:1;}50%{opacity:.6;}}

@@ -570,17 +570,31 @@ function submitInquiry(title) {
 
 // ===== PRODUCTS FROM DB =====
 async function loadProductsFromDB() {
+    // Show cached products instantly if available
+    const cached = sessionStorage.getItem('jobiProducts');
+    if (cached) {
+        try {
+            const products = JSON.parse(cached);
+            if (products.length) { renderDBProducts(products); setTimeout(initScrollReveal, 50); }
+        } catch(e) {}
+    }
     try {
-        const data = await apiCall('/products?limit=10');
+        // 2-second timeout
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 2000);
+        const res = await fetch('/api/products?limit=10', { signal: controller.signal });
+        clearTimeout(timer);
+        const data = await res.json();
         if (data.products && data.products.length > 0) {
+            sessionStorage.setItem('jobiProducts', JSON.stringify(data.products));
             renderDBProducts(data.products);
             setTimeout(initScrollReveal, 50);
             document.dispatchEvent(new Event('productsLoaded'));
-        } else {
+        } else if (!cached) {
             const grid = document.getElementById('products-grid');
             if (grid) grid.innerHTML = '<div style="text-align:center;padding:60px 20px;color:#aaa;grid-column:1/-1;"><i class="fas fa-store" style="font-size:48px;color:#e0e0e0;display:block;margin-bottom:16px;"></i><p style="font-size:16px;font-weight:600;color:#555;margin-bottom:8px;">No products yet</p><p style="font-size:13px;">Check back soon — new arrivals coming!</p></div>';
         }
-    } catch (e) { /* keep static products */ }
+    } catch (e) { /* keep skeleton or cached */ }
 }
 function renderDBProducts(products) {
     window._allProducts = products;
