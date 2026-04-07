@@ -222,14 +222,16 @@ function switchTab(name){
 }
 
 // ===== STATUS TRACKER =====
-var STATUS_STEPS = ['pending','confirmed','processing','shipped','delivered'];
+var STATUS_STEPS = ['pending','confirmed','delivered'];
 function buildStatusTracker(status){
   if(status==='cancelled'){
     return '<div style="display:inline-flex;align-items:center;gap:6px;background:#fee2e2;border:1px solid #fecaca;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;color:#991b1b;margin:10px 0;"><i class="fas fa-times-circle"></i> Order Cancelled</div>';
   }
-  var idx=STATUS_STEPS.indexOf(status);
+  // Map processing/shipped to confirmed for display purposes
+  var displayStatus = (status==='processing'||status==='shipped') ? 'confirmed' : status;
+  var idx=STATUS_STEPS.indexOf(displayStatus);
   var html='<div class="status-track">';
-  var icons=['fa-clock','fa-check','fa-cog','fa-truck','fa-box-open'];
+  var icons=['fa-clock','fa-check-circle','fa-box-open'];
   STATUS_STEPS.forEach(function(s,i){
     var cls=i<idx?'done':i===idx?'active':'';
     html+='<div class="st-step"><div class="st-dot '+cls+'"><i class="fas '+icons[i]+'"></i></div><div class="st-label '+cls+'">'+s.charAt(0).toUpperCase()+s.slice(1)+'</div></div>';
